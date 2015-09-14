@@ -2,17 +2,17 @@
 #include <stdio.h>
 #include "token.h"
 %}
+%option noyywrap
 
 WHITESPACE [ \t]+
 COMMENT (\/\*.*\*\/)|(\/\/.*\n)
 ALPHA [a-zA-Z]
 ALPHA_UNDERSCORE [a-zA-Z_]
 DIGIT [0-9]
-DIGIT_NOZERO [1-9]
 IDENTIFIER {ALPHA_UNDERSCORE}({ALPHA_UNDERSCORE}|{DIGIT})*
 CHAR ('.'|'\\n'|'\\0')
 STRING \".*\"
-INTEGER 0|-?{DIGIT_NOZERO}{DIGIT}*
+INTEGER -?{DIGIT}+
 
 %%
 
@@ -40,8 +40,12 @@ while { return WHILE; }
 {INTEGER} { return INTEGER_LITERAL; }
 : { return DECLARATION; }
 = { return ASSIGNMENT; }
+\{ { return LEFT_BRACE; }
+\} { return RIGHT_BRACE; }
 \( { return LEFT_PAREN; }
 \) { return RIGHT_PAREN; }
+\[ { return LEFT_BRACKET; }
+\] { return RIGHT_BRACKET; }
 \+\+ { return PLUSPLUS; }
 -- { return MINUSMINUS; }
 \+ { return PLUS; }
@@ -58,3 +62,16 @@ while { return WHILE; }
 && { return AND; }
 \|\| { return OR; }
 . { return PARSE_ERROR; }
+
+%%
+
+int main(int argc, char **argv) {
+
+  while(1) {
+    TOKEN token = yylex();
+    if(!token)
+      break;
+    else
+      printf("%s\n", TOKEN_STRING[token]);
+  }
+}
