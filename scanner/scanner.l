@@ -64,18 +64,6 @@ while { return WHILE; }
 . { return PARSE_ERROR; }
 
 %%
-main( argc, argv )
-int argc;
-char **argv;
-    {
-    ++argv, --argc;  /* skip over program name */
-    if ( argc > 0 )
-            yyin = fopen( argv[0], "r" );
-    else
-            yyin = stdin;
-
-    yylex();
-    }
 
 int main(int argc, char **argv) {
   if(argc > 1) {  //arguments on top of program name
