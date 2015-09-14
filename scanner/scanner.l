@@ -3,7 +3,7 @@
 %}
 
 WHITESPACE [ \t]+
-COMMENTS (/\*.**/ | //.*\n)
+COMMENT (/\*.**/ | //.*\n)
 ALPHA [a-zA-Z]
 ALPHA_UNDERSCORE [a-zA-Z_]
 DIGIT [0-9]
