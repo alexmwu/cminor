@@ -11,7 +11,6 @@ typedef enum {
   INTEGER_LITERAL,
   STRING_LITERAL,
   CHAR_LITERAL,
-  BOOLEAN_LITERAL,
   ARRAY,
   VOID,
   TRUE,
@@ -31,8 +30,8 @@ typedef enum {
   RIGHT_BRACKET,
   PLUSPLUS,
   MINUSMINUS,
-  MINUS,
   PLUS,
+  MINUS,
   MULTIPLICATION,
   DIVISION,
   MODULUS,
@@ -44,4 +43,5 @@ typedef enum {
   NE,
   AND,
   OR,
+  PARSE_ERROR
 } TOKEN;
