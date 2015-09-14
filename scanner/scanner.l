@@ -64,8 +64,26 @@ while { return WHILE; }
 . { return PARSE_ERROR; }
 
 %%
+main( argc, argv )
+int argc;
+char **argv;
+    {
+    ++argv, --argc;  /* skip over program name */
+    if ( argc > 0 )
+            yyin = fopen( argv[0], "r" );
+    else
+            yyin = stdin;
+
+    yylex();
+    }
 
 int main(int argc, char **argv) {
+  if(argc > 1) {  //arguments on top of program name
+    yyin = fopen(argv[1], "r");
+  }
+  else {
+    yyin = stdin;
+  }
 
   while(1) {
     TOKEN token = yylex();
@@ -74,4 +92,5 @@ int main(int argc, char **argv) {
     else
       printf("%s\n", TOKEN_STRING[token]);
   }
+  return 0;
 }
