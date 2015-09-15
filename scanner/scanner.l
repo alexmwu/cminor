@@ -32,6 +32,7 @@ true { return TRUE; }
 void { return VOID; }
 while { return WHILE; }
 ; { return SEMICOLON; }
+, { return COMMA; }
 {WHITESPACE} { return WHITESPACE; }
 {COMMENT} { return COMMENT; }
 {IDENTIFIER} { return IDENTIFIER; }
@@ -48,6 +49,7 @@ while { return WHILE; }
 \] { return RIGHT_BRACKET; }
 \+\+ { return PLUSPLUS; }
 -- { return MINUSMINUS; }
+\^ { return EXPONENTIATION; }
 \+ { return PLUS; }
 - { return MINUS; }
 \* { return MULTIPLICATION; }
@@ -66,11 +68,11 @@ while { return WHILE; }
 %%
 
 int main(int argc, char **argv) {
+  yyin = stdin;
   if(argc > 1) {  //arguments on top of program name
-    yyin = fopen(argv[1], "r");
-  }
-  else {
-    yyin = stdin;
+    if(strcmp(argv[1], "-scan") == 0 && argc > 2) {
+      yyin = fopen(argv[2], "r");
+    }
   }
 
   while(1) {
@@ -78,7 +80,7 @@ int main(int argc, char **argv) {
     if(!token)
       break;
     else
-      printf("%s\n", TOKEN_STRING[token]);
+      printf("%s: %s\n", TOKEN_STRING[token], yytext);
   }
   return 0;
 }
