@@ -4,13 +4,13 @@
 %}
 %option noyywrap
 
-WHITESPACE [ \t]+
-COMMENT (\/\*.*\*\/)|(\/\/.*\n)
+WHITESPACE [ \t\n\r]+
+COMMENT \/\*.*?\*\/
 ALPHA [a-zA-Z]
 ALPHA_UNDERSCORE [a-zA-Z_]
 DIGIT [0-9]
 IDENTIFIER {ALPHA_UNDERSCORE}({ALPHA_UNDERSCORE}|{DIGIT})*
-CHAR ('.'|'\\n'|'\\0')
+CHAR ('.'|'\\.')
 STRING \".*\"
 INTEGER -?{DIGIT}+
 
@@ -63,9 +63,39 @@ while { return WHILE; }
 != { return NE; }
 && { return AND; }
 \|\| { return OR; }
-. { return PARSE_ERROR; }
+. { return SCAN_ERROR; }
 
 %%
+
+char handleChar(char *c) {
+  // length should only be 3 or 4
+  int len = strlen(c);
+  if(len == 3) {
+    return c[1];  // c should look like ' + char + '
+  }
+  else if(len == 4) {   // c should look like ' + \ + char + '
+    if(c[2] == '0') {
+      return (char) 0;  // ASCII code for NULL
+    }
+    else if(c[2] == 'n') {
+      return (char) 10;  // ASCII code for NULL
+    }
+    else {
+      return c[2];
+    }
+  }
+  else {
+    printf("Unknown/malformed CHARACTER_LITERAL scanned in: %s\n", c);
+    return (char) -1;
+  }
+}
+
+char *handleString(char *s) {
+  char *ptr = s;
+  while(ptr) {
+
+  }
+}
 
 int main(int argc, char **argv) {
   yyin = stdin;
@@ -75,12 +105,31 @@ int main(int argc, char **argv) {
     }
   }
 
+  if(yyin == stdin) printf("Enter in CMinor code to see if it scans.\n");
+
   while(1) {
     TOKEN token = yylex();
-    if(!token)
+    if(!token) {
       break;
-    else
-      printf("%s: %s\n", TOKEN_STRING[token], yytext);
+    }
+    switch (token) {
+      char c;
+      char *s;
+      case CHAR_LITERAL:
+        c = handleChar(yytext);
+        printf("CHAR_LITERAL: %c\n", c);
+        break;
+      case STRING_LITERAL:
+        break;
+      case WHITESPACE:
+        break;
+      case SCAN_ERROR:
+        printf("%s: %s is not a valid character.\n", TOKEN_STRING[token], yytext);
+        break;
+      default:
+        printf("%s\n", TOKEN_STRING[token]);
+        break;
+    }
   }
   return 0;
 }
