@@ -158,7 +158,7 @@ int main(int argc, char **argv) {
       case STRING_LITERAL:
         s = handleString(yytext);
         if(s == NULL) {
-          printf("PARSE_ERROR: STRING_LITERAL has exceeded the max size of 255\n");
+          printf("SCAN_ERROR: STRING_LITERAL has exceeded the max size of 255\n");
         }
         else {
           printf("STRING_LITERAL: %s\n", s);
@@ -168,7 +168,7 @@ int main(int argc, char **argv) {
       case IDENTIFIER:
         s = handleString(yytext);
         if(s == NULL) {
-          printf("PARSE_ERROR: IDENTIFIER has exceeded the max size of 255\n");
+          printf("SCAN_ERROR: IDENTIFIER has exceeded the max size of 255\n");
         }
         else {
           printf("IDENTIFIER\n");
