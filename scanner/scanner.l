@@ -2,13 +2,16 @@
 #include <stdio.h>
 #include "token.h"
 %}
+
 %option noyywrap
 
+%x C_COMMENT
+
 WHITESPACE [ \t\n\r]+
-COMMENT \/\*.*?\*\/
 ALPHA [a-zA-Z]
 ALPHA_UNDERSCORE [a-zA-Z_]
 DIGIT [0-9]
+CPPCOMMENT \/\/.*\n
 IDENTIFIER {ALPHA_UNDERSCORE}({ALPHA_UNDERSCORE}|{DIGIT})*
 CHAR ('.'|'\\.')
 STRING \".*\"
@@ -34,8 +37,11 @@ while { return WHILE; }
 ; { return SEMICOLON; }
 , { return COMMA; }
 {WHITESPACE} { return WHITESPACE; }
-{COMMENT} { return COMMENT; }
 {IDENTIFIER} { return IDENTIFIER; }
+{CPPCOMMENT} { return CPPCOMMENT; }
+"/*" { BEGIN(C_COMMENT); }
+<C_COMMENT>"*/" { BEGIN(INITIAL); return CCOMMENT; }
+<C_COMMENT>. { }
 {CHAR} { return CHAR_LITERAL; }
 {STRING} { return STRING_LITERAL; }
 {INTEGER} { return INTEGER_LITERAL; }
