@@ -1,12 +1,12 @@
 '\0', '\n';
 
-/*sdlfjsdfjsafd
-sdlfjk
-&sadflj\*\*/
+/*this is
+a multiline
+&comment\*\*/
 
-"slkdfjlsajfd woejrsjfdlsa oiwehrwafd \n \0 \\asldfjsjafw\sd"
+"hi i am a string literal plus a newline\n I should end here\0 \\no mas\pls"
 
--020943824; 234289374; 000000234;
+-020943824, 2309424, +234289374; 000000234;
 
 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 
@@ -14,21 +14,17 @@ sdlfjk
 
 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\0aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 
-for(i=5;i>0;i--) (safljkj-array[34]++);
-
 hi: function integer(hello: integer) {
-  ,;//sklafjf20fjsad/*sdfjsaklfjefa*/
-  /*sdjf289rhsakjfhsd fsaf893hfjasf */
-  /*say hi \n*/
   i: array [] integer, j: string = "sdlfkj";
-  i^0234;
-  if(i*5 < 9*1 || 023-2 && 23-8) {
-  }
+
+// this does cool things.
+if(i*5 < 9*1 || 023-2 && 23-8) {
+  return 5;
 }
 
 
-/*//safjlk3jfjsadfjsal///sdklfdsj*/
+/*//Weird comment - still C comment///will this fail?****/
 
-array; boolean, char < else > if >= function <= if == integer = print : return != string { true; void% while }; //true void while
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 
-/*sdlfjsdfjsafd\*\*/
+/*hello comment\*\*/
