@@ -12,7 +12,7 @@ DIGIT [0-9]
 IDENTIFIER {ALPHA_UNDERSCORE}({ALPHA_UNDERSCORE}|{DIGIT})*
 CHAR ('.'|'\\.')
 STRING \".*\"
-INTEGER -?{DIGIT}+
+INTEGER {DIGIT}+
 
 %%
 
@@ -90,11 +90,40 @@ char handleChar(char *c) {
   }
 }
 
+// need to free string
 char *handleString(char *s) {
+  int len = strlen(s);
+  char *retStr = malloc(len * sizeof(char));
   char *ptr = s;
-  while(ptr) {
-
+  int i = 0;
+  while(*ptr) {
+    if(*ptr == '"') {
+      ptr++;
+      continue;
+    }
+    else if(*ptr == '\\') {
+      ptr++;  // move one ahead for actual value
+      if(*ptr == 'n') {
+        retStr[i++] = '\n';
+      }
+      else if(*ptr == '0') {
+        retStr[i++] = '\0';
+      }
+      else {
+        retStr[i++] = *ptr;
+      }
+      ptr++;
+    }
+    else {
+      retStr[i++] = *ptr;
+      ptr++;
+    }
   }
+  if(strlen(retStr) > 255) {
+    free(retStr);
+    return NULL;  // return NULL if final string length is greater than 255
+  }
+  return retStr;
 }
 
 int main(int argc, char **argv) {
@@ -120,6 +149,12 @@ int main(int argc, char **argv) {
         printf("CHAR_LITERAL: %c\n", c);
         break;
       case STRING_LITERAL:
+        s = handleString(yytext);
+        printf("STRING_LITERAL: %s\n", s);
+        free(s);  // free for now - may need to do other things with it later
+        break;
+      case IDENTIFIER:
+        printf("IDENTIFIER\n");
         break;
       case WHITESPACE:
         break;
