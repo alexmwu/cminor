@@ -119,6 +119,7 @@ char *handleString(char *s) {
       ptr++;
     }
   }
+  retStr[i] = '\0';
   if(strlen(retStr) > 255) {
     free(retStr);
     return NULL;  // return NULL if final string length is greater than 255
@@ -150,11 +151,23 @@ int main(int argc, char **argv) {
         break;
       case STRING_LITERAL:
         s = handleString(yytext);
-        printf("STRING_LITERAL: %s\n", s);
-        free(s);  // free for now - may need to do other things with it later
+        if(s == NULL) {
+          printf("PARSE_ERROR: STRING_LITERAL has exceeded the max size of 255\n");
+        }
+        else {
+          printf("STRING_LITERAL: %s\n", s);
+        }
+        free(s);  // TODO: free for now - may need to do other things with it later
         break;
       case IDENTIFIER:
-        printf("IDENTIFIER\n");
+        s = handleString(yytext);
+        if(s == NULL) {
+          printf("PARSE_ERROR: IDENTIFIER has exceeded the max size of 255\n");
+        }
+        else {
+          printf("IDENTIFIER\n");
+        }
+        free(s);  // TODO: free for now - may need to do other things with it later
         break;
       case WHITESPACE:
         break;
