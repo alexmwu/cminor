@@ -1,0 +1,7 @@
+hi: function integer(hello: integer) {
+    i: array [] integer, j: string = "sdlfkj";
+    // this does cool things.
+    if(i*5 < 9*1 || 023-2 && 23-8) {
+      return 5;
+    }
+}
