@@ -77,6 +77,10 @@ char handleChar(char *c) {
   // length should only be 3 or 4
   int len = strlen(c);
   if(len == 3) {
+    if(c[1] == '\\') {
+      printf("Escape character '\\' not followed by another character");
+      return (char) -1;
+    }
     return c[1];  // c should look like ' + char + '
   }
   else if(len == 4) {   // c should look like ' + \ + char + '
