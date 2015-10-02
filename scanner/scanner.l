@@ -77,8 +77,8 @@ char handleChar(char *c) {
   // length should only be 3 or 4
   int len = strlen(c);
   if(len == 3) {
+    // if character is just a single backslash
     if(c[1] == '\\') {
-      printf("Escape character '\\' not followed by another character");
       return (char) -1;
     }
     return c[1];  // c should look like ' + char + '
@@ -95,7 +95,6 @@ char handleChar(char *c) {
     }
   }
   else {
-    printf("Unknown/malformed CHARACTER_LITERAL scanned in: %s\n", c);
     return (char) -1;
   }
 }
@@ -157,12 +156,17 @@ int main(int argc, char **argv) {
       char *s;
       case CHAR_LITERAL:
         c = handleChar(yytext);
+        if(c == (char) -1) {
+          fprintf(stderr, "Unknown/malformed CHARACTER_LITERAL scanned in: %c\n", c);
+          exit(1);
+        }
         printf("CHAR_LITERAL: %c\n", c);
         break;
       case STRING_LITERAL:
         s = handleString(yytext);
         if(s == NULL) {
-          printf("SCAN_ERROR: STRING_LITERAL has exceeded the max size of 255\n");
+          fprintf(stderr, "SCAN_ERROR: STRING_LITERAL has exceeded the max size of 255\n");
+          exit(1);
         }
         else {
           printf("STRING_LITERAL: %s\n", s);
@@ -172,7 +176,8 @@ int main(int argc, char **argv) {
       case IDENTIFIER:
         s = handleString(yytext);
         if(s == NULL) {
-          printf("SCAN_ERROR: IDENTIFIER has exceeded the max size of 255\n");
+          fprintf(stderr, "SCAN_ERROR: IDENTIFIER has exceeded the max size of 255\n");
+          exit(1);
         }
         else {
           printf("IDENTIFIER\n");
@@ -182,7 +187,8 @@ int main(int argc, char **argv) {
       case WHITESPACE:
         break;
       case SCAN_ERROR:
-        printf("%s: %s is not a valid character.\n", TOKEN_STRING[token], yytext);
+        fprintf(stderr, "%s: %s is not a valid character.\n", TOKEN_STRING[token], yytext);
+        exit(1);
         break;
       default:
         printf("%s\n", TOKEN_STRING[token]);
