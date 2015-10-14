@@ -32,7 +32,7 @@ decl: IDENTIFIER COLON type EQUALS expr SEMICOLON
 
 /* declarations just for params (i.e., no definitions) */
 param_decl: IDENTIFIER COLON type
-
+          ;
 
 type: STRING
     | INTEGER
@@ -63,8 +63,13 @@ stmt: decl
     | IF LEFT_PAREN expr RIGHT_PAREN stmt
     ;
 
+stmt_list: stmt
+         | stmt_list stmt
+         ;
+
 expr:
-/* TODO: expr */
+    ;
+
 optional_expr: /* nothing */
              | expr
              ;
