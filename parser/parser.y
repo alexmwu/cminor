@@ -17,20 +17,26 @@ decl: IDENTIFIER COLON type EQUALS expr SEMICOLON
     | IDENTIFIER COLON type EQUALS LEFT_BRACE stmt_list RIGHT_BRACE
     ;
 
+/* declarations just for params (i.e., no definitions) */
+param_decl: IDENTIFIER COLON type
+
+
 type: STRING
     | INTEGER
     | CHAR
     | BOOLEAN
     | ARRAY /* TODO: need to see what Array type looks like */
-    | FUNCTION type LEFT_PAREN param_list RIGHT_PAREN
+    | FUNCTION type LEFT_PAREN optional_param_list RIGHT_PAREN
     | VOID
     ;
 
-param_list: /* nothing */
-          | not_empty_param_list
+optional_param_list: /* nothing */
+          | param_list
           ;
 
-/* TODO: not_empty_param_list */
+param_list: decl
+          | param_list COMMA decl
+          ;
 
 param: IDENTIFIER COLON type
      ;
@@ -44,5 +50,8 @@ stmt: decl
     | IF LEFT_PAREN expr RIGHT_PAREN stmt
     ;
 
+expr:
 /* TODO: expr */
-/* TODO: optional_expr */
+optional_expr: /* nothing */
+             | expr
+             ;
