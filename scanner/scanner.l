@@ -58,6 +58,7 @@ while { return WHILE; }
 \^ { return EXPONENTIATION; }
 \+ { return PLUS; }
 - { return MINUS; }
+! { return NOT; }
 \* { return MULTIPLICATION; }
 \/ { return DIVISION; }
 % { return MODULUS; }
