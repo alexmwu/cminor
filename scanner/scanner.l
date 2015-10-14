@@ -45,8 +45,8 @@ while { return WHILE; }
 {CHAR} { return CHAR_LITERAL; }
 {STRING} { return STRING_LITERAL; }
 {INTEGER} { return INTEGER_LITERAL; }
-: { return DECLARATION; }
-= { return ASSIGNMENT; }
+: { return COLON; }
+= { return EQUALS; }
 \{ { return LEFT_BRACE; }
 \} { return RIGHT_BRACE; }
 \( { return LEFT_PAREN; }

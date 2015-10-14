@@ -1,0 +1,5 @@
+for (a: integer = 5; a; /*empty expression*/ ) for ( ; a < 5; a ++) {
+  hi;
+  5 == 5;
+  hi = 5 + 5;
+}
