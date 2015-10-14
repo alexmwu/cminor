@@ -1,8 +1,21 @@
 %{
 /* C preamble */
+#include "token.h"
 %}
 
-%token foo
+%token INTEGER STRING CHAR BOOLEAN ARRAY VOID
+%token TRUE FALSE IF ELSE WHILE FOR
+%token FUNCTION RETURN PRINT
+
+%token SEMICOLON COMMA COLON EQUALS
+%token LEFT_BRACE RIGHT_BRACE LEFT_PAREN RIGHT_PAREN LEFT_BRACKET RIGHT_BRACKET
+
+%token INTEGER_LITERAL STRING_LITERAL CHAR_LITERAL
+%token IDENTIFIER
+
+%token PLUSPLUS MINUSMINUS EXPONENTIATION PLUS MINUS MULTIPLICATION DIVISION MODULUS
+%token LT LE GT GE EQ NE AND OR NOT
+
 %%
 
 program: decl_list
@@ -44,7 +57,7 @@ param: IDENTIFIER COLON type
 stmt: decl
     | expr SEMICOLON
     | FOR LEFT_PAREN optional_expr SEMICOLON optional_expr SEMICOLON optional_expr RIGHT_PAREN stmt
-    | LBRACE stmt_list RBRACE
+    | LEFT_BRACE stmt_list RIGHT_BRACE
     /* TODO: fix the below dangling else */
     | IF LEFT_PAREN expr RIGHT_PAREN stmt ELSE stmt
     | IF LEFT_PAREN expr RIGHT_PAREN stmt
