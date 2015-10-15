@@ -30,3 +30,7 @@
 
 # Debug files
 *.dSYM/
+
+# Lex/Yacc generated files
+lex.yy.c
+parser.tab.c

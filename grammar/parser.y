@@ -22,6 +22,7 @@ program: decl_list
        ;
 
 decl_list: decl_list decl
+         | decl_list stmt
          | /* nothing */
          ;
 
@@ -29,10 +30,6 @@ decl: IDENTIFIER COLON type EQUALS expr SEMICOLON
     | IDENTIFIER COLON type SEMICOLON
     | IDENTIFIER COLON type EQUALS LEFT_BRACE stmt_list RIGHT_BRACE
     ;
-
-/* declarations just for params (i.e., no definitions) */
-param_decl: IDENTIFIER COLON type
-          ;
 
 type: STRING
     | INTEGER
@@ -48,7 +45,7 @@ optional_param_list: /* nothing */
           ;
 
 param_list: decl
-          | param_list COMMA decl
+          | param_list COMMA param
           ;
 
 param: IDENTIFIER COLON type
@@ -61,13 +58,16 @@ stmt: decl
     /* TODO: fix the below dangling else */
     | IF LEFT_PAREN expr RIGHT_PAREN stmt ELSE stmt
     | IF LEFT_PAREN expr RIGHT_PAREN stmt
+    | RETURN expr
+    | PRINT expr
     ;
 
 stmt_list: stmt
          | stmt_list stmt
          ;
 
-expr:
+expr: expr COMMA
+    | IDENTIFIER
     ;
 
 optional_expr: /* nothing */
