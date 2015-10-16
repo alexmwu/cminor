@@ -1,6 +1,6 @@
 %{
 #include <stdio.h>
-#include "token.h"
+#include "grammar/token.h"
 %}
 
 %option noyywrap

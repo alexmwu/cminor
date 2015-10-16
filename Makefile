@@ -21,8 +21,8 @@ DEPS = $(TOKEN_PATH) $(PARSER_PRE).tab.h
 OUTPUT_BINARY = cminor
 
 CC = gcc
-CFLAGS = -I.
 GDBFLAG = -g
+CFLAGS = -I./grammar
 
 all: $(GRAM_OBJ) $(DEPS)
 	$(CC) $(GRAM_OBJ) -o $(OUTPUT_BINARY) $(CFLAGS)
@@ -30,7 +30,7 @@ debug: $(GRAM_OBJ) $(DEPS)
 	$(CC) $(GRAM_OBJ) -o $(OUTPUT_BINARY) $(CFLAGS) $(GDBFLAG)
 
 $(GRAM_OBJ): $(GRAM_SRC)
-	$(CC) -c $(GRAM_SRC)
+	$(CC) -c $(GRAM_SRC) $(CFLAGS)
 
 $(PARSER_CODE) $(PARSER_PRE).tab.h: $(PARSER_IN) $(TOKEN_PATH)
 	$(YACC) $(PARSER_IN)

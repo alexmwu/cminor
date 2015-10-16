@@ -1,6 +1,6 @@
 %{
 /* C preamble */
-#include "token.h"
+#include "grammar/token.h"
 %}
 
 %token INTEGER STRING CHAR BOOLEAN ARRAY VOID
