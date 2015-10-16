@@ -33,6 +33,7 @@
 
 # Lex/Yacc generated files
 lex.yy.c
+lex.yy.h
 parser.tab.c
 
 # Binary
