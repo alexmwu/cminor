@@ -1,9 +1,9 @@
 %{
-#include <stdio.h>
 #include "grammar/token.h"
 %}
 
 %option noyywrap
+%option header-file="lex.yy.h"
 
 %x C_COMMENT
 

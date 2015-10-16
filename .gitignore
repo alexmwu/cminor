@@ -34,3 +34,6 @@
 # Lex/Yacc generated files
 lex.yy.c
 parser.tab.c
+
+# Binary
+cminor

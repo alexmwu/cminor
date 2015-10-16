@@ -58,8 +58,8 @@ stmt: decl
     /* TODO: fix the below dangling else */
     | IF LEFT_PAREN expr RIGHT_PAREN stmt ELSE stmt
     | IF LEFT_PAREN expr RIGHT_PAREN stmt
-    | RETURN expr
-    | PRINT expr
+    | RETURN expr SEMICOLON
+    | PRINT expr_list SEMICOLON
     ;
 
 stmt_list: stmt

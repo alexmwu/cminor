@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include "grammar/token.h"
+#include "lex.yy.h"
 
+extern FILE *yyin;
 
 char handleChar(char *c) {
   // length should only be 3 or 4
