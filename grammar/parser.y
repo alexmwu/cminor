@@ -73,3 +73,7 @@ expr: expr COMMA
 optional_expr: /* nothing */
              | expr
              ;
+
+expr_list: expr
+         | expr_list expr
+         ;
