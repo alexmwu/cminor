@@ -18,39 +18,46 @@
 
 %%
 
+/* Rule 1*/
 program: decl_list
        ;
 
+/* Rule 2*/
 decl_list: decl_list decl
-         | decl_list stmt
          | /* nothing */
          ;
 
+/* Rule 3*/
 decl: IDENTIFIER COLON type EQUALS expr SEMICOLON
     | IDENTIFIER COLON type SEMICOLON
     | IDENTIFIER COLON type EQUALS LEFT_BRACE stmt_list RIGHT_BRACE
     ;
 
+/* Rule 4*/
 type: STRING
     | INTEGER
     | CHAR
     | BOOLEAN
-    | ARRAY /* TODO: need to see what Array type looks like */
+    | ARRAY LEFT_BRACE INTEGER_LITERAL RIGHT_BRACE type /* TOOD: see if only fixed sized numbers (integer_literal). i.e., no expressions? */
     | FUNCTION type LEFT_PAREN optional_param_list RIGHT_PAREN
     | VOID
     ;
 
+/* Rule 5*/
 optional_param_list: /* nothing */
           | param_list
           ;
 
+/* Rule 6*/
 param_list: decl
           | param_list COMMA param
           ;
 
+/* Rule 7*/
 param: IDENTIFIER COLON type
      ;
 
+/* Rule 8*/
 stmt: decl
     | expr SEMICOLON
     | FOR LEFT_PAREN optional_expr SEMICOLON optional_expr SEMICOLON optional_expr RIGHT_PAREN stmt
@@ -62,18 +69,22 @@ stmt: decl
     | PRINT expr_list SEMICOLON
     ;
 
+/* Rule 9*/
 stmt_list: stmt
          | stmt_list stmt
          ;
 
+/* Rule 10*/
 expr: expr COMMA
     | IDENTIFIER
     ;
 
+/* Rule 11*/
 optional_expr: /* nothing */
              | expr
              ;
 
+/* Rule 12*/
 expr_list: expr
          | expr_list expr
          ;
