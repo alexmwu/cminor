@@ -16,6 +16,10 @@
 %token PLUSPLUS MINUSMINUS EXPONENTIATION PLUS MINUS MULTIPLICATION DIVISION MODULUS
 %token LT LE GT GE EQ NE AND OR NOT
 
+%nonassoc IFX
+%nonassoc ELSE
+
+
 %%
 
 program: decl_list
@@ -30,7 +34,6 @@ decl: IDENTIFIER COLON type EQUALS expr SEMICOLON
     | IDENTIFIER COLON type EQUALS LEFT_BRACE stmt_list RIGHT_BRACE
     ;
 
-/*Rule 4*/
 type: STRING
     | INTEGER
     | CHAR
@@ -61,17 +64,9 @@ stmt: decl
     | PRINT expr_list SEMICOLON
     ;
 
-if_stmt: matched_if
-       | unmatched_if
+if_stmt: IF LEFT_PAREN expr RIGHT_PAREN stmt %prec IFX
+       | IF LEFT_PAREN expr RIGHT_PAREN stmt ELSE stmt
        ;
-
-matched_if: IF LEFT_PAREN expr RIGHT_PAREN matched_if ELSE matched_if
-          | stmt
-          ;
-
-unmatched_if: IF LEFT_PAREN expr RIGHT_PAREN stmt
-            | IF LEFT_PAREN expr RIGHT_PAREN matched_if
-            ;
 
 stmt_list: stmt
          | stmt_list stmt
