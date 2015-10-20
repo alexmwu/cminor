@@ -4,7 +4,8 @@ GDBFLAG = -g
 CFLAGS = -I./grammar
 LEX = flex
 YACC = bison
-YACCFLAGS = -v
+YACCFLAGS = -d
+YACCDEBUGFLAGS = -v
 
 # directories for grammar
 GRAM_DIR = grammar
@@ -20,10 +21,6 @@ SCANNER_IN = $(GRAM_DIR)/$(SCANNER_PRE).l
 PARSER_IN = $(GRAM_DIR)/$(PARSER_PRE).y
 SCANNER_CODE = lex.yy.c
 PARSER_CODE = $(PARSER_PRE).tab.c
-
-# compiled scanner/parser objects
-SCANNER_OBJ = $(GRAM_DIR)/$(SCANNER_PRE).yy.o
-PARSER_OBJ = $(GRAM_DIR)/$(PARSER_PRE).tab.o
 
 # all source and object files needed for compilation
 GRAM_SRC = $(SCANNER_CODE) $(PARSER_CODE) main.c
@@ -44,15 +41,15 @@ debug: $(GRAM_OBJ) $(DEPS)
 
 # make bison-generated parser with output
 bison_debug: $(PARSER_IN) $(TOKEN_PATH)
-	$(YACC) $(YACCFLAGS) $(PARSER_IN)
+	$(YACC) $(YACCFLAGS) $(YACCDEBUGFLAGS) $(PARSER_IN)
 
 
 $(GRAM_OBJ): $(GRAM_SRC)
 	$(CC) -c $(GRAM_SRC) $(CFLAGS)
 
 $(PARSER_CODE) $(PARSER_PRE).tab.h: $(PARSER_IN) $(TOKEN_PATH)
-	$(YACC) $(PARSER_IN)
-$(SCANNER_CODE) $(SCANNER_PRE).yy.h: $(SCANNER_IN) $(TOKEN_PATH)
+	$(YACC) $(YACCFLAGS) $(PARSER_IN)
+$(SCANNER_CODE) lex.yy.h: $(SCANNER_IN) $(TOKEN_PATH)
 	$(LEX) $(SCANNER_IN)
 clean:
-	rm $(SCANNER_OBJ) $(PARSER_OBJ) $(OUTPUT_BINARY)
+	rm lex.yy.h $(PARSER_PRE).tab.h $(SCANNER_CODE) $(PARSER_CODE) $(PARSER_PRE).output $(GRAM_OBJ) $(OUTPUT_BINARY)

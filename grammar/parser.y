@@ -1,6 +1,9 @@
 %{
 /*C preamble*/
-#include "grammar/token.h"
+#include "lex.yy.h"
+/*#include "grammar/token.h"*/
+
+extern int yylex(union YYSTYPE *, void *);
 %}
 
 %token INTEGER STRING CHAR BOOLEAN ARRAY VOID
@@ -19,6 +22,7 @@
 %nonassoc IFX
 %nonassoc ELSE
 
+%start program
 
 %%
 

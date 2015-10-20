@@ -3,6 +3,7 @@
 #include <string.h>
 #include "grammar/token.h"
 #include "lex.yy.h"
+#include "parser.tab.h"
 
 extern FILE *yyin;
 
