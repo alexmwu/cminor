@@ -3,7 +3,7 @@
 #include "lex.yy.h"
 /*#include "grammar/token.h"*/
 
-extern int yylex(union YYSTYPE *, void *);
+extern int yyerror(char *);
 %}
 
 %token INTEGER STRING CHAR BOOLEAN ARRAY VOID
