@@ -1,5 +1,6 @@
 %{
-#include "grammar/token.h"
+#include "../parser.tab.h"
+#define TOKEN(t) (yylval.token = t)
 %}
 
 %option noyywrap
@@ -19,49 +20,49 @@ INTEGER {DIGIT}+
 
 %%
 
-array { return ARRAY; }
-boolean { return BOOLEAN; }
+array { return ARR; }
+boolean { return BOOL; }
 char { return CHAR; }
-else { return ELSE; }
+else { return EL; }
 false { return FALSE; }
 for { return FOR; }
-function { return FUNCTION; }
+function { return FUNC; }
 if { return IF; }
-integer { return INTEGER; }
+integer { return INT; }
 print { return PRINT; }
-return { return RETURN; }
-string { return STRING; }
+return { return RET; }
+string { return STR; }
 true { return TRUE; }
 void { return VOID; }
 while { return WHILE; }
-; { return SEMICOLON; }
+; { return SEMI; }
 , { return COMMA; }
-{WHITESPACE} { return WHITESPACE; }
-{IDENTIFIER} { return IDENTIFIER; }
-{CPPCOMMENT} { return CPPCOMMENT; }
+{WHITESPACE} { }
+{IDENTIFIER} { return IDENT; }
+{CPPCOMMENT} { }
 "/*" { BEGIN(C_COMMENT); }
 <C_COMMENT>"*/" { BEGIN(INITIAL); return CCOMMENT; }
 <C_COMMENT>. { }
-{CHAR} { return CHAR_LITERAL; }
-{STRING} { return STRING_LITERAL; }
-{INTEGER} { return INTEGER_LITERAL; }
-: { return COLON; }
-= { return EQUALS; }
-\{ { return LEFT_BRACE; }
-\} { return RIGHT_BRACE; }
-\( { return LEFT_PAREN; }
-\) { return RIGHT_PAREN; }
-\[ { return LEFT_BRACKET; }
-\] { return RIGHT_BRACKET; }
+{CHAR} { return CHARLIT; }
+{STRING} { return STRLIT; }
+{INTEGER} { return INTLIT; }
+: { return COL; }
+= { return EQ; }
+\{ { return LBRACE; }
+\} { return RBRACE; }
+\( { return LPAREN; }
+\) { return RPAREN; }
+\[ { return LBRACK; }
+\] { return RBRACK; }
 \+\+ { return PLUSPLUS; }
--- { return MINUSMINUS; }
-\^ { return EXPONENTIATION; }
+-- { return MINMIN; }
+\^ { return EXP; }
 \+ { return PLUS; }
-- { return MINUS; }
+- { return MIN; }
 ! { return NOT; }
-\* { return MULTIPLICATION; }
-\/ { return DIVISION; }
-% { return MODULUS; }
+\* { return MULT; }
+\/ { return DIV; }
+% { return MOD; }
 \< { return LT; }
 \<= { return LE; }
 > { return GT; }
