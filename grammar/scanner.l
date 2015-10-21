@@ -3,7 +3,7 @@
 %}
 
 %option noyywrap
-%option header-file="lex.yy.h"
+%option header-file="scanner.yy.h"
 
 %x C_COMMENT
 

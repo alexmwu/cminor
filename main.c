@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "grammar/token.h"
-#include "lex.yy.h"
+/*#include "grammar/token.h"*/
+#include "scanner.yy.h"
 #include "parser.tab.h"
 
 extern FILE *yyin;

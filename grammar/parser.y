@@ -1,8 +1,6 @@
 %{
 /*C preamble*/
-#include "lex.yy.h"
-/*#include "grammar/token.h"*/
-
+#include "scanner.yy.h"
 extern int yyerror(char *);
 %}
 

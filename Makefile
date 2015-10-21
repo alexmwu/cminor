@@ -1,12 +1,3 @@
-# tools used and their flags
-CC = gcc
-GDBFLAG = -g
-CFLAGS = -I./grammar
-LEX = flex
-YACC = bison
-YACCFLAGS = -d
-YACCDEBUGFLAGS = -v
-
 # directories for grammar
 GRAM_DIR = grammar
 # scanner and parser pre (and post) generated file names
@@ -19,7 +10,7 @@ TOKEN_PATH = $(GRAM_DIR)/token.h
 # scanner/parser inputs to Lex/Yacc and Lex/Yacc generated code
 SCANNER_IN = $(GRAM_DIR)/$(SCANNER_PRE).l
 PARSER_IN = $(GRAM_DIR)/$(PARSER_PRE).y
-SCANNER_CODE = lex.yy.c
+SCANNER_CODE = $(SCANNER_PRE).yy.c
 PARSER_CODE = $(PARSER_PRE).tab.c
 
 # all source and object files needed for compilation
@@ -30,6 +21,15 @@ GRAM_OBJ = $(GRAM_SRC:.c=.o)
 DEPS = $(TOKEN_PATH) $(SCANNER_PRE).yy.h $(PARSER_PRE).tab.h
 OUTPUT_BINARY = cminor
 
+# tools used and their flags
+CC = gcc
+GDBFLAG = -g
+CFLAGS = -I./$(GRAM_DIR)
+LEX = flex
+YACC = bison
+LEXFLAGS = -o $(SCANNER_PRE).yy.c
+YACCFLAGS = -d -o $(PARSER_PRE).tab.c
+YACCDEBUGFLAGS = -v
 
 
 # make everything into a CMinor binary
@@ -49,7 +49,7 @@ $(GRAM_OBJ): $(GRAM_SRC)
 
 $(PARSER_CODE) $(PARSER_PRE).tab.h: $(PARSER_IN) $(TOKEN_PATH)
 	$(YACC) $(YACCFLAGS) $(PARSER_IN)
-$(SCANNER_CODE) lex.yy.h: $(SCANNER_IN) $(TOKEN_PATH)
-	$(LEX) $(SCANNER_IN)
+$(SCANNER_CODE) $(SCANNER_PRE).yy.h: $(SCANNER_IN) $(TOKEN_PATH)
+	$(LEX) $(LEXFLAGS) $(SCANNER_IN)
 clean:
-	rm lex.yy.h $(PARSER_PRE).tab.h $(SCANNER_CODE) $(PARSER_CODE) $(PARSER_PRE).output $(GRAM_OBJ) $(OUTPUT_BINARY)
+	rm $(SCANNER_PRE).yy.h $(PARSER_PRE).tab.h $(SCANNER_CODE) $(PARSER_CODE) $(PARSER_PRE).output $(GRAM_OBJ) $(OUTPUT_BINARY)
