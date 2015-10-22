@@ -29,12 +29,14 @@ char handleChar(char *c) {
     }
   }
   else {
-    return (char) -1;
+    fprintf(stderr, "Unknown/malformed CHARLIT scanned in: %s\n", c);
+    exit(1);
   }
 }
 
 // need to free string
-char *handleString(char *s) {
+// type 0 is string literal; 1 is identifier
+char *handleString(char *s, int type) {
   int len = strlen(s);
   char *retStr = malloc(len * sizeof(char));
   char *ptr = s;
@@ -65,7 +67,13 @@ char *handleString(char *s) {
   retStr[i] = '\0';
   if(strlen(retStr) > 255) {
     free(retStr);
-    return NULL;  // return NULL if final string length is greater than 255
+    if(type == 0)
+      fprintf(stderr, "SCAN_ERROR: STRLIT has exceeded the max size of 255\n");
+    else if(type == 1)
+      fprintf(stderr, "SCAN_ERROR: IDENT has exceeded the max size of 255\n");
+    else
+      fprintf(stderr, "Bad token type (should be string or ident)\n");
+    exit(1);
   }
   return retStr;
 }
@@ -90,36 +98,22 @@ int main(int argc, char **argv) {
       char *s;
       case CHARLIT:
         c = handleChar(yytext);
-        if(c == (char) -1) {
-          fprintf(stderr, "Unknown/malformed CHARLIT scanned in: %c\n", c);
-          exit(1);
-        }
         printf("CHARLIT: %c\n", c);
         break;
       case STRLIT:
-        s = handleString(yytext);
-        if(s == NULL) {
-          fprintf(stderr, "SCAN_ERROR: STRLIT has exceeded the max size of 255\n");
-          exit(1);
-        }
-        else {
-          printf("STRLIT: %s\n", s);
-        }
+        s = handleString(yytext, 0);
+        printf("STRLIT: %s\n", s);
         free(s);  // TODO: free for now - may need to do other things with it later
         break;
       case IDENT:
-        s = handleString(yytext);
-        if(s == NULL) {
-          fprintf(stderr, "SCAN_ERROR: IDENT has exceeded the max size of 255\n");
-          exit(1);
-        }
-        else {
-          printf("IDENT\n");
-        }
+        s = handleString(yytext, 1);
+        printf("IDENT: %s\n", s);
         free(s);  // TODO: free for now - may need to do other things with it later
         break;
       default:
         printf("%d\n", token);
+        // a bit hacky: Bison tokens start at 258
+        /*printf("%s\n", TOKEN_STRING[token - 258]);*/
         break;
     }
   }

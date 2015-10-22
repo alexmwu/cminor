@@ -9,14 +9,14 @@ void yyerror(const char *s) { printf("ERROR: %s\n", s); }
 %token TRUE FALSE IF ELSE WHILE FOR
 %token FUNC RET PRINT
 
-%token SEMI COMMA COL
+%token SEMI COMMA COL EQ
 %token LBRACE RBRACE LPAREN RPAREN LBRACK RBRACK
 
 %token INTLIT STRLIT CHARLIT
 %token IDENT
 
 %token PLUSPLUS MINMIN EXP PLUS MIN MULT DIV MOD
-%token LT LE GT GE EQ NE AND OR NOT
+%token LT LE GT GE EQEQ NE AND OR NOT
 
 %nonassoc IFX
 %nonassoc ELSE

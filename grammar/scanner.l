@@ -71,6 +71,6 @@ while { return WHILE; }
 != { return NE; }
 && { return AND; }
 \|\| { return OR; }
-. { fprintf(stderr, "SCAN_ERROR: %s is not a valid token", yytext); exit(1); }
+. { fprintf(stderr, "SCAN_ERROR: %s is not a valid token\n", yytext); exit(1); }
 
 %%
