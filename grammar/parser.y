@@ -76,6 +76,10 @@ stmt_list: stmt
          ;
 
 expr: TIDENT
+    /*
+     *| TIDENT TLPAREN arg_list TRPAREN
+     *| arith_expr
+     */
     ;
 
 optional_expr: /*nothing*/

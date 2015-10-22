@@ -2,7 +2,7 @@
 
 for testfile in good*.cminor
 do
-	if cminor -scan $testfile > $testfile.out
+	if ./cminor -scan $testfile > $testfile.out
 	then
 		echo "$testfile success (as expected)"
 	else
@@ -12,7 +12,7 @@ done
 
 for testfile in bad*.cminor
 do
-	if cminor -scan $testfile > $testfile.out
+	if ./cminor -scan $testfile > $testfile.out
 	then
 		echo "$testfile success (INCORRECT)"
 	else

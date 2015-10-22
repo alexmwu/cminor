@@ -48,7 +48,10 @@ char *handleString(char *s, int type) {
     }
     else if(*ptr == '\\') {
       ptr++;  // move one ahead for actual value
-      if(*ptr == 'n') {
+      if(!ptr) {
+        fprintf(stderr, "SCAN_ERROR: STRING_LITERAL terminated on '\\'\n");
+      }
+      else if(*ptr == 'n') {
         retStr[i++] = '\n';
       }
       else if(*ptr == '0') {
@@ -68,9 +71,9 @@ char *handleString(char *s, int type) {
   if(strlen(retStr) > 255) {
     free(retStr);
     if(type == 0)
-      fprintf(stderr, "SCAN_ERROR: STRLIT has exceeded the max size of 255\n");
+      fprintf(stderr, "SCAN_ERROR: STRING_LITERAL has exceeded the max size of 255\n");
     else if(type == 1)
-      fprintf(stderr, "SCAN_ERROR: IDENT has exceeded the max size of 255\n");
+      fprintf(stderr, "SCAN_ERROR: IDENTIFIER has exceeded the max size of 255\n");
     else
       fprintf(stderr, "Bad token type (should be string or ident)\n");
     exit(1);
@@ -98,16 +101,16 @@ int main(int argc, char **argv) {
       char *s;
       case TCHARLIT:
         c = handleChar(yytext);
-        printf("CHARLIT: %c\n", c);
+        printf("CHARACTER_LITERAL: %c\n", c);
         break;
       case TSTRLIT:
         s = handleString(yytext, 0);
-        printf("STRLIT: %s\n", s);
+        printf("STRING_LITERAL: %s\n", s);
         free(s);  // TODO: free for now - may need to do other things with it later
         break;
       case TIDENT:
         s = handleString(yytext, 1);
-        printf("IDENT: %s\n", s);
+        printf("IDENTIFIER: %s\n", s);
         free(s);  // TODO: free for now - may need to do other things with it later
         break;
       default:

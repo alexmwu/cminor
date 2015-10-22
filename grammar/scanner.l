@@ -15,7 +15,7 @@ DIGIT [0-9]
 CPPCOMMENT \/\/.*\n
 IDENTIFIER {ALPHA_UNDERSCORE}({ALPHA_UNDERSCORE}|{DIGIT})*
 CHAR ('.'|'\\.')
-STRING \".*\"
+STRING \"(\\.|[^\\"])*\"
 INTEGER {DIGIT}+
 
 %%
@@ -43,6 +43,7 @@ while { return TWHILE; }
 "/*" { BEGIN(C_COMMENT); }
 <C_COMMENT>"*/" { BEGIN(INITIAL); }
 <C_COMMENT>. { }
+<C_COMMENT><<EOF>> { fprintf(stderr, "SCAN_ERROR: Trailing C-Comment\n"); exit(1); }
 {CHAR} { return TCHARLIT; }
 {STRING} { return TSTRLIT; }
 {INTEGER} { return TINTLIT; }
