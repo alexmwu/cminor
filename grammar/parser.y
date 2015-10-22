@@ -5,10 +5,10 @@ extern int yyerror(char *);
 %}
 
 %token INT STR CHAR BOOL ARR VOID
-%token TRUE FALSE IF EL WHILE FOR
+%token TRUE FALSE IF ELSE WHILE FOR
 %token FUNC RET PRINT
 
-%token SEMI COMMA COL EQ
+%token SEMI COMMA COL
 %token LBRACE RBRACE LPAREN RPAREN LBRACK RBRACK
 
 %token INTLIT STRLIT CHARLIT
@@ -31,17 +31,17 @@ decl_list: decl_list decl
          | /*nothing*/
          ;
 
-decl: IDENTIFIER COLON type EQUALS expr SEMICOLON
-    | IDENTIFIER COLON type SEMICOLON
-    | IDENTIFIER COLON type EQUALS LEFT_BRACE stmt_list RIGHT_BRACE
+decl: IDENT COL type EQ expr SEMI
+    | IDENT COL type SEMI
+    | IDENT COL type EQ LBRACE stmt_list RBRACE
     ;
 
-type: STRING
-    | INTEGER
+type: STR
+    | INT
     | CHAR
-    | BOOLEAN
-    | ARRAY LEFT_BRACE INTEGER_LITERAL RIGHT_BRACE type /*TOOD: see if only fixed sized numbers (integer_literal). i.e., no expressions?*/
-    | FUNCTION type LEFT_PAREN optional_param_list RIGHT_PAREN
+    | BOOL
+    | ARR LBRACE INTLIT RBRACE type /*TOOD: see if only fixed sized numbers (integer_literal). i.e., no expressions?*/
+    | FUNC type LPAREN optional_param_list RPAREN
     | VOID
     ;
 
@@ -53,28 +53,28 @@ param_list: decl
           | param_list COMMA param
           ;
 
-param: IDENTIFIER COLON type
+param: IDENT COL type
      ;
 
 stmt: decl
-    | expr SEMICOLON
-    | FOR LEFT_PAREN optional_expr SEMICOLON optional_expr SEMICOLON optional_expr RIGHT_PAREN stmt
-    | LEFT_BRACE stmt_list RIGHT_BRACE
+    | expr SEMI
+    | FOR LPAREN optional_expr SEMI optional_expr SEMI optional_expr RPAREN stmt
+    | LBRACE stmt_list RBRACE
     /* TODO: fix the below dangling else */
     | if_stmt
-    | RETURN expr SEMICOLON
-    | PRINT expr_list SEMICOLON
+    | RET expr SEMI
+    | PRINT expr_list SEMI
     ;
 
-if_stmt: IF LEFT_PAREN expr RIGHT_PAREN stmt %prec IFX
-       | IF LEFT_PAREN expr RIGHT_PAREN stmt ELSE stmt
+if_stmt: IF LPAREN expr RPAREN stmt %prec IFX
+       | IF LPAREN expr RPAREN stmt ELSE stmt
        ;
 
 stmt_list: stmt
          | stmt_list stmt
          ;
 
-expr: IDENTIFIER
+expr: IDENT
     ;
 
 optional_expr: /*nothing*/

@@ -81,51 +81,45 @@ int main(int argc, char **argv) {
   if(yyin == stdin) printf("Enter in CMinor code to see if it scans.\n");
 
   while(1) {
-    TOKEN token = yylex();
+    int token = yylex();
     if(!token) {
       break;
     }
     switch (token) {
       char c;
       char *s;
-      case CHAR_LITERAL:
+      case CHARLIT:
         c = handleChar(yytext);
         if(c == (char) -1) {
-          fprintf(stderr, "Unknown/malformed CHARACTER_LITERAL scanned in: %c\n", c);
+          fprintf(stderr, "Unknown/malformed CHARLIT scanned in: %c\n", c);
           exit(1);
         }
-        printf("CHAR_LITERAL: %c\n", c);
+        printf("CHARLIT: %c\n", c);
         break;
-      case STRING_LITERAL:
+      case STRLIT:
         s = handleString(yytext);
         if(s == NULL) {
-          fprintf(stderr, "SCAN_ERROR: STRING_LITERAL has exceeded the max size of 255\n");
+          fprintf(stderr, "SCAN_ERROR: STRLIT has exceeded the max size of 255\n");
           exit(1);
         }
         else {
-          printf("STRING_LITERAL: %s\n", s);
+          printf("STRLIT: %s\n", s);
         }
         free(s);  // TODO: free for now - may need to do other things with it later
         break;
-      case IDENTIFIER:
+      case IDENT:
         s = handleString(yytext);
         if(s == NULL) {
-          fprintf(stderr, "SCAN_ERROR: IDENTIFIER has exceeded the max size of 255\n");
+          fprintf(stderr, "SCAN_ERROR: IDENT has exceeded the max size of 255\n");
           exit(1);
         }
         else {
-          printf("IDENTIFIER\n");
+          printf("IDENT\n");
         }
         free(s);  // TODO: free for now - may need to do other things with it later
-        break;
-      case WHITESPACE:
-        break;
-      case SCAN_ERROR:
-        fprintf(stderr, "%s: %s is not a valid character.\n", TOKEN_STRING[token], yytext);
-        exit(1);
         break;
       default:
-        printf("%s\n", TOKEN_STRING[token]);
+        printf("%d\n", token);
         break;
     }
   }

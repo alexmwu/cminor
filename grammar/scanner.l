@@ -23,7 +23,7 @@ INTEGER {DIGIT}+
 array { return ARR; }
 boolean { return BOOL; }
 char { return CHAR; }
-else { return EL; }
+else { return ELSE; }
 false { return FALSE; }
 for { return FOR; }
 function { return FUNC; }
@@ -41,7 +41,7 @@ while { return WHILE; }
 {IDENTIFIER} { return IDENT; }
 {CPPCOMMENT} { }
 "/*" { BEGIN(C_COMMENT); }
-<C_COMMENT>"*/" { BEGIN(INITIAL); return CCOMMENT; }
+<C_COMMENT>"*/" { BEGIN(INITIAL); }
 <C_COMMENT>. { }
 {CHAR} { return CHARLIT; }
 {STRING} { return STRLIT; }
@@ -71,6 +71,6 @@ while { return WHILE; }
 != { return NE; }
 && { return AND; }
 \|\| { return OR; }
-. { return SCAN_ERROR; }
+. { fprintf(stderr, "SCAN_ERROR: %s is not a valid token", yytext); exit(1); }
 
 %%
