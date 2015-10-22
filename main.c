@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-/*#include "grammar/token.h"*/
+#include "grammar/token.h"
 #include "scanner.yy.h"
 #include "parser.tab.h"
 
@@ -96,24 +96,23 @@ int main(int argc, char **argv) {
     switch (token) {
       char c;
       char *s;
-      case CHARLIT:
+      case TCHARLIT:
         c = handleChar(yytext);
         printf("CHARLIT: %c\n", c);
         break;
-      case STRLIT:
+      case TSTRLIT:
         s = handleString(yytext, 0);
         printf("STRLIT: %s\n", s);
         free(s);  // TODO: free for now - may need to do other things with it later
         break;
-      case IDENT:
+      case TIDENT:
         s = handleString(yytext, 1);
         printf("IDENT: %s\n", s);
         free(s);  // TODO: free for now - may need to do other things with it later
         break;
       default:
-        printf("%d\n", token);
         // a bit hacky: Bison tokens start at 258
-        /*printf("%s\n", TOKEN_STRING[token - 258]);*/
+        printf("%s\n", TOKEN_STRING[token - 258]);
         break;
     }
   }

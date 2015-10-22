@@ -20,57 +20,57 @@ INTEGER {DIGIT}+
 
 %%
 
-array { return ARR; }
-boolean { return BOOL; }
-char { return CHAR; }
-else { return ELSE; }
-false { return FALSE; }
-for { return FOR; }
-function { return FUNC; }
-if { return IF; }
-integer { return INT; }
-print { return PRINT; }
-return { return RET; }
-string { return STR; }
-true { return TRUE; }
-void { return VOID; }
-while { return WHILE; }
-; { return SEMI; }
-, { return COMMA; }
+array { return TARR; }
+boolean { return TBOOL; }
+char { return TCHAR; }
+else { return TELSE; }
+false { return TFALSE; }
+for { return TFOR; }
+function { return TFUNC; }
+if { return TIF; }
+integer { return TINT; }
+print { return TPRINT; }
+return { return TRET; }
+string { return TSTR; }
+true { return TTRUE; }
+void { return TVOID; }
+while { return TWHILE; }
+; { return TSEMI; }
+, { return TCOMMA; }
 {WHITESPACE} { }
-{IDENTIFIER} { return IDENT; }
+{IDENTIFIER} { return TIDENT; }
 {CPPCOMMENT} { }
 "/*" { BEGIN(C_COMMENT); }
 <C_COMMENT>"*/" { BEGIN(INITIAL); }
 <C_COMMENT>. { }
-{CHAR} { return CHARLIT; }
-{STRING} { return STRLIT; }
-{INTEGER} { return INTLIT; }
-: { return COL; }
-= { return EQ; }
-\{ { return LBRACE; }
-\} { return RBRACE; }
-\( { return LPAREN; }
-\) { return RPAREN; }
-\[ { return LBRACK; }
-\] { return RBRACK; }
-\+\+ { return PLUSPLUS; }
--- { return MINMIN; }
-\^ { return EXP; }
-\+ { return PLUS; }
-- { return MIN; }
-! { return NOT; }
-\* { return MULT; }
-\/ { return DIV; }
-% { return MOD; }
-\< { return LT; }
-\<= { return LE; }
-> { return GT; }
->= { return GE; }
-== { return EQ; }
-!= { return NE; }
-&& { return AND; }
-\|\| { return OR; }
+{CHAR} { return TCHARLIT; }
+{STRING} { return TSTRLIT; }
+{INTEGER} { return TINTLIT; }
+: { return TCOL; }
+= { return TEQ; }
+\{ { return TLBRACE; }
+\} { return TRBRACE; }
+\( { return TLPAREN; }
+\) { return TRPAREN; }
+\[ { return TLBRACK; }
+\] { return TRBRACK; }
+\+\+ { return TPLUSPLUS; }
+-- { return TMINMIN; }
+\^ { return TEXP; }
+\+ { return TPLUS; }
+- { return TMIN; }
+! { return TNOT; }
+\* { return TMULT; }
+\/ { return TDIV; }
+% { return TMOD; }
+\< { return TLT; }
+\<= { return TLE; }
+> { return TGT; }
+>= { return TGE; }
+== { return TEQ; }
+!= { return TNE; }
+&& { return TAND; }
+\|\| { return TOR; }
 . { fprintf(stderr, "SCAN_ERROR: %s is not a valid token\n", yytext); exit(1); }
 
 %%

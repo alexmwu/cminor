@@ -5,21 +5,21 @@
 void yyerror(const char *s) { printf("ERROR: %s\n", s); }
 %}
 
-%token INT STR CHAR BOOL ARR VOID
-%token TRUE FALSE IF ELSE WHILE FOR
-%token FUNC RET PRINT
+%token TINT TSTR TCHAR TBOOL TARR TVOID
+%token TTRUE TFALSE TIF TELSE TWHILE TFOR
+%token TFUNC TRET TPRINT
 
-%token SEMI COMMA COL EQ
-%token LBRACE RBRACE LPAREN RPAREN LBRACK RBRACK
+%token TSEMI TCOMMA TCOL TEQ
+%token TLBRACE TRBRACE TLPAREN TRPAREN TLBRACK TRBRACK
 
-%token INTLIT STRLIT CHARLIT
-%token IDENT
+%token TINTLIT TSTRLIT TCHARLIT
+%token TIDENT
 
-%token PLUSPLUS MINMIN EXP PLUS MIN MULT DIV MOD
-%token LT LE GT GE EQEQ NE AND OR NOT
+%token TPLUSPLUS TMINMIN TEXP TPLUS TMIN TMULT TDIV TMOD
+%token TLT TLE TGT TGE TEQEQ TNE TAND TOR TNOT
 
-%nonassoc IFX
-%nonassoc ELSE
+%nonassoc TIFX
+%nonassoc TELSE
 
 %start program
 
@@ -32,18 +32,18 @@ decl_list: decl_list decl
          | /*nothing*/
          ;
 
-decl: IDENT COL type EQ expr SEMI
-    | IDENT COL type SEMI
-    | IDENT COL type EQ LBRACE stmt_list RBRACE
+decl: TIDENT TCOL type TEQ expr TSEMI
+    | TIDENT TCOL type TSEMI
+    | TIDENT TCOL type TEQ TLBRACE stmt_list TRBRACE
     ;
 
-type: STR
-    | INT
-    | CHAR
-    | BOOL
-    | ARR LBRACE INTLIT RBRACE type /*TOOD: see if only fixed sized numbers (integer_literal). i.e., no expressions?*/
-    | FUNC type LPAREN optional_param_list RPAREN
-    | VOID
+type: TSTR
+    | TINT
+    | TCHAR
+    | TBOOL
+    | TARR TLBRACE TINTLIT TRBRACE type /*TOOD: see if only fixed sized numbers (integer_literal). i.e., no expressions?*/
+    | TFUNC type TLPAREN optional_param_list TRPAREN
+    | TVOID
     ;
 
 optional_param_list: /*nothing*/
@@ -51,31 +51,31 @@ optional_param_list: /*nothing*/
           ;
 
 param_list: decl
-          | param_list COMMA param
+          | param_list TCOMMA param
           ;
 
-param: IDENT COL type
+param: TIDENT TCOL type
      ;
 
 stmt: decl
-    | expr SEMI
-    | FOR LPAREN optional_expr SEMI optional_expr SEMI optional_expr RPAREN stmt
-    | LBRACE stmt_list RBRACE
+    | expr TSEMI
+    | TFOR TLPAREN optional_expr TSEMI optional_expr TSEMI optional_expr TRPAREN stmt
+    | TLBRACE stmt_list TRBRACE
     /* TODO: fix the below dangling else */
     | if_stmt
-    | RET expr SEMI
-    | PRINT expr_list SEMI
+    | TRET expr TSEMI
+    | TPRINT expr_list TSEMI
     ;
 
-if_stmt: IF LPAREN expr RPAREN stmt %prec IFX
-       | IF LPAREN expr RPAREN stmt ELSE stmt
+if_stmt: TIF TLPAREN expr TRPAREN stmt %prec TIFX
+       | TIF TLPAREN expr TRPAREN stmt TELSE stmt
        ;
 
 stmt_list: stmt
          | stmt_list stmt
          ;
 
-expr: IDENT
+expr: TIDENT
     ;
 
 optional_expr: /*nothing*/
@@ -83,5 +83,5 @@ optional_expr: /*nothing*/
              ;
 
 expr_list: expr
-         | expr_list COMMA expr
+         | expr_list TCOMMA expr
          ;
