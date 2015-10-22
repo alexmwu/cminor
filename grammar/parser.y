@@ -1,7 +1,8 @@
 %{
 /*C preamble*/
 #include "scanner.yy.h"
-extern int yyerror(char *);
+//TODO: better error messages (e.g., line number and line of error)
+void yyerror(const char *s) { printf("ERROR: %s\n", s); }
 %}
 
 %token INT STR CHAR BOOL ARR VOID
