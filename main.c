@@ -6,6 +6,7 @@
 #include "parser.tab.h"
 
 extern FILE *yyin;
+extern int yyparse();
 
 char handleChar(char *c) {
   // length should only be 3 or 4
@@ -81,43 +82,79 @@ char *handleString(char *s, int type) {
   return retStr;
 }
 
+// temporary help printout
+void printHelp() {
+  printf("The CMinor Compiler\n\n");
+  printf("usage: cminor [--help|<command>] [filename]\n\n");
+  printf("*Filenames are optional; the default is stdin\n");
+  printf("These are optional commands for the CMinor compiler:\n");
+  printf("\t-scan\tRun an optional file through CMinor scanner\n");
+  printf("\t-parse\tRun an optional file through CMinor parser\n");
+}
+
+void printGoHelp(char *command) {
+  printf("cminor: '%s' is not a cminor command. See 'cminor --help'.\n", command);
+}
+
 int main(int argc, char **argv) {
   yyin = stdin;
+  // TODO: replace if-else statement handling with lib getopt
   if(argc > 1) {  //arguments on top of program name
-    if(strcmp(argv[1], "-scan") == 0 && argc > 2) {
+    if(argc == 3) {
       yyin = fopen(argv[2], "r");
     }
+    else if(argc > 3) {
+      fprintf(stderr, "Extraneous arguments\n");
+      printf("See 'cminor --help'\n");
+      exit(1);
+    }
+
+    if(strcmp(argv[1], "--help") == 0) {
+      printHelp();
+    }
+    else if(strcmp(argv[1], "-scan") == 0) {
+      if(yyin == stdin) printf("Enter in CMinor code to see if it scans.\n");
+
+      while(1) {
+        int token = yylex();
+        if(!token) {
+          break;
+        }
+        switch (token) {
+          char c;
+          char *s;
+          case TCHARLIT:
+          c = handleChar(yytext);
+          printf("CHARACTER_LITERAL: %c\n", c);
+          break;
+          case TSTRLIT:
+          s = handleString(yytext, 0);
+          printf("STRING_LITERAL: %s\n", s);
+          free(s);  // TODO: free for now - may need to do other things with it later
+          break;
+          case TIDENT:
+          s = handleString(yytext, 1);
+          printf("IDENTIFIER: %s\n", s);
+          free(s);  // TODO: free for now - may need to do other things with it later
+          break;
+          default:
+          // a bit hacky: Bison tokens start at 258
+          printf("%s\n", TOKEN_STRING[token - 258]);
+          break;
+        }
+      }
+    }
+    else if(strcmp(argv[1], "-parse") == 0) {
+      int outCode = yyparse();
+      exit(outCode);
+    }
+    else {
+      printGoHelp(argv[1]);
+    }
+  }
+  else {
+    printHelp();
   }
 
-  if(yyin == stdin) printf("Enter in CMinor code to see if it scans.\n");
-
-  while(1) {
-    int token = yylex();
-    if(!token) {
-      break;
-    }
-    switch (token) {
-      char c;
-      char *s;
-      case TCHARLIT:
-        c = handleChar(yytext);
-        printf("CHARACTER_LITERAL: %c\n", c);
-        break;
-      case TSTRLIT:
-        s = handleString(yytext, 0);
-        printf("STRING_LITERAL: %s\n", s);
-        free(s);  // TODO: free for now - may need to do other things with it later
-        break;
-      case TIDENT:
-        s = handleString(yytext, 1);
-        printf("IDENTIFIER: %s\n", s);
-        free(s);  // TODO: free for now - may need to do other things with it later
-        break;
-      default:
-        // a bit hacky: Bison tokens start at 258
-        printf("%s\n", TOKEN_STRING[token - 258]);
-        break;
-    }
-  }
   return 0;
 }
