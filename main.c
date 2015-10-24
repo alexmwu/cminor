@@ -98,7 +98,7 @@ void printGoHelp(char *command) {
 
 int main(int argc, char **argv) {
   yyin = stdin;
-  // TODO: replace if-else statement handling with lib getopt
+  // TODO: replace if-else statement handling with lib getopt (unistd.h)
   if(argc > 1) {  //arguments on top of program name
     if(argc == 3) {
       yyin = fopen(argv[2], "r");

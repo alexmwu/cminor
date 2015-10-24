@@ -61,7 +61,7 @@ stmt: decl
     | expr TSEMI
     | TFOR TLPAREN optional_expr TSEMI optional_expr TSEMI optional_expr TRPAREN stmt
     | TLBRACE stmt_list TRBRACE
-    /* TODO: fix the below dangling else */
+    | TLBRACE TRBRACE
     | if_stmt
     | TRET expr TSEMI
     | TPRINT expr_list TSEMI
@@ -76,13 +76,48 @@ stmt_list: stmt
          ;
 
 expr: TIDENT
-    /*
-     *| TIDENT TLPAREN arg_list TRPAREN
-     *| arith_expr
-     */
+    /*atomic types*/
+    | TTRUE
+    | TFALSE
+    | TINTLIT
+    | TCHARLIT
+    | TSTRLIT
+    /*other expressions*/
+    | TLPAREN expr TRPAREN
+    | TIDENT TLBRACK INTLIT TRBRACK
+    | TIDENT TLPAREN expr_list TRPAREN
+    | prepost
+    | expr twoway_operators expr
     ;
 
-optional_expr: /*nothing*/
+unary: TNOT expr
+     | TMIN expr
+     ;
+
+prepost: expr TPLUSPLUS
+       | TPLUSPLUS expr
+       | expr TMINMIN
+       | TMINMIN expr
+       ;
+
+twoway_operators: TEXP
+                | TMUL
+                | TDIV
+                | TMOD
+                | TADD
+                | TSUB
+                | TLT
+                | TLE
+                | TGT
+                | TGE
+                | TEQEQ
+                | TNE
+                | TAND
+                | TOR
+                | TNOT
+                ;
+
+optional_expr: /*nothing */
              | expr
              ;
 
