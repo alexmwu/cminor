@@ -15,7 +15,7 @@ void yyerror(const char *s) { printf("ERROR: %s\n", s); }
 %token TINTLIT TSTRLIT TCHARLIT
 %token TIDENT
 
-%token TPLUSPLUS TMINMIN TEXP TPLUS TMIN TMULT TDIV TMOD
+%token TPLUSPLUS TMINMIN TEXP TPLUS TMIN TMUL TDIV TMOD
 %token TLT TLE TGT TGE TEQEQ TNE TAND TOR TNOT
 
 %nonassoc TIFX
@@ -84,9 +84,10 @@ expr: TIDENT
     | TSTRLIT
     /*other expressions*/
     | TLPAREN expr TRPAREN
-    | TIDENT TLBRACK INTLIT TRBRACK
+    | TIDENT TLBRACK TINTLIT TRBRACK
     | TIDENT TLPAREN expr_list TRPAREN
     | prepost
+    | unary
     | expr twoway_operators expr
     ;
 
@@ -104,8 +105,8 @@ twoway_operators: TEXP
                 | TMUL
                 | TDIV
                 | TMOD
-                | TADD
-                | TSUB
+                | TPLUS
+                | TMIN
                 | TLT
                 | TLE
                 | TGT

@@ -61,7 +61,7 @@ while { return TWHILE; }
 \+ { return TPLUS; }
 - { return TMIN; }
 ! { return TNOT; }
-\* { return TMULT; }
+\* { return TMUL; }
 \/ { return TDIV; }
 % { return TMOD; }
 \< { return TLT; }

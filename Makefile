@@ -29,7 +29,8 @@ LEX = flex
 YACC = bison
 LEXFLAGS = -o $(SCANNER_PRE).yy.c
 YACCFLAGS = -d -o $(PARSER_PRE).tab.c
-YACCDEBUGFLAGS = -v
+# verbose and debug (better syntax errors)
+YACCDEBUGFLAGS = -v -t
 
 
 # make everything into a CMinor binary
