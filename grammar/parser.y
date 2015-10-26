@@ -18,8 +18,27 @@ void yyerror(const char *s) { printf("ERROR: %s\n", s); }
 %token TPLUSPLUS TMINMIN TEXP TPLUS TMIN TMUL TDIV TMOD
 %token TLT TLE TGT TGE TEQEQ TNE TAND TOR TNOT
 
-%nonassoc TIFX
-%nonassoc TELSE
+/*
+ *Operator precedence (should achieve more C-like precedence at some point;
+ *spec will change as needed)
+ *As detailed here: http://ee.hawaii.edu/~tep/EE160/Book/chap5/subsection2.1.4.1.html
+ */
+
+%nonassoc TNOELSE
+%right TEQ
+%left TOR
+%left TAND
+/*The C-spec separates equality checks (==, !=) and comparisons (<, <=, etc.)*/
+%left TLT TLE TGT TGE TEQEQ TNE
+%left TPLUS TMIN
+%left TMUL TDIV TMOD
+%right TEXP
+/*
+ *C does not separate postfix increment or decrement from unary minus or logival not
+ *(i.e., they have the same precedence)
+ */
+%right TUMIN TNOT
+%right TPLUSPLUS TMINMIN
 
 %start program
 
@@ -41,7 +60,7 @@ type: TSTR
     | TINT
     | TCHAR
     | TBOOL
-    | TARR TLBRACE TINTLIT TRBRACE type /*TOOD: see if only fixed sized numbers (integer_literal). i.e., no expressions?*/
+    | TARR TLBRACE TINTLIT TRBRACE type /*TODO: see if only fixed sized numbers (integer_literal). i.e., no expressions?*/
     | TFUNC type TLPAREN optional_param_list TRPAREN
     | TVOID
     ;
@@ -67,7 +86,7 @@ stmt: decl
     | TPRINT expr_list TSEMI
     ;
 
-if_stmt: TIF TLPAREN expr TRPAREN stmt %prec TIFX
+if_stmt: TIF TLPAREN expr TRPAREN stmt %prec TNOELSE
        | TIF TLPAREN expr TRPAREN stmt TELSE stmt
        ;
 
@@ -88,40 +107,47 @@ expr: TIDENT
     | TIDENT TLPAREN expr_list TRPAREN
     | prepost
     | unary
-    | expr twoway_operators expr
+
+    /*arithmetic operators (blocked off by order of precedence)*/
+    | expr TEXP expr
+
+    | expr TMUL expr
+    | expr TDIV expr
+    | expr TMOD expr
+
+    | expr TPLUS expr
+    | expr TMIN expr
+
+    | expr comparison expr
+
+    | expr TEQ expr
     ;
 
 unary: TNOT expr
-     | TMIN expr
+     | TMIN expr %prec TUMIN
      ;
 
-prepost: expr TPLUSPLUS
-       | TPLUSPLUS expr
-       | expr TMINMIN
-       | TMINMIN expr
+prepost: TIDENT TPLUSPLUS
+       | TPLUSPLUS TIDENT
+       | TIDENT TMINMIN
+       | TMINMIN TIDENT
        ;
 
-twoway_operators: TEXP
-                | TMUL
-                | TDIV
-                | TMOD
-                | TPLUS
-                | TMIN
-                | TLT
-                | TLE
-                | TGT
-                | TGE
-                | TEQEQ
-                | TNE
-                | TAND
-                | TOR
-                | TNOT
-                ;
+comparison: TLT
+          | TLE
+          | TGT
+          | TGE
+          | TEQEQ
+          | TNE
+          | TAND
+          | TOR
+          ;
 
 optional_expr: /*nothing */
              | expr
              ;
 
-expr_list: expr
+expr_list: /*nothing*/
+         | expr
          | expr_list TCOMMA expr
          ;
