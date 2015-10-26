@@ -18,28 +18,6 @@ void yyerror(const char *s) { printf("ERROR: %s\n", s); }
 %token TPLUSPLUS TMINMIN TEXP TPLUS TMIN TMUL TDIV TMOD
 %token TLT TLE TGT TGE TEQEQ TNE TAND TOR TNOT
 
-/*
- *Operator precedence (should achieve more C-like precedence at some point;
- *spec will change as needed)
- *As detailed here: http://ee.hawaii.edu/~tep/EE160/Book/chap5/subsection2.1.4.1.html
- */
-
-%nonassoc TNOELSE
-%right TEQ
-%left TOR
-%left TAND
-/*The C-spec separates equality checks (==, !=) and comparisons (<, <=, etc.)*/
-%left TLT TLE TGT TGE TEQEQ TNE
-%left TPLUS TMIN
-%left TMUL TDIV TMOD
-%right TEXP
-/*
- *C does not separate postfix increment or decrement from unary minus or logival not
- *(i.e., they have the same precedence)
- */
-%right TUMIN TNOT
-%right TPLUSPLUS TMINMIN
-
 %start program
 
 %%
@@ -86,7 +64,7 @@ stmt: decl
     | TPRINT expr_list TSEMI
     ;
 
-if_stmt: TIF TLPAREN expr TRPAREN stmt %prec TNOELSE
+if_stmt: TIF TLPAREN expr TRPAREN stmt
        | TIF TLPAREN expr TRPAREN stmt TELSE stmt
        ;
 
@@ -124,7 +102,7 @@ expr: TIDENT
     ;
 
 unary: TNOT expr
-     | TMIN expr %prec TUMIN
+     | TMIN expr
      ;
 
 prepost: TIDENT TPLUSPLUS
