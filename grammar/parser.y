@@ -54,19 +54,26 @@ param_list: decl
 param: TIDENT TCOL type
      ;
 
-stmt: decl
-    | optional_expr TSEMI
-    | TFOR TLPAREN optional_expr TSEMI optional_expr TSEMI optional_expr TRPAREN stmt
-    | TLBRACE stmt_list TRBRACE
-    | TLBRACE TRBRACE
-    | if_stmt
-    | TRET expr TSEMI
-    | TPRINT expr_list TSEMI
+stmt: matched
+    | unmatched
     ;
 
-if_stmt: TIF TLPAREN expr TRPAREN stmt
-       | TIF TLPAREN expr TRPAREN stmt TELSE stmt
+other_stmt: decl
+          | optional_expr TSEMI
+          | TFOR TLPAREN optional_expr TSEMI optional_expr TSEMI optional_expr TRPAREN stmt
+          | TLBRACE stmt_list TRBRACE
+          | TLBRACE TRBRACE
+          | TRET optional_expr TSEMI
+          | TPRINT expr_list TSEMI
+          ;
+
+matched: TIF TLPAREN expr TRPAREN matched TELSE matched
+       | other_stmt
        ;
+
+unmatched: TIF TLPAREN expr TRPAREN stmt
+         | TIF TLPAREN expr TRPAREN matched TELSE unmatched
+         ;
 
 stmt_list: stmt
          | stmt_list stmt
@@ -77,7 +84,6 @@ expr: assign_expr
     ;
 
 assign_expr: TIDENT TEQ or_expr
-           | TIDENT TEQ atomic
            ;
 
 or_expr: or_expr TOR and_expr
