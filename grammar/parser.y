@@ -121,8 +121,8 @@ exp_expr: exp_expr TEXP unary
         ;
 
 
-unary: TNOT expr
-     | TMIN expr
+unary: TNOT unary
+     | TMIN unary
      | prepost
      ;
 
