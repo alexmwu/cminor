@@ -2,8 +2,16 @@
 /*C preamble*/
 #include "scanner.yy.h"
 //TODO: better error messages (e.g., line number and line of error)
-void yyerror(const char *s) { printf("ERROR: %s\n", s); }
+void yyerror(const char *s) { printf("PARSE_ERROR: %s\n", s); }
 %}
+
+%union {
+  int token;
+  long intLit;
+  char *strLit;
+  char charLit;
+  char *ident;
+}
 
 %token TINT TSTR TCHAR TBOOL TARR TVOID
 %token TTRUE TFALSE TIF TELSE TWHILE TFOR
@@ -59,7 +67,7 @@ stmt: matched
     ;
 
 other_stmt: decl
-          | optional_expr TSEMI
+          | expr TSEMI
           | TFOR TLPAREN optional_expr TSEMI optional_expr TSEMI optional_expr TRPAREN stmt
           | TLBRACE stmt_list TRBRACE
           | TLBRACE TRBRACE

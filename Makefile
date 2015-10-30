@@ -23,6 +23,7 @@ OUTPUT_BINARY = cminor
 
 # tools used and their flags
 CC = gcc
+CCFLAGS = -Wall
 GDBFLAG = -g
 CFLAGS = -I./$(GRAM_DIR)
 LEX = flex
@@ -35,15 +36,15 @@ YACCDEBUGFLAGS = -v -t
 
 # make everything into a CMinor binary
 all: $(GRAM_OBJ) $(DEPS)
-	$(CC) $(GRAM_OBJ) -o $(OUTPUT_BINARY) $(CFLAGS)
+	$(CC) $(CCFLAGS) $(GRAM_OBJ) -o $(OUTPUT_BINARY) $(CFLAGS)
 # make everything into a CMinor binary that can be used with gdb
 # need to rewrite commands because of dependencies on different
 # versions of source files (e.g., bison output)
 debug:
 	$(LEX) $(LEXFLAGS) $(SCANNER_IN)
 	$(YACC) $(YACCFLAGS) $(YACCDEBUGFLAGS) $(PARSER_IN)
-	$(CC) -c $(GRAM_SRC) $(CFLAGS)
-	$(CC) $(GRAM_OBJ) -o $(OUTPUT_BINARY) $(CFLAGS) $(GDBFLAG)
+	$(CC) $(CCFLAGS) -c $(GRAM_SRC) $(CFLAGS)
+	$(CC) $(CCFLAGS) $(GRAM_OBJ) -o $(OUTPUT_BINARY) $(CFLAGS) $(GDBFLAG)
 
 # make bison-generated parser with output
 bison_debug: $(PARSER_IN) $(TOKEN_PATH)
@@ -51,7 +52,7 @@ bison_debug: $(PARSER_IN) $(TOKEN_PATH)
 
 
 $(GRAM_OBJ): $(GRAM_SRC)
-	$(CC) -c $(GRAM_SRC) $(CFLAGS)
+	$(CC) $(CCFLAGS) -c $(GRAM_SRC) $(CFLAGS)
 
 $(PARSER_CODE) $(PARSER_PRE).tab.h: $(PARSER_IN) $(TOKEN_PATH)
 	$(YACC) $(YACCFLAGS) $(PARSER_IN)
