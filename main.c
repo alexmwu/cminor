@@ -1,12 +1,13 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "grammar/token.h"
+#include "grammar/handle.h"
 #include "scanner.yy.h"
 #include "parser.tab.h"
 
 extern FILE *yyin;
 extern int yyparse();
+
+extern
 
 // temporary help printout
 void printHelp() {
@@ -48,7 +49,7 @@ int main(int argc, char **argv) {
         }
         switch (token) {
           case TCHARLIT:
-          printf("CHARACTER_LITERAL: %c\n", handleText(yytext));
+          printf("CHARACTER_LITERAL: %c\n", handleChar(yytext));
           break;
           case TSTRLIT:
           printf("STRING_LITERAL: %s\n", handleString(yytext, 0));
@@ -57,7 +58,7 @@ int main(int argc, char **argv) {
           printf("IDENTIFIER: %s\n", handleString(yytext, 1));
           break;
           case TINTLIT:
-          printf("INTEGER_LITERAL: %ld", handleInt(yytext));
+          printf("INTEGER_LITERAL: %ld\n", handleInt(yytext));
           break;
           default:
           // a bit hacky: Bison tokens start at 258
