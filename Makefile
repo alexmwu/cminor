@@ -37,7 +37,12 @@ YACCDEBUGFLAGS = -v -t
 all: $(GRAM_OBJ) $(DEPS)
 	$(CC) $(GRAM_OBJ) -o $(OUTPUT_BINARY) $(CFLAGS)
 # make everything into a CMinor binary that can be used with gdb
-debug: $(GRAM_OBJ) $(DEPS)
+# need to rewrite commands because of dependencies on different
+# versions of source files (e.g., bison output)
+debug:
+	$(LEX) $(LEXFLAGS) $(SCANNER_IN)
+	$(YACC) $(YACCFLAGS) $(YACCDEBUGFLAGS) $(PARSER_IN)
+	$(CC) -c $(GRAM_SRC) $(CFLAGS)
 	$(CC) $(GRAM_OBJ) -o $(OUTPUT_BINARY) $(CFLAGS) $(GDBFLAG)
 
 # make bison-generated parser with output
