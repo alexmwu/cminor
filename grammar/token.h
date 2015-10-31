@@ -10,6 +10,7 @@
   MACRO(INTEGER), \
   MACRO(STRING), \
   MACRO(CHAR), \
+  MACRO(BOOLEAN), \
   MACRO(ARRAY), \
   MACRO(VOID), \
   MACRO(TRUE), \
@@ -58,12 +59,10 @@
 #define GENERATE_STRING(STRING) #STRING
 
 typedef enum {
-  BAD_TOKEN,  // otherwise SEMICOLON would start off as 0, which makes the token variable 0, breaking the loop
   FOREACH_TOKEN(GENERATE_ENUM)
 } TOKEN;
 
 static const char *TOKEN_STRING[] = {
-  "BAD_TOKEN",  // need to match the index of the TOKEN enum
   FOREACH_TOKEN(GENERATE_STRING)
 };
 

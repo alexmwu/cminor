@@ -147,18 +147,6 @@ group_arr_func: TLPAREN expr TRPAREN
               | atomic
               ;
 
-/*
- *comparison: TLT
- *          | TLE
- *          | TGT
- *          | TGE
- *          | TEQEQ
- *          | TNE
- *          | TAND
- *          | TOR
- *          ;
- */
-
 optional_expr: /*nothing */
              | expr
              ;
