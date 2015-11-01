@@ -69,10 +69,9 @@ stmt: matched
 
 other_stmt: decl
           | expr TSEMI
-          /*needs to be matched rather than stmt otherwise there will be ambiguities with the for loop as well*/
-          | TFOR TLPAREN optional_expr TSEMI optional_expr TSEMI optional_expr TRPAREN stmt
+          /*FOR needs to be matched rather than stmt otherwise there will be ambiguities (e.g., if X for() if Y else Z; Z can match with Y or X) since stmt covers unmatched as well with the for loop as well*/
+          | TFOR TLPAREN optional_expr TSEMI optional_expr TSEMI optional_expr TRPAREN matched
           | TLBRACE optional_stmt_list TRBRACE
-          | TLBRACE TRBRACE
           | TRET optional_expr TSEMI
           | TPRINT optional_expr_list TSEMI
           ;
