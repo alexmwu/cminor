@@ -5,6 +5,8 @@
 void yyerror(const char *s) { printf("PARSE_ERROR: %s\n", s); }
 %}
 
+%error-verbose
+
 %union {
   int token;
   long intLit;
@@ -94,10 +96,10 @@ stmt_list: stmt
 
 /*Everything from expr to expr_list is for expr; the many rules are for operator precedence*/
 expr: assign_expr
-    | or_expr
     ;
 
 assign_expr: TIDENT TEQ or_expr
+           | or_expr
            ;
 
 or_expr: or_expr TOR and_expr
