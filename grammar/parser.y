@@ -2,7 +2,7 @@
 /*C preamble*/
 #include "scanner.yy.h"
 //TODO: better error messages (e.g., line number and line of error)
-void yyerror(const char *s) { printf("PARSE_ERROR: %s\n", s); }
+void yyerror(const char *s) { fprintf(stderr, "PARSE_ERROR at line number %d: %s\n", yylineno, s); }
 %}
 
 %error-verbose

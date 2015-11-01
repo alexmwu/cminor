@@ -6,6 +6,7 @@
 
 %option noyywrap
 %option header-file="scanner.yy.h"
+%option yylineno
 
 %x C_COMMENT
 
@@ -73,6 +74,6 @@ while { return TOKEN(TWHILE); }
 != { return TOKEN(TNE); }
 && { return TOKEN(TAND); }
 \|\| { return TOKEN(TOR); }
-. { fprintf(stderr, "SCAN_ERROR: %s is not a valid token\n", yytext); exit(1); }
+. { fprintf(stderr, "SCAN_ERROR at line %d: %s is not a valid token\n", yylineno, yytext); exit(1); }
 
 %%
