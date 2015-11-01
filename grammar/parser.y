@@ -39,14 +39,15 @@ decl_list: decl_list decl
 
 decl: TIDENT TCOL type TEQ expr TSEMI
     | TIDENT TCOL type TSEMI
-    | TIDENT TCOL type TEQ TLBRACE stmt_list TRBRACE
+    | TIDENT TCOL type TEQ TLBRACE optional_stmt_list TRBRACE
     ;
 
 type: TSTR
     | TINT
     | TCHAR
     | TBOOL
-    | TARR TLBRACE TINTLIT TRBRACE type /*TODO: see if only fixed sized numbers (integer_literal). i.e., no expressions?*/
+    | TARR TLBRACK TINTLIT TRBRACK type /*TODO: see if only fixed sized numbers (integer_literal). i.e., no expressions?*/
+    | TARR TLBRACK TRBRACK type
     | TFUNC type TLPAREN optional_param_list TRPAREN
     | TVOID
     ;
@@ -55,7 +56,7 @@ optional_param_list: /*nothing*/
           | param_list
           ;
 
-param_list: decl
+param_list: param
           | param_list TCOMMA param
           ;
 
@@ -68,11 +69,12 @@ stmt: matched
 
 other_stmt: decl
           | expr TSEMI
+          /*needs to be matched rather than stmt otherwise there will be ambiguities with the for loop as well*/
           | TFOR TLPAREN optional_expr TSEMI optional_expr TSEMI optional_expr TRPAREN stmt
-          | TLBRACE stmt_list TRBRACE
+          | TLBRACE optional_stmt_list TRBRACE
           | TLBRACE TRBRACE
           | TRET optional_expr TSEMI
-          | TPRINT expr_list TSEMI
+          | TPRINT optional_expr_list TSEMI
           ;
 
 matched: TIF TLPAREN expr TRPAREN matched TELSE matched
@@ -83,12 +85,17 @@ unmatched: TIF TLPAREN expr TRPAREN stmt
          | TIF TLPAREN expr TRPAREN matched TELSE unmatched
          ;
 
+optional_stmt_list: /*nothing*/
+                  | stmt_list
+                  ;
+
 stmt_list: stmt
          | stmt_list stmt
          ;
 
 /*Everything from expr to expr_list is for expr; the many rules are for operator precedence*/
 expr: assign_expr
+    | or_expr
     ;
 
 assign_expr: TIDENT TEQ or_expr
@@ -143,7 +150,7 @@ prepost: TIDENT TPLUSPLUS
 
 group_arr_func: TLPAREN expr TRPAREN
               | TIDENT TLBRACK TINTLIT TRBRACK
-              | TIDENT TLPAREN expr_list TRPAREN
+              | TIDENT TLPAREN optional_expr_list TRPAREN
               | atomic
               ;
 
@@ -151,14 +158,18 @@ optional_expr: /*nothing */
              | expr
              ;
 
-expr_list: /*nothing*/
-         | expr
+expr_list: expr
          | expr_list TCOMMA expr
          ;
+
+optional_expr_list: /*nothing*/
+                  | expr_list
+                  ;
 
 atomic: TTRUE
       | TFALSE
       | TINTLIT
       | TCHARLIT
       | TSTRLIT
+      | TIDENT
       ;
