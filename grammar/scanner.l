@@ -69,7 +69,7 @@ while { return TOKEN(TWHILE); }
 \<= { return TOKEN(TLE); }
 > { return TOKEN(TGT); }
 >= { return TOKEN(TGE); }
-== { return TOKEN(TEQ); }
+== { return TOKEN(TEQEQ); }
 != { return TOKEN(TNE); }
 && { return TOKEN(TAND); }
 \|\| { return TOKEN(TOR); }
