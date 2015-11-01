@@ -1,4 +1,4 @@
-main: function int () = {
+main: function integer () = {
   if ( i = 6) {
     return;
   }

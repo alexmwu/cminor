@@ -1,0 +1,6 @@
+ops: function void() = {
+  hi = sadf++;
+  t = !true || 5 >= 6 && (6%5)/7*8 - 5 != 5 ^8;
+  a[3] = -a[2] * dsf();
+  a[s] = sdf(2,3,ds,s*2);
+}

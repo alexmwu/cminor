@@ -8,6 +8,11 @@ void yyerror(const char *s) { printf("PARSE_ERROR: %s\n", s); }
 %error-verbose
 
 %union {
+  struct decl *decl;
+  struct stmt *stmt;
+  struct expr *expr;
+  struct param_list *param_list;
+  struct type *type;
   int token;
   long intLit;
   char *strLit;
@@ -100,6 +105,7 @@ expr: assign_expr
     ;
 
 assign_expr: TIDENT TEQ or_expr
+           | TIDENT TLBRACK atomic TRBRACK TEQ or_expr
            | or_expr
            ;
 
