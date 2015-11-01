@@ -29,6 +29,11 @@ int main(int argc, char **argv) {
   if(argc > 1) {  //arguments on top of program name
     if(argc == 3) {
       yyin = fopen(argv[2], "r");
+      if(!yyin) {
+        fprintf(stderr, "cminor: error: no such file or directory: %s\n", argv[2]);
+        fprintf(stderr, "cminor: error: no input files\n");
+        exit(1);
+      }
     }
     else if(argc > 3) {
       fprintf(stderr, "Extraneous arguments\n");

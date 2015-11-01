@@ -1,8 +1,10 @@
 #!/bin/sh
 
+#Uncomment > $testfile.out for file output
+#Comment out > /dev/null to see output to stdout
 for testfile in good*.cminor
 do
-	if ./cminor -scan $testfile > $testfile.out
+	if ./cminor -scan $testfile > /dev/null # > $testfile.out
 	then
 		echo "$testfile success (as expected)"
 	else
@@ -12,7 +14,7 @@ done
 
 for testfile in bad*.cminor
 do
-	if ./cminor -scan $testfile > $testfile.out
+	if ./cminor -scan $testfile > /dev/null # > $testfile.out
 	then
 		echo "$testfile success (INCORRECT)"
 	else
