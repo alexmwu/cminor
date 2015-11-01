@@ -1,2 +1,2 @@
-array [] array[] array [] void = 424 * 435345;
+array [] array[] array [] void = { 424, 435345 };
 

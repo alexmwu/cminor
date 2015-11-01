@@ -41,6 +41,7 @@ decl_list: decl_list decl
 
 decl: TIDENT TCOL type TEQ expr TSEMI
     | TIDENT TCOL type TSEMI
+    | TIDENT TCOL type TEQ TLBRACE expr_list TRBRACE TSEMI
     | TIDENT TCOL type TEQ TLBRACE optional_stmt_list TRBRACE
     ;
 

@@ -1,1 +1,3 @@
-for (sf; sf < 5; ) a++;
+main: function void() = {
+  for (sf; sf < 5; ) a++;
+}
