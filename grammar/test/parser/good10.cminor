@@ -1,0 +1,3 @@
+square: function integer ( x: integer ) = {
+    return x^2;
+}

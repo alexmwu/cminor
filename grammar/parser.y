@@ -148,7 +148,7 @@ prepost: TIDENT TPLUSPLUS
        ;
 
 group_arr_func: TLPAREN expr TRPAREN
-              | TIDENT TLBRACK TINTLIT TRBRACK
+              | TIDENT TLBRACK atomic TRBRACK
               | TIDENT TLPAREN optional_expr_list TRPAREN
               | atomic
               ;

@@ -1,0 +1,5 @@
+main: function int () = {
+  if ( i = 6) {
+    return;
+  }
+}
