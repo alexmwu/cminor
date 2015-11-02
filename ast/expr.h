@@ -4,11 +4,33 @@
 #include "symbol.h"
 
 typedef enum {
-	EXPR_ADD,
-	EXPR_SUB,
+	EXPR_PLUS,
+	EXPR_MIN,
 	EXPR_MUL,
-	EXPR_DIV
-	/* many more types to add here */
+	EXPR_DIV,
+  EXPR_MOD,
+  EXPR_PLUSPLUS,
+  EXPR_MINMIN,
+  EXPR_EXP,
+  EXPR_LT,
+  EXPR_LE,
+  EXPR_GT,
+  EXPR_GE,
+  EXPR_EQEQ,
+  EXPR_NE,
+  EXPR_AND,
+  EXPR_OR,
+  EXPR_NOT,
+  EXPR_EQ,
+  EXPR_ARR,
+  EXPR_GROUP,
+  EXPR_FUNC,
+  EXPR_TRUE,
+  EXPR_FALSE,
+  EXPR_INTLIT,
+  EXPR_CHARLIT,
+  EXPR_STRLIT,
+  EXPR_IDENT
 } expr_t;
 
 struct expr {
