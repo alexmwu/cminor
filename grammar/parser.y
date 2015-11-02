@@ -1,6 +1,10 @@
 %{
 /*C preamble*/
 #include "scanner.yy.h"
+#include "ast/decl.h"
+#include "ast/stmt.h"
+#include "ast/expr.h"
+
 //TODO: better error messages (e.g., line number and line of error)
 void yyerror(const char *s) { fprintf(stderr, "PARSE_ERROR at line %d: %s\n", yylineno, s); }
 %}
@@ -47,6 +51,7 @@ void yyerror(const char *s) { fprintf(stderr, "PARSE_ERROR at line %d: %s\n", yy
 
 %%
 
+/*Yacc returns (in $$) $1 by default*/
 program: decl_list
        ;
 
@@ -115,81 +120,115 @@ expr: assign_expr
     ;
 
 assign_expr: TIDENT TEQ or_expr
-           | TIDENT TLBRACK atomic TRBRACK TEQ or_expr
+              { $$ = expr_create(EXPR_EQ, $1, $3, 0); }
+           | TIDENT TLBRACK expr TRBRACK TEQ or_expr
+              { $$ = expr_create(EXPR_ARR_EQ, $1, $3, $6); }
            | or_expr
            ;
 
 or_expr: or_expr TOR and_expr
+          { $$ = expr_create(EXPR_OR, $1, $3, 0); }
        | and_expr
        ;
 
 and_expr: and_expr TAND comparison_expr
+          { $$ = expr_create(EXPR_AND, $1, $3, 0); }
         | comparison_expr
         ;
 
 comparison_expr: comparison_expr TLT add_expr
+                  { $$ = expr_create(EXPR_LT, $1, $3, 0); }
                | comparison_expr TLE add_expr
+                  { $$ = expr_create(EXPR_LE, $1, $3, 0); }
                | comparison_expr TGT add_expr
+                  { $$ = expr_create(EXPR_GT, $1, $3, 0); }
                | comparison_expr TGE add_expr
+                  { $$ = expr_create(EXPR_GE, $1, $3, 0); }
                | comparison_expr TEQEQ add_expr
+                  { $$ = expr_create(EXPR_EQEQ, $1, $3, 0); }
                | comparison_expr TNE add_expr
+                  { $$ = expr_create(EXPR_NE, $1, $3, 0); }
                | add_expr
                ;
 
 /*Also encapsulates minus*/
 add_expr: add_expr TPLUS mul_expr
-          { $$ = expr_create(EXPR_ADD, $1, $3); }
+          { $$ = expr_create(EXPR_PLUS, $1, $3, 0); }
         | add_expr TMIN mul_expr
-          { $$ = expr_create(EXPR_SUB, $1, $3); }
+          { $$ = expr_create(EXPR_MIN, $1, $3, 0); }
         | mul_expr
         ;
 
 /*Also encapsulates division and modulus*/
 mul_expr: mul_expr TMUL exp_expr
+          { $$ = expr_create(EXPR_MUL, $1, $3, 0); }
         | mul_expr TDIV exp_expr
+          { $$ = expr_create(EXPR_DIV, $1, $3, 0); }
         | mul_expr TMOD exp_expr
+          { $$ = expr_create(EXPR_MOD, $1, $3, 0); }
         | exp_expr
         ;
 
 exp_expr: exp_expr TEXP unary
+          { $$ = expr_create(EXPR_EXP, $1, $3, 0); }
         | unary
         ;
 
 
 unary: TNOT unary
+        { $$ = expr_create(EXPR_NOT, 0, $2, 0); }
      | TMIN unary
+        { $$ = expr_create(EXPR_MIN, 0, $2, 0); }
      | prepost
      ;
 
 prepost: TIDENT TPLUSPLUS
+          { $$ = expr_create(EXPR_PLUSPLUS, expr_create_name($2), 0, 0); }
        | TPLUSPLUS TIDENT
+          { $$ = expr_create(EXPR_PLUSPLUS, 0, expr_create_name($2), 0); }
        | TIDENT TMINMIN
+          { $$ = expr_create(EXPR_MINMIN, expr_create_name($2), 0, 0); }
        | TMINMIN TIDENT
+          { $$ = expr_create(EXPR_MINMIN, 0, expr_create_name($2), 0); }
        | group_arr_func
        ;
 
 group_arr_func: TLPAREN expr TRPAREN
-              | TIDENT TLBRACK atomic TRBRACK
+                { $$ = expr_create(EXPR_GROUP, 0, 0, $2); }
+              | TIDENT TLBRACK expr TRBRACK
+                { $$ = expr_create(EXPR_ARR, expr_create_name($1), $3, 0); }
               | TIDENT TLPAREN optional_expr_list TRPAREN
+                { $$ = expr_create(EXPR_FUNC, expr_create_name($1), 0, $3); }
               | atomic
               ;
 
 optional_expr: /*nothing */
+                { $$ = 0; }
              | expr
              ;
 
 expr_list: expr
+            { $$ = expr_create(EXPR_LIST, $1, 0, 0); }
          | expr_list TCOMMA expr
+            { $1 -> next = $3; }
          ;
 
 optional_expr_list: /*nothing*/
+                    { $$ = 0; }
                   | expr_list
+                    { $$ = $1; }
                   ;
 
 atomic: TTRUE
+        { $$ = expr_create_boolean_literal(1); }
       | TFALSE
+        { $$ = expr_create_boolean_literal(0); }
       | TINTLIT
+        { $$ = expr_create_integer_literal($1); }
       | TCHARLIT
+        { $$ = expr_create_character_literal($1); }
       | TSTRLIT
+        { $$ = expr_create_string_literal($1); }
       | TIDENT
+        { $$ = expr_create_name($1); }
       ;
