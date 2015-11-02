@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "scanner.yy.h"
+#include "handle.h"
 // scanner tools
 
 char handleChar(char *c) {

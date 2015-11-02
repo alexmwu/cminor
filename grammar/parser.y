@@ -2,7 +2,7 @@
 /*C preamble*/
 #include "scanner.yy.h"
 //TODO: better error messages (e.g., line number and line of error)
-void yyerror(const char *s) { fprintf(stderr, "PARSE_ERROR at line number %d: %s\n", yylineno, s); }
+void yyerror(const char *s) { fprintf(stderr, "PARSE_ERROR at line %d: %s\n", yylineno, s); }
 %}
 
 %error-verbose
@@ -12,6 +12,7 @@ void yyerror(const char *s) { fprintf(stderr, "PARSE_ERROR at line number %d: %s
   struct stmt *stmt;
   struct expr *expr;
   struct param_list *param_list;
+  struct symbol *symbol;
   struct type *type;
   int token;
   long intLit;
@@ -20,18 +21,27 @@ void yyerror(const char *s) { fprintf(stderr, "PARSE_ERROR at line number %d: %s
   char *ident;
 }
 
-%token TINT TSTR TCHAR TBOOL TARR TVOID
-%token TTRUE TFALSE TIF TELSE TWHILE TFOR
-%token TFUNC TRET TPRINT
+%token <token> TINT TSTR TCHAR TBOOL TARR TVOID
+%token <token> TTRUE TFALSE TIF TELSE TWHILE TFOR
+%token <token> TFUNC TRET TPRINT
 
-%token TSEMI TCOMMA TCOL TEQ
-%token TLBRACE TRBRACE TLPAREN TRPAREN TLBRACK TRBRACK
+%token <token> TSEMI TCOMMA TCOL TEQ
+%token <token> TLBRACE TRBRACE TLPAREN TRPAREN TLBRACK TRBRACK
 
-%token TINTLIT TSTRLIT TCHARLIT
-%token TIDENT
+%token <intLit> TINTLIT
+%token <strLit> TSTRLIT
+%token <charLit> TCHARLIT
+%token <strLit> TIDENT
 
-%token TPLUSPLUS TMINMIN TEXP TPLUS TMIN TMUL TDIV TMOD
-%token TLT TLE TGT TGE TEQEQ TNE TAND TOR TNOT
+%token <token> TPLUSPLUS TMINMIN TEXP TPLUS TMIN TMUL TDIV TMOD
+%token <token> TLT TLE TGT TGE TEQEQ TNE TAND TOR TNOT
+
+
+%type <decl> program decl_list decl
+%type <param_list> optional_param_list param_list param
+%type <stmt> stmt other_stmt matched unmatched optional_stmt_list stmt_list
+%type <expr> expr optional_expr expr_list optional_expr_list assign_expr or_expr and_expr comparison_expr add_expr mul_expr exp_expr unary prepost group_arr_func atomic
+%type <type> type
 
 %start program
 
@@ -128,7 +138,9 @@ comparison_expr: comparison_expr TLT add_expr
 
 /*Also encapsulates minus*/
 add_expr: add_expr TPLUS mul_expr
+          { $$ = expr_create(EXPR_ADD, $1, $3); }
         | add_expr TMIN mul_expr
+          { $$ = expr_create(EXPR_SUB, $1, $3); }
         | mul_expr
         ;
 
