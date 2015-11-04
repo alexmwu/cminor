@@ -225,5 +225,9 @@ void expr_print(struct expr *e) {
       print_string(e -> name);
       break;
   }
-  expr_print(e -> next);
+  /*print expr_lists*/
+  if(e -> next) {
+    printf(", ");
+    expr_print(e -> next);
+  }
 }

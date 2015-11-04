@@ -11,7 +11,7 @@ typedef enum {
 	STMT_FOR,
 	STMT_WHILE,
 	STMT_PRINT,
-	STMT_RETURN,
+	STMT_RET,
 	STMT_BLOCK
 } stmt_kind_t;
 

@@ -91,28 +91,39 @@ stmt: matched
     ;
 
 other_stmt: decl
+            { $$ = stmt_create(STMT_DECL, $1, 0, 0, 0, 0, 0); }
           | expr TSEMI
+            { $$ = stmt_create(STMT_EXPR, 0, 0, $1, 0, 0, 0); }
           /*FOR needs to be matched rather than stmt otherwise there will be ambiguities (e.g., if X for() if Y else Z; Z can match with Y or X) since stmt covers unmatched as well with the for loop as well*/
           | TFOR TLPAREN optional_expr TSEMI optional_expr TSEMI optional_expr TRPAREN matched
+            { $$ = stmt_create(STMT_FOR, 0, $3, $5, $7, $9, 0); }
           | TLBRACE optional_stmt_list TRBRACE
+            { $$ = stmt_create(STMT_BLOCK, 0, 0, 0, 0, $2, 0); }
           | TRET optional_expr TSEMI
+            { $$ = stmt_create(STMT_RET, 0, 0, $2, 0, 0, 0); }
           | TPRINT optional_expr_list TSEMI
+            { $$ = stmt_create(STMT_PRINT, 0, 0, $2, 0, 0, 0); }
           ;
 
 matched: TIF TLPAREN expr TRPAREN matched TELSE matched
+          { $$ = stmt_create(STMT_IF_ELSE, 0, 0, $3, 0, $5, $7); }
        | other_stmt
        ;
 
 unmatched: TIF TLPAREN expr TRPAREN stmt
+            { $$ = stmt_create(STMT_IF_ELSE, 0, 0, $3, 0, $5, 0); }
          | TIF TLPAREN expr TRPAREN matched TELSE unmatched
+            { $$ = stmt_create(STMT_IF_ELSE, 0, 0, $3, 0, $5, $7); }
          ;
 
 optional_stmt_list: /*nothing*/
+                    { $$ = 0; }
                   | stmt_list
                   ;
 
 stmt_list: stmt
          | stmt_list stmt
+            { $1 -> next = $2; }
          ;
 
 /*Everything from expr to expr_list is for expr; the many rules are for operator precedence*/
@@ -120,9 +131,9 @@ expr: assign_expr
     ;
 
 assign_expr: TIDENT TEQ or_expr
-              { $$ = expr_create(EXPR_EQ, $1, $3, 0); }
+              { $$ = expr_create(EXPR_EQ, expr_create_name($1), $3, 0); }
            | TIDENT TLBRACK expr TRBRACK TEQ or_expr
-              { $$ = expr_create(EXPR_ARR_EQ, $1, $3, $6); }
+              { $$ = expr_create(EXPR_ARREQ, expr_create_name($1), $3, $6); }
            | or_expr
            ;
 
@@ -183,11 +194,11 @@ unary: TNOT unary
      ;
 
 prepost: TIDENT TPLUSPLUS
-          { $$ = expr_create(EXPR_PLUSPLUS, expr_create_name($2), 0, 0); }
+          { $$ = expr_create(EXPR_PLUSPLUS, expr_create_name($1), 0, 0); }
        | TPLUSPLUS TIDENT
           { $$ = expr_create(EXPR_PLUSPLUS, 0, expr_create_name($2), 0); }
        | TIDENT TMINMIN
-          { $$ = expr_create(EXPR_MINMIN, expr_create_name($2), 0, 0); }
+          { $$ = expr_create(EXPR_MINMIN, expr_create_name($1), 0, 0); }
        | TMINMIN TIDENT
           { $$ = expr_create(EXPR_MINMIN, 0, expr_create_name($2), 0); }
        | group_arr_func
@@ -208,7 +219,6 @@ optional_expr: /*nothing */
              ;
 
 expr_list: expr
-            { $$ = expr_create(EXPR_LIST, $1, 0, 0); }
          | expr_list TCOMMA expr
             { $1 -> next = $3; }
          ;

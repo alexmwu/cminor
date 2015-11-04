@@ -26,6 +26,13 @@ x = integer_power(a,b);
 
 #include <stdio.h>
 
+void print_indent(int indent) {
+  int i;
+  for(i = 0; i < indent; i++) {
+    printf("\t");
+  }
+}
+
 void print_integer( int x )
 {
 	printf("%d",x);
