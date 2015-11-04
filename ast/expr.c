@@ -46,7 +46,7 @@ void expr_print(struct expr *e) {
   switch(e -> kind) {
     case EXPR_PLUS:
       expr_print(e -> left);
-      printf(" + ");
+      printf("+");
       expr_print(e -> right);
       break;
     case EXPR_MIN:
@@ -56,22 +56,22 @@ void expr_print(struct expr *e) {
         break;
       }
       expr_print(e -> left);
-      printf(" - ");
+      printf("-");
       expr_print(e -> right);
       break;
     case EXPR_MUL:
       expr_print(e -> left);
-      printf(" * ");
+      printf("*");
       expr_print(e -> right);
       break;
     case EXPR_DIV:
       expr_print(e -> left);
-      printf(" / ");
+      printf("/");
       expr_print(e -> right);
       break;
     case EXPR_MOD:
       expr_print(e -> left);
-      printf(" %% ");
+      printf("%%");
       expr_print(e -> right);
       break;
     case EXPR_PLUSPLUS:
@@ -104,47 +104,47 @@ void expr_print(struct expr *e) {
       break;
     case EXPR_EXP:
       expr_print(e -> left);
-      printf(" ^ ");
+      printf("^");
       expr_print(e -> right);
       break;
     case EXPR_LT:
       expr_print(e -> left);
-      printf(" < ");
+      printf("<");
       expr_print(e -> right);
       break;
     case EXPR_LE:
       expr_print(e -> left);
-      printf(" <= ");
+      printf("<=");
       expr_print(e -> right);
       break;
     case EXPR_GT:
       expr_print(e -> left);
-      printf(" > ");
+      printf(">");
       expr_print(e -> right);
       break;
     case EXPR_GE:
       expr_print(e -> left);
-      printf(" >= ");
+      printf(">=");
       expr_print(e -> right);
       break;
     case EXPR_EQEQ:
       expr_print(e -> left);
-      printf(" == ");
+      printf("==");
       expr_print(e -> right);
       break;
     case EXPR_NE:
       expr_print(e -> left);
-      printf(" != ");
+      printf("!=");
       expr_print(e -> right);
       break;
     case EXPR_AND:
       expr_print(e -> left);
-      printf(" && ");
+      printf("&&");
       expr_print(e -> right);
       break;
     case EXPR_OR:
       expr_print(e -> left);
-      printf(" || ");
+      printf("||");
       expr_print(e -> right);
       break;
     case EXPR_NOT:
@@ -193,17 +193,17 @@ void expr_print(struct expr *e) {
       expr_print(e -> next);
       printf(")");
       break;
-    case EXPR_LIST:
-      /*
-       *Expr list defined as linked list of exprs.
-       *each expr is held in e -> left
-       */
-      expr_print(e -> left);
-      if(e -> next) {
-        printf(", ");
-        expr_print(e -> next);
-      }
-      break;
+    /*
+     *case EXPR_LIST:
+     *  [>Expr list defined as linked list of exprs.<]
+     *  [>each expr is held in e -> left<]
+     *  expr_print(e -> left);
+     *  if(e -> next) {
+     *    printf(", ");
+     *    expr_print(e -> next);
+     *  }
+     *  break;
+     */
     case EXPR_TRUE:
       print_boolean(1);
       break;
@@ -225,4 +225,5 @@ void expr_print(struct expr *e) {
       print_string(e -> name);
       break;
   }
+  expr_print(e -> next);
 }

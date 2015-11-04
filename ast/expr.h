@@ -26,7 +26,6 @@ typedef enum {
   EXPR_ARR,
   EXPR_GROUP,
   EXPR_FUNC,
-  EXPR_LIST,
   EXPR_TRUE,
   EXPR_FALSE,
   EXPR_INTLIT,
