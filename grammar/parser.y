@@ -71,16 +71,25 @@ decl: TIDENT TCOL type TEQ expr TSEMI
     ;
 
 type: TSTR
+      { $$ = type_create(TYPE_STRING, 0, 0); }
     | TINT
+      { $$ = type_create(TYPE_INTEGER, 0, 0); }
     | TCHAR
+      { $$ = type_create(TYPE_CHARACTER, 0, 0); }
     | TBOOL
+      { $$ = type_create(TYPE_BOOLEAN, 0, 0); }
     | TARR TLBRACK TINTLIT TRBRACK type /*TODO: see if only fixed sized numbers (integer_literal). i.e., no expressions?*/
+      /*{ $$ = type_create(TYPE_ARR,*/
     | TARR TLBRACK TRBRACK type
+      { $$ = type_create(TYPE_ARR, 0, 0); }
     | TFUNC type TLPAREN optional_param_list TRPAREN
+      { $$ = type_create(TYPE_FUNC, $4, $2); }
     | TVOID
+      { $$ = type_create(TYPE_VOID, 0, 0); }
     ;
 
 optional_param_list: /*nothing*/
+                      { $$ = 0; }
           | param_list
           ;
 
@@ -90,6 +99,7 @@ param_list: param
           ;
 
 param: TIDENT TCOL type
+        { $$ = param_list_create($1, $3, 0); }
      ;
 
 stmt: matched
