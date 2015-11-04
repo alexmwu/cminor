@@ -51,6 +51,11 @@ void yyerror(const char *s) { fprintf(stderr, "PARSE_ERROR at line %d: %s\n", yy
 
 %%
 
+/*
+ *TODO: add last element for list types (allows constant
+ *time linked-list access (useful for left recursion).
+ */
+
 /*Yacc returns (in $$) $1 by default*/
 program: decl_list
        ;
@@ -81,6 +86,7 @@ optional_param_list: /*nothing*/
 
 param_list: param
           | param_list TCOMMA param
+            { curr = $1; while(curr -> next) { curr = curr -> next; } curr -> next = $3; }
           ;
 
 param: TIDENT TCOL type
@@ -123,7 +129,7 @@ optional_stmt_list: /*nothing*/
 
 stmt_list: stmt
          | stmt_list stmt
-            { $1 -> next = $2; }
+            { curr = $1; while(curr -> next) { curr = curr -> next; } curr -> next = $2; }
          ;
 
 /*Everything from expr to expr_list is for expr; the many rules are for operator precedence*/
@@ -220,7 +226,7 @@ optional_expr: /*nothing */
 
 expr_list: expr
          | expr_list TCOMMA expr
-            { $1 -> next = $3; }
+            { curr = $1; while(curr -> next) { curr = curr -> next; } curr -> next = $3; }
          ;
 
 optional_expr_list: /*nothing*/
