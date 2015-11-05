@@ -5,6 +5,7 @@
 #include "type.h"
 #include "stmt.h"
 #include "expr.h"
+#include "library.h"
 #include <stdio.h>
 
 struct decl {

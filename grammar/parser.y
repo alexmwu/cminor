@@ -61,13 +61,19 @@ program: decl_list
        ;
 
 decl_list: decl_list decl
+            { curr = $1; while(curr -> next) { curr = curr -> next; } curr -> next = $2; }
          | /*nothing*/
+            { $$ = 0; }
          ;
 
 decl: TIDENT TCOL type TEQ expr TSEMI
+      { $$ = decl_create($1, $3, $5, 0, 0); }
     | TIDENT TCOL type TSEMI
+      { $$ = decl_create($1, $3, 0, 0, 0); }
     | TIDENT TCOL type TEQ TLBRACE expr_list TRBRACE TSEMI
+      { $$ = decl_create($1, $3, $6, 0, 0); }
     | TIDENT TCOL type TEQ TLBRACE optional_stmt_list TRBRACE
+      { $$ = decl_create($1, $3, 0, $6, 0); }
     ;
 
 type: TSTR
