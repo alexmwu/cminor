@@ -61,7 +61,7 @@ program: decl_list
        ;
 
 decl_list: decl_list decl
-            { curr = $1; while(curr -> next) { curr = curr -> next; } curr -> next = $2; }
+            { struct decl *curr = $1; while(curr -> next) { curr = curr -> next; } curr -> next = $2; }
          | /*nothing*/
             { $$ = 0; }
          ;
@@ -79,7 +79,7 @@ decl: TIDENT TCOL type TEQ expr TSEMI
 type: TSTR
       { $$ = type_create(TYPE_STRING, 0, 0, 0); }
     | TINT
-      { $$ = type_create(TYPE_INTEGER, 0, 0); }
+      { $$ = type_create(TYPE_INTEGER, 0, 0, 0); }
     | TCHAR
       { $$ = type_create(TYPE_CHARACTER, 0, 0, 0); }
     | TBOOL
@@ -88,9 +88,9 @@ type: TSTR
       { $$ = type_create(TYPE_ARRAY_DECL, 0, $5, expr_create_integer_literal($3)); }
       /*{ $$ = type_create(TYPE_ARR,*/
     | TARR TLBRACK TRBRACK type
-      { $$ = type_create(TYPE_ARR, 0, 0, 0); }
+      { $$ = type_create(TYPE_ARRAY, 0, 0, 0); }
     | TFUNC type TLPAREN optional_param_list TRPAREN
-      { $$ = type_create(TYPE_FUNC, $4, $2, 0); }
+      { $$ = type_create(TYPE_FUNCTION, $4, $2, 0); }
     | TVOID
       { $$ = type_create(TYPE_VOID, 0, 0, 0); }
     ;
@@ -102,7 +102,7 @@ optional_param_list: /*nothing*/
 
 param_list: param
           | param_list TCOMMA param
-            { curr = $1; while(curr -> next) { curr = curr -> next; } curr -> next = $3; }
+            { struct param_list *curr = $1; while(curr -> next) { curr = curr -> next; } curr -> next = $3; }
           ;
 
 param: TIDENT TCOL type
@@ -146,7 +146,7 @@ optional_stmt_list: /*nothing*/
 
 stmt_list: stmt
          | stmt_list stmt
-            { curr = $1; while(curr -> next) { curr = curr -> next; } curr -> next = $2; }
+            { struct stmt *curr = $1; while(curr -> next) { curr = curr -> next; } curr -> next = $2; }
          ;
 
 /*Everything from expr to expr_list is for expr; the many rules are for operator precedence*/
@@ -243,7 +243,7 @@ optional_expr: /*nothing */
 
 expr_list: expr
          | expr_list TCOMMA expr
-            { curr = $1; while(curr -> next) { curr = curr -> next; } curr -> next = $3; }
+            { struct expr *curr = $1; while(curr -> next) { curr = curr -> next; } curr -> next = $3; }
          ;
 
 optional_expr_list: /*nothing*/
