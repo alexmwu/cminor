@@ -3,6 +3,7 @@
 #include "grammar/handle.h"
 #include "scanner.yy.h"
 #include "parser.tab.h"
+#include "ast/decl.h"
 
 extern FILE *yyin;
 extern int yyparse();
@@ -73,7 +74,9 @@ int main(int argc, char **argv) {
       }
     }
     else if(strcmp(argv[1], "-parse") == 0) {
-      int outCode = yyparse();
+      struct decl *program = NULL;
+      int outCode = yyparse(program);
+      decl_print(program, 0);
       exit(outCode);
     }
     else {
@@ -83,6 +86,6 @@ int main(int argc, char **argv) {
   else {
     printHelp();
   }
-
+  fclose(yyin);
   return 0;
 }

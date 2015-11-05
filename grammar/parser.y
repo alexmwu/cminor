@@ -6,10 +6,11 @@
 #include "ast/expr.h"
 
 //TODO: better error messages (e.g., line number and line of error)
-void yyerror(const char *s) { fprintf(stderr, "PARSE_ERROR at line %d: %s\n", yylineno, s); }
+void yyerror(struct decl *p, const char *s) { fprintf(stderr, "PARSE_ERROR at line %d: %s\n", yylineno, s); }
 %}
 
 %error-verbose
+%parse-param {struct decl *prog}
 
 %union {
   struct decl *decl;
