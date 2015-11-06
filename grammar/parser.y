@@ -231,7 +231,7 @@ prepost: TIDENT TPLUSPLUS
        ;
 
 group_arr_func: TLPAREN expr TRPAREN
-                { $$ = expr_create(EXPR_GROUP, 0, 0, $2); }
+                { $$ = expr_create(EXPR_GROUP, 0, $2, 0); }
               | TIDENT TLBRACK expr TRBRACK
                 { $$ = expr_create(EXPR_ARR, expr_create_name($1), $3, 0); }
               | TIDENT TLPAREN optional_expr_list TRPAREN

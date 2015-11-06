@@ -183,9 +183,9 @@ void expr_print(struct expr *e) {
       printf("(");
       /*
        *Grouping is defined as one expression around paren
-       *(so just print e->next which should be just one expr)
+       *(so just print e->right which should be just one expr)
        */
-      expr_print(e -> next);
+      expr_print(e -> right);
       printf(")");
       break;
     case EXPR_FUNC:

@@ -40,10 +40,7 @@ struct expr {
 	struct expr *left;
 	struct expr *right;
 
-  /*
-   *used by expr_lists and one off exprs (like groupings
-   *and arrs)
-   */
+  // used by expr_lists
   struct expr *next;
 
 	/* used by leaf expr types */
