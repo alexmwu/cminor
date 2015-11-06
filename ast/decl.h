@@ -9,7 +9,7 @@
 #include <stdio.h>
 
 struct decl {
-	char *name;
+	struct expr *name;
 	struct type *type;
 	struct expr *value;
 	struct stmt *code;
@@ -17,7 +17,7 @@ struct decl {
 	struct decl *next;
 };
 
-struct decl * decl_create( char *name, struct type *t, struct expr *v, struct stmt *c, struct decl *next );
+struct decl * decl_create( struct expr *name, struct type *t, struct expr *v, struct stmt *c, struct decl *next );
 void decl_print( struct decl *d, int indent );
 
 #endif

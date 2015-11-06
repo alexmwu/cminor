@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-struct decl *decl_create(char *name, struct type *t, struct expr *v, struct stmt *c, struct decl *next) {
-  struct decl *d = malloc(sizeof(*d));
+struct decl *decl_create(struct expr *name, struct type *t, struct expr *v, struct stmt *c, struct decl *next) {
+  struct decl *d = malloc(sizeof *d);
   d -> name = name;
   d -> type = t;
   d -> value = v;
@@ -15,7 +15,7 @@ struct decl *decl_create(char *name, struct type *t, struct expr *v, struct stmt
 void decl_print(struct decl *d, int indent) {
   if(!d) return;
   print_indent(indent);
-  print_string(d -> name);
+  expr_print(d -> name);
   printf(": ");
   type_print(d -> type);
   if(d -> value) {

@@ -71,13 +71,13 @@ decl_list: decl_list decl
          ;
 
 decl: TIDENT TCOL type TEQ expr TSEMI
-      { $$ = decl_create($1, $3, $5, 0, 0); }
+      { $$ = decl_create(expr_create_name($1), $3, $5, 0, 0); }
     | TIDENT TCOL type TSEMI
-      { $$ = decl_create($1, $3, 0, 0, 0); }
+      { $$ = decl_create(expr_create_name($1), $3, 0, 0, 0); }
     | TIDENT TCOL type TEQ TLBRACE expr_list TRBRACE TSEMI
-      { $$ = decl_create($1, $3, $6, 0, 0); }
+      { $$ = decl_create(expr_create_name($1), $3, $6, 0, 0); }
     | TIDENT TCOL type TEQ TLBRACE optional_stmt_list TRBRACE
-      { $$ = decl_create($1, $3, 0, $6, 0); }
+      { $$ = decl_create(expr_create_name($1), $3, 0, $6, 0); }
     ;
 
 type: TSTR
@@ -110,7 +110,7 @@ param_list: param
           ;
 
 param: TIDENT TCOL type
-        { $$ = param_list_create($1, $3, 0); }
+        { $$ = param_list_create(expr_create_name($1), $3, 0); }
      ;
 
 stmt: matched

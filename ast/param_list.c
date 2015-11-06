@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-struct param_list *param_list_create(char *name, struct type *type, struct param_list *next) {
+struct param_list *param_list_create(struct expr *name, struct type *type, struct param_list *next) {
   struct param_list *pl = malloc(sizeof *pl);
   pl -> name = name;
   pl -> type = type;
@@ -12,7 +12,7 @@ struct param_list *param_list_create(char *name, struct type *type, struct param
 
 void param_list_print(struct param_list *a) {
   if(!a) return;
-  printf("%s", a -> name);
+  expr_print(a -> name);
   printf(": ");
   type_print(a -> type);
   if(a -> next) {
