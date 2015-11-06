@@ -37,7 +37,7 @@ void yyerror(const char *s) { fprintf(stderr, "PARSE_ERROR at line %d: %s\n", yy
 %token <intLit> TINTLIT
 %token <strLit> TSTRLIT
 %token <charLit> TCHARLIT
-%token <strLit> TIDENT
+%token <ident> TIDENT
 
 %token <token> TPLUSPLUS TMINMIN TEXP TPLUS TMIN TMUL TDIV TMOD
 %token <token> TLT TLE TGT TGE TEQEQ TNE TAND TOR TNOT
@@ -60,7 +60,7 @@ void yyerror(const char *s) { fprintf(stderr, "PARSE_ERROR at line %d: %s\n", yy
 
 /*Yacc returns (in $$) $1 by default*/
 program: decl_list
-       { struct decl *programRoot = $1; }
+       { programRoot = $1; }
        ;
 
 decl_list: decl_list decl
@@ -150,7 +150,7 @@ optional_stmt_list: /*nothing*/
 
 stmt_list: stmt
          | stmt_list stmt
-            { if(!$1) $$ = $1; struct stmt *curr = $1; while(curr -> next) { curr = curr -> next; } curr -> next = $2; }
+            { struct stmt *curr = $1; while(curr -> next) { curr = curr -> next; } curr -> next = $2; }
          ;
 
 /*Everything from expr to expr_list is for expr; the many rules are for operator precedence*/
@@ -247,7 +247,7 @@ optional_expr: /*nothing */
 
 expr_list: expr
          | expr_list TCOMMA expr
-            { if(!$1) $$ = $1; struct expr *curr = $1; while(curr -> next) { curr = curr -> next; } curr -> next = $3; }
+            { struct expr *curr = $1; while(curr -> next) { curr = curr -> next; } curr -> next = $3; }
          ;
 
 optional_expr_list: /*nothing*/
