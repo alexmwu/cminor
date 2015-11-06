@@ -24,7 +24,6 @@ void yyerror(const char *s) { fprintf(stderr, "PARSE_ERROR at line %d: %s\n", yy
   long intLit;
   char *strLit;
   char charLit;
-  char *ident;
 }
 
 %token <token> TINT TSTR TCHAR TBOOL TARR TVOID
@@ -37,7 +36,7 @@ void yyerror(const char *s) { fprintf(stderr, "PARSE_ERROR at line %d: %s\n", yy
 %token <intLit> TINTLIT
 %token <strLit> TSTRLIT
 %token <charLit> TCHARLIT
-%token <ident> TIDENT
+%token <strLit> TIDENT
 
 %token <token> TPLUSPLUS TMINMIN TEXP TPLUS TMIN TMUL TDIV TMOD
 %token <token> TLT TLE TGT TGE TEQEQ TNE TAND TOR TNOT

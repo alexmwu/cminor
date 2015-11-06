@@ -40,15 +40,15 @@ while { return TOKEN(TWHILE); }
 ; { return TOKEN(TSEMI); }
 , { return TOKEN(TCOMMA); }
 {WHITESPACE} { }
-{IDENTIFIER} { yylval.ident = handleString(yytext, 1); return TOKEN(TIDENT); }
+{IDENTIFIER} { yylval.strLit = handleString(yytext, 1); return TIDENT; }
 {CPPCOMMENT} { }
 "/*" { BEGIN(C_COMMENT); }
 <C_COMMENT>"*/" { BEGIN(INITIAL); }
 <C_COMMENT>. { }
 <C_COMMENT><<EOF>> { fprintf(stderr, "SCAN_ERROR: Trailing C-Comment\n"); exit(1); }
-{CHAR} { yylval.charLit = handleChar(yytext); return TOKEN(TCHARLIT); }
-{STRING} { yylval.strLit = handleString(yytext, 0); return TOKEN(TSTRLIT); }
-{INTEGER} { yylval.intLit = handleInt(yytext); return TOKEN(TINTLIT); }
+{CHAR} { yylval.charLit = handleChar(yytext); return TCHARLIT; }
+{STRING} { yylval.strLit = handleString(yytext, 0); return TSTRLIT; }
+{INTEGER} { yylval.intLit = handleInt(yytext); return TINTLIT; }
 : { return TOKEN(TCOL); }
 = { return TOKEN(TEQ); }
 \{ { return TOKEN(TLBRACE); }
