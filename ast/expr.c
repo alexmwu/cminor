@@ -26,6 +26,7 @@ struct expr *expr_create_boolean_literal(int c) {
 
 struct expr *expr_create_integer_literal(int c) {
   struct expr *e = expr_create(EXPR_INTLIT, 0, 0, 0);
+  e -> literal_value = c;
   return e;
 }
 

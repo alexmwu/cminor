@@ -22,7 +22,7 @@ void decl_print(struct decl *d, int indent) {
     printf(" = ");
     // expr_list rather than just one expr
     if(d -> value -> next) {
-      printf("{\n");
+      printf("{");
       expr_print(d -> value);
       printf("}");
     }
@@ -33,7 +33,7 @@ void decl_print(struct decl *d, int indent) {
   }
   else if(d -> code) {
     printf(" = ");
-    printf("{");
+    printf("{\n");
     stmt_print(d -> code, indent + 1);
     printf("}\n");
   }
