@@ -9,8 +9,6 @@ extern FILE *yyin;
 extern int yyparse();
 extern struct decl *programRoot;
 
-extern
-
 // temporary help printout
 void printHelp() {
   printf("The CMinor Compiler\n\n");
@@ -27,7 +25,6 @@ void printGoHelp(char *command) {
 
 int main(int argc, char **argv) {
   yyin = stdin;
-  // TODO: replace if-else statement handling with lib getopt (unistd.h)
   if(argc > 1) {  //arguments on top of program name
     if(argc == 3) {
       yyin = fopen(argv[2], "r");
@@ -77,6 +74,14 @@ int main(int argc, char **argv) {
     else if(strcmp(argv[1], "-parse") == 0) {
       int outCode = yyparse();
       decl_print(programRoot, 0);
+      exit(outCode);
+    }
+    else if(strcmp(argv[1], "-resolve") == 0) {
+      int outCode = yyparse();
+      exit(outCode);
+    }
+    else if(strcmp(argv[1], "-resolve") == 0) {
+      int outCode = yyparse();
       exit(outCode);
     }
     else {
