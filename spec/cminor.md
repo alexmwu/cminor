@@ -3,7 +3,8 @@
 # Overview of C-Minor 2015
 
 </div>
-This md file was generated with [to-markdown](https://domchristie.github.io/to-markdown/)
+This md file was generated with [to-markdown](https://domchristie.github.io/to-markdown/).
+
 This is an informal specification of C-Minor 2015, a C-like language for use in an undergraduate compilers class. C-minor includes expressions, basic control flow, recursive functions, and strict type checking. It is object-code compatible with ordinary C and thus can take advantage of the standard C library, within its defined types. It is similar enough to C to feel familiar, but different enough to give you some sense of alternatives.
 
 This document is deliberately informal: the most precise specification of a language is the compiler itself, and it is your job to write the compiler! It is your job to read the document carefully and extract a formal specification. You will certainly find elements that are unclear or incompletely specified, and you are encouraged to raise questions in class.
