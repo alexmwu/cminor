@@ -5,12 +5,13 @@
 #include "ast/stmt.h"
 #include "ast/expr.h"
 
+struct decl *programRoot;
+
 //TODO: better error messages (e.g., line number and line of error)
-void yyerror(struct decl *p, const char *s) { fprintf(stderr, "PARSE_ERROR at line %d: %s\n", yylineno, s); }
+void yyerror(const char *s) { fprintf(stderr, "PARSE_ERROR at line %d: %s\n", yylineno, s); }
 %}
 
 %error-verbose
-%parse-param {struct decl *prog}
 
 %union {
   struct decl *decl;
@@ -59,10 +60,12 @@ void yyerror(struct decl *p, const char *s) { fprintf(stderr, "PARSE_ERROR at li
 
 /*Yacc returns (in $$) $1 by default*/
 program: decl_list
+       { struct decl *programRoot = $1; }
        ;
 
 decl_list: decl_list decl
             { struct decl *curr = $1; while(curr -> next) { curr = curr -> next; } curr -> next = $2; }
+         | decl
          | /*nothing*/
             { $$ = 0; }
          ;
@@ -147,7 +150,7 @@ optional_stmt_list: /*nothing*/
 
 stmt_list: stmt
          | stmt_list stmt
-            { struct stmt *curr = $1; while(curr -> next) { curr = curr -> next; } curr -> next = $2; }
+            { if(!$1) $$ = $1; struct stmt *curr = $1; while(curr -> next) { curr = curr -> next; } curr -> next = $2; }
          ;
 
 /*Everything from expr to expr_list is for expr; the many rules are for operator precedence*/
@@ -244,7 +247,7 @@ optional_expr: /*nothing */
 
 expr_list: expr
          | expr_list TCOMMA expr
-            { struct expr *curr = $1; while(curr -> next) { curr = curr -> next; } curr -> next = $3; }
+            { if(!$1) $$ = $1; struct expr *curr = $1; while(curr -> next) { curr = curr -> next; } curr -> next = $3; }
          ;
 
 optional_expr_list: /*nothing*/

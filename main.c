@@ -7,6 +7,7 @@
 
 extern FILE *yyin;
 extern int yyparse();
+extern struct decl *programRoot;
 
 extern
 
@@ -74,9 +75,8 @@ int main(int argc, char **argv) {
       }
     }
     else if(strcmp(argv[1], "-parse") == 0) {
-      struct decl *program = NULL;
-      int outCode = yyparse(program);
-      decl_print(program, 0);
+      int outCode = yyparse();
+      decl_print(programRoot, 0);
       exit(outCode);
     }
     else {
