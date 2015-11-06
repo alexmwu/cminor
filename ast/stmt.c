@@ -19,12 +19,12 @@ void stmt_print_body(struct stmt *s, int indent) {
   if(s -> kind == STMT_BLOCK) {
     /*pretty print a space if the next stmt is a block*/
     printf(" ");
-    stmt_print(s -> body, indent);
+    stmt_print(s, indent);
   }
   else {
     /*otherwise, new line*/
     printf("\n");
-    stmt_print(s -> body, indent + 1);
+    stmt_print(s, indent + 1);
   }
 }
 
