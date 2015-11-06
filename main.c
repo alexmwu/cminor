@@ -77,6 +77,7 @@ int main(int argc, char **argv) {
     else if(strcmp(argv[1], "-parse") == 0) {
       int outCode = yyparse();
       decl_print(programRoot, 0);
+      printf("%d", programRoot);
       exit(outCode);
     }
     else {

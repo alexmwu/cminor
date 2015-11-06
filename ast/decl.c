@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 struct decl *decl_create(char *name, struct type *t, struct expr *v, struct stmt *c, struct decl *next) {
-  struct decl *d = malloc(sizeof(d));
+  struct decl *d = malloc(sizeof(*d));
   d -> name = name;
   d -> type = t;
   d -> value = v;
