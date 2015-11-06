@@ -42,7 +42,7 @@ void yyerror(const char *s) { fprintf(stderr, "PARSE_ERROR at line %d: %s\n", yy
 %token <token> TLT TLE TGT TGE TEQEQ TNE TAND TOR TNOT
 
 
-%type <decl> program decl_list decl
+%type <decl> program optional_decl_list decl_list decl
 %type <param_list> optional_param_list param_list param
 %type <stmt> stmt other_stmt matched unmatched optional_stmt_list stmt_list
 %type <expr> expr optional_expr expr_list optional_expr_list assign_expr or_expr and_expr comparison_expr add_expr mul_expr exp_expr unary prepost group_arr_func atomic
@@ -58,15 +58,18 @@ void yyerror(const char *s) { fprintf(stderr, "PARSE_ERROR at line %d: %s\n", yy
  */
 
 /*Yacc returns (in $$) $1 by default*/
-program: decl_list
+program: optional_decl_list
        { programRoot = $1; }
        ;
+
+optional_decl_list: /*nothing*/
+                    { $$ = 0; }
+                  | decl_list
+                  ;
 
 decl_list: decl_list decl
             { struct decl *curr = $1; while(curr -> next) { curr = curr -> next; } curr -> next = $2; }
          | decl
-         | /*nothing*/
-            { $$ = 0; }
          ;
 
 decl: TIDENT TCOL type TEQ expr TSEMI
