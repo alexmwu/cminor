@@ -33,8 +33,8 @@ void stmt_print(struct stmt *s, int indent) {
   print_indent(indent);
   switch(s -> kind) {
     case STMT_DECL:
-      decl_print(s -> decl, indent);
-      printf("\n");
+      decl_print(s -> decl, indent - 1);
+      /*don't print new line because decl always prints new lines*/
       break;
     case STMT_EXPR:
       expr_print(s -> expr);

@@ -91,7 +91,7 @@ type: TSTR
       { $$ = type_create(TYPE_ARRAY_DECL, 0, $5, expr_create_integer_literal($3)); }
       /*{ $$ = type_create(TYPE_ARR,*/
     | TARR TLBRACK TRBRACK type
-      { $$ = type_create(TYPE_ARRAY, 0, 0, 0); }
+      { $$ = type_create(TYPE_ARRAY, 0, $5, 0); }
     | TFUNC type TLPAREN optional_param_list TRPAREN
       { $$ = type_create(TYPE_FUNCTION, $4, $2, 0); }
     | TVOID
