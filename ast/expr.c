@@ -167,6 +167,9 @@ void expr_print(struct expr *e) {
       printf("]");
       printf(" = ");
       expr_print(e -> next);
+      // return early because we expr_print(e -> next) below,
+      // which is just for expr_lists
+      return;
       break;
     case EXPR_EQ:
       expr_print(e -> left);
