@@ -252,7 +252,6 @@ expr_list: expr
 optional_expr_list: /*nothing*/
                     { $$ = 0; }
                   | expr_list
-                    { $$ = $1; }
                   ;
 
 atomic: TTRUE

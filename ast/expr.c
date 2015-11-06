@@ -194,17 +194,6 @@ void expr_print(struct expr *e) {
       expr_print(e -> next);
       printf(")");
       break;
-    /*
-     *case EXPR_LIST:
-     *  [>Expr list defined as linked list of exprs.<]
-     *  [>each expr is held in e -> left<]
-     *  expr_print(e -> left);
-     *  if(e -> next) {
-     *    printf(", ");
-     *    expr_print(e -> next);
-     *  }
-     *  break;
-     */
     case EXPR_TRUE:
       print_boolean(1);
       break;

@@ -38,6 +38,7 @@ void print_integer( int x )
 	printf("%d",x);
 }
 
+/*TODO: write a function to handle \n and \0 so they get printed out like code*/
 void print_string( const char *s )
 {
 	printf("%s",s);

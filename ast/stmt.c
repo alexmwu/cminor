@@ -30,7 +30,9 @@ void stmt_print_body(struct stmt *s, int indent) {
 
 void stmt_print(struct stmt *s, int indent) {
   if(!s) return;
-  print_indent(indent);
+  if(s -> kind != STMT_BLOCK)
+    print_indent(indent);
+
   switch(s -> kind) {
     case STMT_DECL:
       decl_print(s -> decl, indent - 1);
@@ -86,6 +88,7 @@ void stmt_print(struct stmt *s, int indent) {
     case STMT_BLOCK:
       printf("{\n");
       stmt_print(s -> body, indent + 1);
+      print_indent(indent);
       printf("}\n");
       break;
   }
