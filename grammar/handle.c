@@ -38,7 +38,7 @@ char handleChar(char *c) {
 // TODO: optimize for character length (more space than needed)
 char *handleString(char *s, int type) {
   int len = strlen(s);
-  char *retStr = malloc(len * sizeof(char));
+  char *retStr = malloc((len + 1) * sizeof(char));
   char *ptr = s;
   int i = 0;
   while(*ptr) {
@@ -74,7 +74,7 @@ char *handleString(char *s, int type) {
   int newLen = strlen(retStr);
   char *newStr;
   if(newLen < len) {
-    newStr = malloc(newLen * sizeof(char));
+    newStr = malloc((newLen + 1) * sizeof(char));
     strcpy(newStr, retStr);
     free(retStr);
     retStr = newStr;
