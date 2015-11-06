@@ -34,7 +34,7 @@ void type_print(struct type *t) {
       printf("array ");
       printf("[");
       expr_print(t -> expr);
-      printf("]");
+      printf("] ");
       type_print(t -> subtype);
       break;
     case TYPE_FUNCTION:

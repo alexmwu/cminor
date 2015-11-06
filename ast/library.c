@@ -50,7 +50,7 @@ void print_boolean( int b )
 
 void print_character( char c )
 {
-	printf("%c",c);
+	printf("'%c'",c);
 }
 
 int integer_power( int x, int y )

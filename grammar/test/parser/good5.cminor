@@ -1,5 +1,11 @@
 main: function integer () = {
   if ( i = 6) {
+    g = '\i';
     return;
   }
+  if (j) {
+    sadf;
+  }
+  else
+    sadf;
 }
