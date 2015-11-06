@@ -235,7 +235,7 @@ group_arr_func: TLPAREN expr TRPAREN
               | TIDENT TLBRACK expr TRBRACK
                 { $$ = expr_create(EXPR_ARR, expr_create_name($1), $3, 0); }
               | TIDENT TLPAREN optional_expr_list TRPAREN
-                { $$ = expr_create(EXPR_FUNC, expr_create_name($1), 0, $3); }
+                { $$ = expr_create(EXPR_FUNC, expr_create_name($1), $3, 0); }
               | atomic
               ;
 

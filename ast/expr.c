@@ -191,7 +191,7 @@ void expr_print(struct expr *e) {
     case EXPR_FUNC:
       expr_print(e -> left);
       printf("(");
-      expr_print(e -> next);
+      expr_print(e -> right);
       printf(")");
       break;
     case EXPR_TRUE:
