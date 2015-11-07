@@ -95,3 +95,14 @@ void stmt_print(struct stmt *s, int indent) {
   stmt_print(s -> next, indent);
 }
 
+void stmt_free(struct stmt *s) {
+  if(!s) return;
+  decl_free(s -> decl);
+  expr_free(s -> init_expr);
+  expr_free(s -> expr);
+  expr_free(s -> next_expr);
+  stmt_free(s -> body);
+  stmt_free(s -> else_body);
+  stmt_free(s -> next);
+  free(s);
+}

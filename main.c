@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
       int outCode = yyparse();
       exit(outCode);
     }
-    else if(strcmp(argv[1], "-resolve") == 0) {
+    else if(strcmp(argv[1], "-typecheck") == 0) {
       int outCode = yyparse();
       exit(outCode);
     }

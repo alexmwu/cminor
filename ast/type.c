@@ -49,3 +49,11 @@ void type_print(struct type *t) {
       break;
   }
 }
+
+void type_free(struct type *t) {
+  if(!t) return;
+  param_list_free(t -> params);
+  type_free(t -> subtype);
+  expr_free(t -> expr);
+  free(t);
+}

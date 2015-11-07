@@ -42,3 +42,14 @@ void decl_print(struct decl *d, int indent) {
   }
   decl_print(d -> next, indent);
 }
+
+void decl_free(struct decl *d) {
+  if(!d) return;
+  expr_free(d -> name);
+  type_free(d -> type);
+  expr_free(d -> value);
+  stmt_free(d -> code);
+  symbol_free(d -> symbol);
+  decl_free(d -> next);
+  free(d);
+}

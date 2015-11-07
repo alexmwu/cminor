@@ -5,6 +5,7 @@
 #include "type.h"
 #include "stmt.h"
 #include "expr.h"
+#include "symbol.h"
 #include "library.h"
 #include <stdio.h>
 
@@ -19,6 +20,7 @@ struct decl {
 
 struct decl * decl_create( struct expr *name, struct type *t, struct expr *v, struct stmt *c, struct decl *next );
 void decl_print( struct decl *d, int indent );
+void decl_free(struct decl *d);
 
 #endif
 

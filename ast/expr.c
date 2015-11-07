@@ -224,3 +224,12 @@ void expr_print(struct expr *e) {
     expr_print(e -> next);
   }
 }
+
+void expr_free(struct expr *e) {
+  if(!e) return;
+  expr_free(e -> left);
+  expr_free(e -> right);
+  expr_free(e -> next);
+  symbol_free(e -> symbol);
+  free(e);
+}
