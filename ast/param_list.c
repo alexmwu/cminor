@@ -7,6 +7,7 @@ struct param_list *param_list_create(struct expr *name, struct type *type, struc
   pl -> name = name;
   pl -> type = type;
   pl -> next = next;
+  pl -> symbol = 0;
   return pl;
 }
 

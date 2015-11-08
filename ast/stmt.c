@@ -12,6 +12,7 @@ struct stmt *stmt_create(stmt_kind_t kind, struct decl *d, struct expr *init_exp
   s -> next_expr = next_expr;
   s -> body = body;
   s -> else_body = else_body;
+  s -> next = 0;
   return s;
 }
 

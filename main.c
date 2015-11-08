@@ -76,14 +76,17 @@ int main(int argc, char **argv) {
     else if(strcmp(argv[1], "-parse") == 0) {
       int outCode = yyparse();
       decl_print(programRoot, 0);
+      decl_free(programRoot);
       exit(outCode);
     }
     else if(strcmp(argv[1], "-resolve") == 0) {
       int outCode = yyparse();
+      decl_free(programRoot);
       exit(outCode);
     }
     else if(strcmp(argv[1], "-typecheck") == 0) {
       int outCode = yyparse();
+      decl_free(programRoot);
       exit(outCode);
     }
     else {

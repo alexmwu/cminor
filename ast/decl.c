@@ -9,6 +9,7 @@ struct decl *decl_create(struct expr *name, struct type *t, struct expr *v, stru
   d -> value = v;
   d -> code = c;
   d -> next = next;
+  d -> symbol = 0;
   return d;
 }
 
