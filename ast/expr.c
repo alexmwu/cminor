@@ -230,6 +230,8 @@ void expr_free(struct expr *e) {
   expr_free(e -> left);
   expr_free(e -> right);
   expr_free(e -> next);
+  /*free(e -> name);*/
   symbol_free(e -> symbol);
+  /*free(e -> string_literal);*/
   free(e);
 }

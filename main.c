@@ -53,16 +53,18 @@ int main(int argc, char **argv) {
         }
         switch (token) {
           case TCHARLIT:
-          printf("CHARACTER_LITERAL: %c\n", handleChar(yytext));
+          printf("CHARACTER_LITERAL: %c\n", yylval.charLit);
           break;
           case TSTRLIT:
-          printf("STRING_LITERAL: %s\n", handleString(yytext, 0));
+          printf("STRING_LITERAL: %s\n", yylval.strLit);
+          free(yylval.strLit);
           break;
           case TIDENT:
-          printf("IDENTIFIER: %s\n", handleString(yytext, 1));
+          printf("IDENTIFIER: %s\n", yylval.strLit);
+          free(yylval.strLit);
           break;
           case TINTLIT:
-          printf("INTEGER_LITERAL: %ld\n", handleInt(yytext));
+          printf("INTEGER_LITERAL: %ld\n", yylval.intLit);
           break;
           default:
           // a bit hacky: Bison tokens start at 258
