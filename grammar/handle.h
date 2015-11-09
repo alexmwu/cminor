@@ -1,5 +1,5 @@
-#ifndef _HANDLE_H
-#define _TOKEN_H
+#ifndef HANDLE_H
+#define HANDLE_H
 
 char handleChar(char *c);
 char *handleString(char *s, int type);

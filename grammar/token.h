@@ -3,8 +3,8 @@
  * http://stackoverflow.com/questions/9907160/how-to-convert-enum-names-to-string-in-c
  */
 
-#ifndef _TOKEN_H
-#define _TOKEN_H
+#ifndef TOKEN_H
+#define TOKEN_H
 
 #define FOREACH_TOKEN(MACRO) \
   MACRO(INTEGER), \

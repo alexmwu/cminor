@@ -1,5 +1,5 @@
-#ifndef _LIBRARY_H
-#define _LIBRARY_H
+#ifndef LIBRARY_H
+#define LIBRARY_H
 
 void print_integer(int x);
 void print_string(const char *s);
