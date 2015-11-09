@@ -9,6 +9,8 @@ struct expr *expr_create(expr_t kind, struct expr *left, struct expr *right, str
   e -> left = left;
   e -> right = right;
   e -> next = next;
+  e -> name = 0;
+  e -> string_literal = 0;
   e -> symbol = 0;
   return e;
 }
