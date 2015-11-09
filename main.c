@@ -14,9 +14,12 @@ void printHelp() {
   printf("The CMinor Compiler\n\n");
   printf("usage: cminor [--help|<command>] [filename]\n\n");
   printf("*Filenames are optional; the default is stdin\n");
+  printf("*All lower commands make use of steps in previous commands (e.g., -parse uses -scan code)\n");
   printf("These are optional commands for the CMinor compiler:\n");
   printf("\t-scan\tRun an optional file through CMinor scanner\n");
   printf("\t-parse\tRun an optional file through CMinor parser\n");
+  printf("\t-resolve\tRun an optional file through CMinor resolver and see if there are name resolution errors\n");
+  printf("\t-typecheck\tRun an optional file through CMinor typechecker and see if there are type errors\n");
 }
 
 void printGoHelp(char *command) {
