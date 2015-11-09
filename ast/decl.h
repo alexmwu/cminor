@@ -7,7 +7,6 @@
 #include "expr.h"
 #include "symbol.h"
 #include "library.h"
-#include <stdio.h>
 
 struct decl {
 	struct expr *name;
