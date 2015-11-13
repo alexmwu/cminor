@@ -107,3 +107,12 @@ void stmt_free(struct stmt *s) {
   stmt_free(s -> next);
   free(s);
 }
+
+void stmt_resolve(struct stmt *s) {
+  if(!s) return;
+  switch(s -> kind) {
+    case STMT_DECL:
+      decl_resolve(s -> decl);
+      break;
+  }
+}

@@ -24,7 +24,7 @@ void remove_scopes(struct hash_table *ht) {
   char **key;
   struct symbol *value;
   hash_table_firstkey(ht);
-  while(hash_table_nextkey(ht, key, (void **) &value)){
+  while(hash_table_nextkey(ht, key, (void **) &value)) {
     free(value);
   }
 }

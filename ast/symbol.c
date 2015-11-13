@@ -15,3 +15,16 @@ void symbol_free(struct symbol *s) {
   free(s -> name);
   free(s);
 }
+
+const char *symbol_kind_print(symbol_t k) {
+  switch(k) {
+    case SYMBOL_LOCAL:
+      return "local";
+    case SYMBOL_PARAM:
+      return "param";
+    case SYMBOL_GLOBAL:
+      return "global";
+    default:
+      return 0;
+  }
+}

@@ -11,6 +11,7 @@ struct scope_list {
 };
 
 struct scope_list *curr_scope;
+int resolve_error_count;
 
 void scope_enter();
 void scope_exit();

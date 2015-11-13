@@ -19,5 +19,6 @@ struct symbol {
 
 struct symbol * symbol_create( symbol_t kind, struct type *type, char *name );
 void symbol_free(struct symbol *s);
+const char *symbol_kind_print(symbol_t k);
 
 #endif

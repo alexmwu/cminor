@@ -238,3 +238,25 @@ void expr_free(struct expr *e) {
   free((char *) e -> string_literal);
   free(e);
 }
+
+void expr_resolve(struct expr *e) {
+  if(!e) return;
+  expr_resolve(e -> left);
+  expr_resolve(e -> right);
+  expr_resolve(e -> next);
+  if(e -> kind == EXPR_IDENT) {
+    struct symbol *s = scope_lookup(e -> name);
+    if(s) {
+      e -> symbol = s;
+      if(s -> kind == SYMBOL_GLOBAL)
+        printf("%s resolves to global %s\n", e -> name, s -> name);
+      else {
+        printf("%s resolves to %s %d\n", e -> name, symbol_kind_print(s -> kind), s -> which);
+      }
+    }
+    else {
+      fprintf(stderr, "resolve error: %s is not defined\n", e -> name);
+      resolve_error_count++;
+    }
+  }
+}
