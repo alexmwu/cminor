@@ -20,6 +20,7 @@ struct decl {
 struct decl * decl_create( struct expr *name, struct type *t, struct expr *v, struct stmt *c, struct decl *next );
 void decl_print( struct decl *d, int indent );
 void decl_free(struct decl *d);
+void decl_resolve(struct decl *d, symbol_t kind);
 
 #endif
 

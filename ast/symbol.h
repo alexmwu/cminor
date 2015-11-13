@@ -14,10 +14,10 @@ struct symbol {
 	symbol_t kind;
 	int which;
 	struct type *type;
-	char *name;
+	struct expr *name;
 };
 
-struct symbol * symbol_create( symbol_t kind, struct type *type, char *name );
+struct symbol * symbol_create( symbol_t kind, struct type *type, expr *name );
 void symbol_free(struct symbol *s);
 const char *symbol_kind_print(symbol_t k);
 

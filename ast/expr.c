@@ -249,13 +249,13 @@ void expr_resolve(struct expr *e) {
     if(s) {
       e -> symbol = s;
       if(s -> kind == SYMBOL_GLOBAL)
-        printf("%s resolves to global %s\n", e -> name, s -> name);
+        printf("%s resolves to global %s\n", e -> name, s -> name -> name);
       else {
         printf("%s resolves to %s %d\n", e -> name, symbol_kind_print(s -> kind), s -> which);
       }
     }
     else {
-      fprintf(stderr, "resolve error: %s is not defined\n", e -> name);
+      fprintf(stderr, "RESOLVE_ERROR: %s is not defined\n", e -> name);
       resolve_error_count++;
     }
   }

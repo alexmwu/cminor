@@ -20,7 +20,7 @@ void scope_enter() {
   curr_scope = new_scope;
 }
 
-void remove_scopes(struct hash_table *ht) {
+void scope_table_delete(struct hash_table *ht) {
   char **key;
   struct symbol *value;
   hash_table_firstkey(ht);
@@ -30,7 +30,7 @@ void remove_scopes(struct hash_table *ht) {
 }
 
 void scope_exit() {
-  remove_scopes(curr_scope -> table);
+  scope_table_delete(curr_scope -> table);
   hash_table_clear(curr_scope -> table);
   hash_table_delete(curr_scope -> table);
   struct scope_list *exited_scope = curr_scope;
@@ -41,12 +41,21 @@ void scope_exit() {
 void scope_bind(const char *name, struct symbol *s) {
   int outCode = hash_table_insert(curr_scope -> table, name, s);
   if(!outCode) {
-    fprintf(stderr, "Error in adding a key to the hash table\n");
-    exit(1);
+    fprintf(stderr, "RESOLVE_ERROR: redeclaration of %s.\n", name);
+    resolve_error_count++;
   }
 }
 
 struct symbol *scope_lookup(const char *name) {
-  return hash_table_lookup(curr_scope -> table, name);
+  struct symbol *tmp;
+  // pointer to current table to look at
+  struct scope_list *ptr = curr_scope;
+  // keep doing while can't find the key or
+  // until it hits the global symbol table
+  do {
+    tmp = hash_table_lookup(curr_scope -> table, name);
+    ptr = ptr -> prev;
+  } while(!tmp && ptr);
+  return tmp;
 }
 
