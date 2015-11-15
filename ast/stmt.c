@@ -112,7 +112,7 @@ void stmt_resolve(struct stmt *s) {
   if(!s) return;
   switch(s -> kind) {
     case STMT_DECL:
-      decl_resolve(s -> decl);
+      decl_resolve(s -> decl, SYMBOL_LOCAL);
       break;
     case STMT_EXPR:
       expr_resolve(s -> expr);

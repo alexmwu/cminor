@@ -21,12 +21,31 @@ void scope_enter() {
 }
 
 void scope_table_delete(struct hash_table *ht) {
-  char **key;
+  char **key = malloc(sizeof *key);
   struct symbol *value;
   hash_table_firstkey(ht);
   while(hash_table_nextkey(ht, key, (void **) &value)) {
     free(value);
   }
+  free(key);
+}
+
+void scope_table_print(struct hash_table *ht, char **key, struct symbol *value) {
+  hash_table_firstkey(ht);
+  while(hash_table_nextkey(ht, key, (void **) &value)) {
+    symbol_print(value);
+  }
+}
+
+void scope_print_all(struct hash_table *ht) {
+  char **key = malloc(sizeof *key);
+  struct symbol *value;
+  struct scope_list *ptr = curr_scope;
+  while(ptr) {
+    scope_table_print(ptr -> table, key, value);
+    ptr = ptr -> prev;
+  }
+  free(key);
 }
 
 void scope_exit() {

@@ -1,5 +1,6 @@
 #include "symbol.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 struct symbol *symbol_create(symbol_t kind, struct type *type, struct expr *name) {
   struct symbol *s = malloc(sizeof s);
@@ -24,7 +25,29 @@ const char *symbol_kind_print(symbol_t k) {
       return "param";
     case SYMBOL_GLOBAL:
       return "global";
-    default:
-      return 0;
   }
 }
+
+void symbol_print(struct symbol *s) {
+  switch(s -> kind) {
+    case SYMBOL_LOCAL:
+      printf("local %d ", s -> which);
+      expr_print(s -> name);
+      printf(" of type ");
+      type_print(s -> type);
+      break;
+    case SYMBOL_PARAM:
+      printf("param %d ", s -> which);
+      expr_print(s -> name);
+      printf(" of type ");
+      type_print(s -> type);
+      break;
+    case SYMBOL_GLOBAL:
+      printf("global ");
+      expr_print(s -> name);
+      printf(" of type ");
+      type_print(s -> type);
+      break;
+  }
+}
+

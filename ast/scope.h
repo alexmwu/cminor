@@ -18,6 +18,7 @@ void scope_exit();
 void scope_bind(const char *name, struct symbol *s);
 // returns null if symbol not found; need to handle
 struct symbol *scope_lookup(const char *name);
+void scope_print_all(struct hash_table *ht);
 
 #endif
 

@@ -84,6 +84,9 @@ int main(int argc, char **argv) {
     }
     else if(strcmp(argv[1], "-resolve") == 0) {
       int outCode = yyparse();
+      scope_enter();
+      decl_resolve(programRoot, SYMBOL_GLOBAL);
+      scope_exit();
       decl_free(programRoot);
       exit(outCode);
     }
