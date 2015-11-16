@@ -1,5 +1,8 @@
+c: void;
+
 main: function void () = {
   a: integer;
   if(a)
     b: integer = 5;
+    c;
 }

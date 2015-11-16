@@ -30,6 +30,7 @@ const char *symbol_kind_print(symbol_t k) {
 }
 
 void symbol_print(struct symbol *s) {
+  if(!s) return;
   switch(s -> kind) {
     case SYMBOL_LOCAL:
       printf("local %d ", s -> which);

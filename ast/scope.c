@@ -30,20 +30,20 @@ void scope_table_delete(struct hash_table *ht) {
   free(key);
 }
 
-void scope_table_print(struct hash_table *ht, char **key, struct symbol *value) {
+void scope_print_table(struct hash_table *ht, char **key, struct symbol *value) {
   hash_table_firstkey(ht);
   while(hash_table_nextkey(ht, key, (void **) &value)) {
     symbol_print(value);
   }
 }
 
-void scope_print_all(struct hash_table *ht) {
+void scope_print_all() {
   char **key = malloc(sizeof *key);
   struct symbol *value;
   struct scope_list *ptr = curr_scope;
   while(ptr) {
     printf("New scope:\n");
-    scope_table_print(ptr -> table, key, value);
+    scope_print_table(ptr -> table, key, value);
     ptr = ptr -> prev;
   }
   free(key);
@@ -70,10 +70,10 @@ struct symbol *scope_lookup(const char *name) {
   struct symbol *tmp;
   // pointer to current table to look at
   struct scope_list *ptr = curr_scope;
-  // keep doing while can't find the key or
-  // until it hits the global symbol table
+  // keep doing while can't find the key and
+  // the symbol table ptr is not null
   do {
-    tmp = hash_table_lookup(curr_scope -> table, name);
+    tmp = hash_table_lookup(ptr -> table, name);
     ptr = ptr -> prev;
   } while(!tmp && ptr);
   return tmp;
