@@ -7,13 +7,14 @@ struct symbol *symbol_create(symbol_t kind, struct type *type, struct expr *name
   s -> kind = kind;
   s -> type = type;
   s -> name = name;
+  s -> which = 0;
   return s;
 }
 
 void symbol_free(struct symbol *s) {
   if(!s) return;
   type_free(s -> type);
-  free(s -> name);
+  expr_free(s -> name);
   free(s);
 }
 

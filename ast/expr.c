@@ -234,7 +234,8 @@ void expr_free(struct expr *e) {
   expr_free(e -> right);
   expr_free(e -> next);
   free((char *) e -> name);
-  symbol_free(e -> symbol);
+  // should not free as decl "owns" the object
+  /*symbol_free(e -> symbol);*/
   free((char *) e -> string_literal);
   free(e);
 }
@@ -246,7 +247,6 @@ void expr_resolve(struct expr *e) {
   expr_resolve(e -> next);
   if(e -> kind == EXPR_IDENT) {
     struct symbol *s = scope_lookup(e -> name);
-  symbol_print(s);
     if(s) {
       e -> symbol = s;
       if(s -> kind == SYMBOL_GLOBAL)
