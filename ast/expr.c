@@ -246,6 +246,7 @@ void expr_resolve(struct expr *e) {
   expr_resolve(e -> next);
   if(e -> kind == EXPR_IDENT) {
     struct symbol *s = scope_lookup(e -> name);
+  symbol_print(s);
     if(s) {
       e -> symbol = s;
       if(s -> kind == SYMBOL_GLOBAL)

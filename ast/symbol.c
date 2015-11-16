@@ -35,18 +35,21 @@ void symbol_print(struct symbol *s) {
       expr_print(s -> name);
       printf(" of type ");
       type_print(s -> type);
+      printf("\n");
       break;
     case SYMBOL_PARAM:
       printf("param %d ", s -> which);
       expr_print(s -> name);
       printf(" of type ");
       type_print(s -> type);
+      printf("\n");
       break;
     case SYMBOL_GLOBAL:
       printf("global ");
       expr_print(s -> name);
       printf(" of type ");
       type_print(s -> type);
+      printf("\n");
       break;
   }
 }

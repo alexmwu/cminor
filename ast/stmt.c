@@ -108,25 +108,25 @@ void stmt_free(struct stmt *s) {
   free(s);
 }
 
-void stmt_resolve(struct stmt *s) {
+void stmt_resolve(struct stmt *s, int which) {
   if(!s) return;
   switch(s -> kind) {
     case STMT_DECL:
-      decl_resolve(s -> decl, SYMBOL_LOCAL);
+      decl_resolve(s -> decl, SYMBOL_LOCAL, which);
       break;
     case STMT_EXPR:
       expr_resolve(s -> expr);
       break;
     case STMT_IF_ELSE:
       expr_resolve(s -> expr);
-      stmt_resolve(s -> body);
-      stmt_resolve(s -> else_body);
+      stmt_resolve(s -> body, which);
+      stmt_resolve(s -> else_body, which);
       break;
     case STMT_FOR:
       expr_resolve(s -> init_expr);
       expr_resolve(s -> expr);
       expr_resolve(s -> next_expr);
-      stmt_resolve(s -> body);
+      stmt_resolve(s -> body, which);
       break;
     case STMT_WHILE:
       break;
@@ -138,8 +138,9 @@ void stmt_resolve(struct stmt *s) {
       break;
     case STMT_BLOCK:
       scope_enter();
-      stmt_resolve(s -> body);
+      stmt_resolve(s -> body, 1);
       scope_exit();
       break;
   }
+  stmt_resolve(s -> next, which + 1);
 }

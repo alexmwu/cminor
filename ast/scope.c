@@ -42,6 +42,7 @@ void scope_print_all(struct hash_table *ht) {
   struct symbol *value;
   struct scope_list *ptr = curr_scope;
   while(ptr) {
+    printf("New scope:\n");
     scope_table_print(ptr -> table, key, value);
     ptr = ptr -> prev;
   }

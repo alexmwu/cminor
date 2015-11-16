@@ -1,0 +1,5 @@
+main: function integer () = {
+  a: function integer();
+  b: function integer();
+  c: integer;
+}

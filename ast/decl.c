@@ -55,9 +55,10 @@ void decl_free(struct decl *d) {
   free(d);
 }
 
-void decl_resolve(struct decl *d, symbol_t kind) {
+void decl_resolve(struct decl *d, symbol_t kind, int which) {
   if(!d) return;
   struct symbol *sym = symbol_create(kind, d -> type, d -> name);
+  sym -> which = which;
   struct symbol *old = scope_lookup(d -> name -> name);
   if(old) {
     fprintf(stderr, "%s is a redeclaration. Already declared as %s variable\n", d -> name -> name, symbol_kind_print(old -> kind));
@@ -70,9 +71,10 @@ void decl_resolve(struct decl *d, symbol_t kind) {
   if(d -> code) {
     scope_enter();
     param_list_resolve(d -> type -> params, 1);
-    stmt_resolve(d -> code);
+    stmt_resolve(d -> code, 1);
     scope_exit();
   }
-  decl_resolve(d -> next, kind);
+  scope_print_all(curr_scope -> table);
+  decl_resolve(d -> next, kind, which);
 }
 
