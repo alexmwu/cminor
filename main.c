@@ -83,12 +83,18 @@ int main(int argc, char **argv) {
       exit(outCode);
     }
     else if(strcmp(argv[1], "-resolve") == 0) {
-      int outCode = yyparse();
+      yyparse();
       scope_enter();
       decl_resolve(programRoot, SYMBOL_GLOBAL, 0);
       scope_exit();
       decl_free(programRoot);
-      exit(outCode);
+      if(resolve_error_count) {
+        printf("Resolve error count: %d\n", resolve_error_count);
+        exit(1);
+      }
+      else {
+        exit(0);
+      }
     }
     else if(strcmp(argv[1], "-typecheck") == 0) {
       int outCode = yyparse();

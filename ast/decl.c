@@ -74,7 +74,6 @@ void decl_resolve(struct decl *d, symbol_t kind, int which) {
     stmt_resolve(d -> code, 1);
     scope_exit();
   }
-  scope_print_all(curr_scope -> table);
   decl_resolve(d -> next, kind, which);
 }
 
