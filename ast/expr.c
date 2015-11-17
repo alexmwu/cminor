@@ -9,6 +9,7 @@ struct expr *expr_create(expr_t kind, struct expr *left, struct expr *right, str
   e -> left = left;
   e -> right = right;
   e -> next = next;
+  e -> arr_next = 0;
   e -> name = 0;
   e -> string_literal = 0;
   e -> symbol = 0;
@@ -47,6 +48,7 @@ struct expr *expr_create_string_literal(const char *str) {
 
 void expr_print(struct expr *e) {
   if(!e) return;
+  struct expr *curr_arr;
   switch(e -> kind) {
     case EXPR_PLUS:
       expr_print(e -> left);
@@ -165,6 +167,13 @@ void expr_print(struct expr *e) {
        *and next of expr (what it is set to).
        */
       expr_print(e -> left);
+      curr_arr = e -> arr_next;
+      while(curr_arr) {
+        printf("[");
+        expr_print(curr_arr);
+        printf("]");
+        curr_arr = curr_arr -> arr_next;
+      }
       printf("[");
       expr_print(e -> right);
       printf("]");
@@ -181,9 +190,13 @@ void expr_print(struct expr *e) {
       break;
     case EXPR_ARR:
       expr_print(e -> left);
-      printf("[");
-      expr_print(e -> right);
-      printf("]");
+      curr_arr = e -> arr_next;
+      while(curr_arr) {
+        printf("[");
+        expr_print(curr_arr);
+        printf("]");
+        curr_arr = curr_arr -> arr_next;
+      }
       break;
     case EXPR_GROUP:
       printf("(");
@@ -233,6 +246,7 @@ void expr_free(struct expr *e) {
   expr_free(e -> left);
   expr_free(e -> right);
   expr_free(e -> next);
+  expr_free(e -> arr_next);
   free((char *) e -> name);
   // should not free as decl "owns" the object
   /*symbol_free(e -> symbol);*/

@@ -45,7 +45,7 @@ void yyerror(const char *s) { fprintf(stderr, "PARSE_ERROR at line %d: %s\n", yy
 %type <decl> program optional_decl_list decl_list decl
 %type <param_list> optional_param_list param_list param
 %type <stmt> stmt other_stmt matched unmatched optional_stmt_list stmt_list
-%type <expr> expr optional_expr expr_list optional_expr_list assign_expr or_expr and_expr comparison_expr add_expr mul_expr exp_expr unary prepost group_arr_func atomic
+%type <expr> expr optional_expr expr_list optional_expr_list assign_expr or_expr and_expr comparison_expr add_expr mul_expr exp_expr unary prepost group_arr_func arr_index_list arr_index atomic
 %type <type> type
 
 %start program
@@ -161,8 +161,8 @@ expr: assign_expr
 
 assign_expr: TIDENT TEQ or_expr
               { $$ = expr_create(EXPR_EQ, expr_create_name($1), $3, 0); }
-           | TIDENT TLBRACK expr TRBRACK TEQ or_expr
-              { $$ = expr_create(EXPR_ARREQ, expr_create_name($1), $3, $6); }
+           | TIDENT arr_index_list TEQ or_expr
+              { struct expr *curr = expr_create(EXPR_ARREQ, expr_create_name($1), 0, $4); curr -> arr_next = $2; $$ = curr; }
            | or_expr
            ;
 
@@ -235,8 +235,8 @@ prepost: TIDENT TPLUSPLUS
 
 group_arr_func: TLPAREN expr TRPAREN
                 { $$ = expr_create(EXPR_GROUP, 0, $2, 0); }
-              | TIDENT TLBRACK expr TRBRACK
-                { $$ = expr_create(EXPR_ARR, expr_create_name($1), $3, 0); }
+              | TIDENT arr_index_list
+                { struct expr *curr = expr_create(EXPR_ARR, expr_create_name($1), 0, 0); curr -> arr_next = $2; $$ = curr; }
               | TIDENT TLPAREN optional_expr_list TRPAREN
                 { $$ = expr_create(EXPR_FUNC, expr_create_name($1), $3, 0); }
               | atomic
@@ -246,6 +246,16 @@ optional_expr: /*nothing */
                 { $$ = 0; }
              | expr
              ;
+
+/*put array index lists in right as a linked list*/
+arr_index_list: arr_index
+              | arr_index_list arr_index
+                { struct expr *curr = $1; while(curr -> arr_next) { curr = curr -> arr_next; } curr -> arr_next = $2; }
+              ;
+
+arr_index: TLBRACK expr TRBRACK
+            { $$ = $2; }
+         ;
 
 expr_list: expr
          | expr_list TCOMMA expr
