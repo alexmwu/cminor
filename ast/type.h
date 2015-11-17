@@ -22,6 +22,8 @@ struct type {
   struct expr *expr;
 };
 
+int type_error_count;
+
 struct type * type_create( type_kind_t kind, struct param_list *params, struct type *subtype , struct expr *expr );
 void type_print( struct type *t );
 void type_free(struct type *t);
@@ -31,3 +33,4 @@ int type_compare(struct type *a, struct type *b);
 void type_delete(struct type *t);
 
 #endif
+

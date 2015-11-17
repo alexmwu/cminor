@@ -57,31 +57,35 @@ void type_free(struct type *t) {
   expr_free(t -> expr);
   free(t);
 }
-/*
- *
- *struct type *type_copy(struct type *t) {
- *
- *}
- *
- *int type_compare(struct type *a, struct type *b) {
- *  if(a -> kind == b -> kind) {
- *    if(a -> kind == TYPE_ARRAY) {
- *
- *    }
- *    else if(a -> kind == TYPE_ARRAY_DECL) {
- *
- *    }
- *    else if(a -> kind == TYPE_FUNCTION) {
- *
- *    }
- *    else
- *      return 1;
- *  }
- *  return 0;
- *}
- *
- *void type_delete(struct type *t) {
- *
- *
- *}
- */
+
+// will cause issues upon freeing
+struct type *type_copy(struct type *t) {
+  struct type *new = malloc(sizeof *new);
+  new -> kind = t -> kind;
+  new -> params = t -> params;
+  new -> subtype = t -> subtype;
+  new -> expr = t -> expr;
+  return new;
+}
+
+int type_compare(struct type *a, struct type *b) {
+  if(a -> kind == b -> kind) {
+    switch(a -> kind) {
+      case TYPE_ARRAY:
+        break;
+      case TYPE_ARRAY_DECL:
+        break;
+      case TYPE_FUNCTION:
+        break;
+      default:
+        return 1;
+        break;
+    }
+  }
+  return 0;
+}
+
+void type_delete(struct type *t) {
+
+
+}
