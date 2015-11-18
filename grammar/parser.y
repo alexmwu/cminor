@@ -90,8 +90,8 @@ type: TSTR
       { $$ = type_create(TYPE_CHARACTER, 0, 0, 0); }
     | TBOOL
       { $$ = type_create(TYPE_BOOLEAN, 0, 0, 0); }
-    | TARR TLBRACK TINTLIT TRBRACK type /*TODO: see if only fixed sized numbers (integer_literal). i.e., no expressions?*/
-      { $$ = type_create(TYPE_ARRAY_DECL, 0, $5, expr_create_integer_literal($3)); }
+    | TARR TLBRACK expr TRBRACK type /*TODO: see if only fixed sized numbers (integer_literal). i.e., no expressions?*/
+      { $$ = type_create(TYPE_ARRAY_DECL, 0, $5, $3); }
       /*{ $$ = type_create(TYPE_ARR,*/
     | TARR TLBRACK TRBRACK type
       { $$ = type_create(TYPE_ARRAY, 0, $4, 0); }
@@ -162,7 +162,7 @@ expr: assign_expr
 assign_expr: TIDENT TEQ or_expr
               { $$ = expr_create(EXPR_EQ, expr_create_name($1), $3, 0); }
            | TIDENT arr_index_list TEQ or_expr
-              { struct expr *curr = expr_create(EXPR_ARREQ, expr_create_name($1), 0, $4); curr -> arr_next = $2; $$ = curr; }
+              { struct expr *curr = expr_create(EXPR_ARREQ, expr_create_name($1), $4, 0); curr -> arr_next = $2; $$ = curr; }
            | or_expr
            ;
 

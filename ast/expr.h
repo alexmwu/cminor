@@ -43,7 +43,6 @@ struct expr {
 
   // used by expr_lists
   struct expr *next;
-  // used by next array
   struct expr *arr_next;
 
 	/* used by leaf expr types */

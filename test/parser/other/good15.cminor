@@ -1,3 +1,5 @@
+@badtest
+// no while loops in cminor
 /*
 This program displays a square bouncing around on the screen.
 Click to reset the square in a new place.

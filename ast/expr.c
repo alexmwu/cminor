@@ -174,14 +174,8 @@ void expr_print(struct expr *e) {
         printf("]");
         curr_arr = curr_arr -> arr_next;
       }
-      printf("[");
-      expr_print(e -> right);
-      printf("]");
       printf(" = ");
-      expr_print(e -> next);
-      // return early because we expr_print(e -> next) below,
-      // which is just for expr_lists
-      return;
+      expr_print(e -> right);
       break;
     case EXPR_EQ:
       expr_print(e -> left);

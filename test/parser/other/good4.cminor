@@ -1,3 +1,5 @@
+@badtest
+// no postincrement for expressions (only identifiers in C)
 // produces correct precedence of operations
 
 main: function void() = {

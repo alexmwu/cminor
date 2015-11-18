@@ -1,1 +1,1 @@
-a: array[5] array[5] array [] boolean = {5<4, 5*5, a[1], a[true], x++, 5 == 5, x = 5, 2 || true, "dsfds" && 'c'};
+a: array[5] array[5*x] array [] boolean = {5<4, 5*5, a[1], a[true], x++, 5 == 5, x = 5, 2 || true, "dsfds" && 'c'};

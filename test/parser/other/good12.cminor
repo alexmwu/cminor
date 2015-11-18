@@ -1,3 +1,4 @@
+@badtest
 //test expressions inside of array indexes
 arr:array [5] integer = {0,1,2,3,4};
 
