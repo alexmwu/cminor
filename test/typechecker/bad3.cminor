@@ -3,3 +3,4 @@ main: function integer () = {
   arr[4<3] = 5;
   arr[4<3] = 'c';
 }
+

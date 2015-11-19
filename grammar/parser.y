@@ -230,6 +230,14 @@ prepost: TIDENT TPLUSPLUS
           { $$ = expr_create(EXPR_MINMIN, expr_create_name($1), 0, 0); }
        | TMINMIN TIDENT
           { $$ = expr_create(EXPR_MINMIN, 0, expr_create_name($2), 0); }
+       | group_arr_func TPLUSPLUS
+          { $$ = expr_create(EXPR_PLUSPLUS, $1, 0, 0); }
+       | TPLUSPLUS group_arr_func
+          { $$ = expr_create(EXPR_PLUSPLUS, 0, $2, 0); }
+       | group_arr_func TMINMIN
+          { $$ = expr_create(EXPR_MINMIN, $1, 0, 0); }
+       | TMINMIN group_arr_func
+          { $$ = expr_create(EXPR_MINMIN, 0, $2, 0); }
        | group_arr_func
        ;
 

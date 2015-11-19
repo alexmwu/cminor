@@ -1,0 +1,7 @@
+add: function void();
+b: integer;
+
+main: integer = {
+  add();
+  b();
+}
