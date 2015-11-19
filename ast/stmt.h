@@ -30,5 +30,6 @@ struct stmt * stmt_create( stmt_kind_t kind, struct decl *d, struct expr *init_e
 void stmt_print( struct stmt *s, int indent );
 void stmt_free(struct stmt *s);
 void stmt_resolve(struct stmt *s, int which);
+void stmt_typecheck(struct stmt *s);
 
 #endif

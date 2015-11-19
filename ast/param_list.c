@@ -41,11 +41,13 @@ void param_list_resolve(struct param_list *a, int which) {
   param_list_resolve(a -> next, which + 1);
 }
 
+
+// TODO: finish this
 int param_list_typecheck(struct param_list *p_list, struct expr *exp_list) {
   struct param_list *curr_param;
   struct expr *curr_exp;
   while(curr_param && curr_exp) {
-    if(!type_compare(curr_param)) return 0;
+    if(!type_compare(curr_param -> type)) return 0;
   }
 }
 

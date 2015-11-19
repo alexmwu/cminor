@@ -144,3 +144,25 @@ void stmt_resolve(struct stmt *s, int which) {
   }
   stmt_resolve(s -> next, which + 1);
 }
+
+void stmt_typecheck(struct stmt *s) {
+  switch(s -> kind) {
+    case STMT_DECL:
+      break;
+    case STMT_EXPR:
+      break;
+    case STMT_IF_ELSE:
+      break;
+    case STMT_FOR:
+      break;
+    case STMT_WHILE:
+      break;
+    case STMT_PRINT:
+      break;
+    case STMT_RET:
+      break;
+    case STMT_BLOCK:
+      break;
+  }
+}
+

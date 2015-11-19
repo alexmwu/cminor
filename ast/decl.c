@@ -77,3 +77,17 @@ void decl_resolve(struct decl *d, symbol_t kind, int which) {
   decl_resolve(d -> next, kind, which);
 }
 
+void decl_typecheck(struct decl *d) {
+
+  if(!type_compare(d -> type, expr_typecheck(d -> value))) {
+    // TODO: error
+  }
+  if(d -> symbol -> kind == SYMBOL_GLOBAL && !expr_is_constant(d -> value)) {
+    // TODO: error
+  }
+  if(d -> code) {
+
+  }
+  decl_typecheck(d -> next);
+}
+

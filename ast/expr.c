@@ -422,6 +422,11 @@ struct type *expr_eq_typecheck(struct expr *e, int which) {
   return type_create(TYPE_BOOLEAN, 0, 0, 0);
 }
 
+// TODO: finish this
+int expr_arr_typecheck(struct type *t, struct expr *e) {
+
+}
+
 // 0 is standard assignment, 1 is array assign
 struct type *expr_assign_typecheck(struct expr *e, int which) {
   struct type *left, *right, *arr_next, *curr;
@@ -435,7 +440,7 @@ struct type *expr_assign_typecheck(struct expr *e, int which) {
       type_error_count++;
     }
     else {
-      if(!expr_arr_typecheck(e -> arr_next)) {
+      if(!expr_arr_typecheck(e -> symbol -> type, e -> arr_next)) {
         type_error_count++;
       }
     }
@@ -459,10 +464,6 @@ struct type *expr_assign_typecheck(struct expr *e, int which) {
   }
 }
 
-int expr_arr_typecheck();
-
-struct type *expr_arr_type();
-
 struct type *expr_typecheck(struct expr *e) {
   if(!e) return 0;
   switch(e -> kind) {
@@ -473,6 +474,18 @@ struct type *expr_typecheck(struct expr *e) {
     case EXPR_PLUS:
       return expr_arith_typecheck(e, 0);
     case EXPR_MIN:
+      // unary minus
+      if(!e -> left) {
+        right = expr_typecheck(e -> right);
+        if(right -> kind != TYPE_INTEGER) {
+          fprintf(stderr, "TYPE_ERROR: unary minus only works on integers (does not work on ");
+          type_print(right);
+          fprintf(stderr, ")\n");
+          type_error_count++;
+        }
+        type_delete(right);
+        return type_create(TYPE_INTEGER, 0, 0, 0);
+      }
       return expr_arith_typecheck(e, 1);
     case EXPR_MUL:
       return expr_arith_typecheck(e, 2);
@@ -554,7 +567,7 @@ struct type *expr_typecheck(struct expr *e) {
       // return function return type
       return type_copy(e -> left -> symbol -> type -> subtype);
 
-      //end TODO
+      // end TODO
     case EXPR_TRUE:
       return type_create(TYPE_BOOLEAN, 0, 0, 0);
     case EXPR_FALSE:
