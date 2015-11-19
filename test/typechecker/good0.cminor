@@ -1,5 +1,3 @@
-c: integer;
-
 main: function integer (d: integer) = {
   a: function integer();
   c: integer = d + a();

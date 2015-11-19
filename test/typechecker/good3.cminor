@@ -1,0 +1,10 @@
+arr: array[] integer;
+
+hi: function void(array [] integer, array [] array [] integer);
+
+main: function integer() = {
+  a: array [3] array[4] integer;
+  b: array [4] integer;
+  hi(b, a);
+}
+

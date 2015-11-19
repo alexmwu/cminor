@@ -1,0 +1,7 @@
+arr: array[] array[] integer;
+
+main: function integer() = {
+  arr[3] = 'c';
+  arr[3][4] = 'a';
+}
+

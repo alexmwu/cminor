@@ -1,0 +1,5 @@
+main: function integer () = {
+  arr: array[5];
+  arr[4<3] = 5;
+  arr[4<3] = 'c';
+}
