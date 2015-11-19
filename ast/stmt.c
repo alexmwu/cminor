@@ -146,6 +146,7 @@ void stmt_resolve(struct stmt *s, int which) {
 }
 
 void stmt_typecheck(struct stmt *s) {
+  if(!s) return;
   switch(s -> kind) {
     case STMT_DECL:
       break;

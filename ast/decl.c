@@ -78,16 +78,21 @@ void decl_resolve(struct decl *d, symbol_t kind, int which) {
 }
 
 void decl_typecheck(struct decl *d) {
-
-  if(!type_compare(d -> type, expr_typecheck(d -> value))) {
-    // TODO: error
+  if(!d) return;
+  struct type *value = expr_typecheck(d -> value);
+  if(!type_compare(d -> type, value)) {
+    fprintf(stderr, "TYPE_ERROR: type declaration value (");
+    type_print(value);
+    fprintf(stderr, ") for %s does not match declared value (", d -> name -> name);
+    type_print(d -> type);
+    fprintf(stderr, ")\n");
+    type_error_count++;
   }
   if(d -> symbol -> kind == SYMBOL_GLOBAL && !expr_is_constant(d -> value)) {
-    // TODO: error
+    fprintf(stderr, "TYPE_ERROR: global variables need to have constant type declarations\n");
+    type_error_count++;
   }
-  if(d -> code) {
-
-  }
+  stmt_typecheck(d -> code);
   decl_typecheck(d -> next);
 }
 
