@@ -422,9 +422,46 @@ struct type *expr_eq_typecheck(struct expr *e, int which) {
   return type_create(TYPE_BOOLEAN, 0, 0, 0);
 }
 
+// 0 is standard assignment, 1 is array assign
 struct type *expr_assign_typecheck(struct expr *e, int which) {
-
+  struct type *left, *right, *arr_next, *curr;
+  left = expr_typecheck(e -> left);
+  right = expr_typecheck(e -> right);
+  if(which == 1) {
+    if(left -> kind != TYPE_ARRAY || left -> kind != TYPE_ARRAY_DECL) {
+      fprintf(stderr, "TYPE_ERROR: cannot use array assignment on non-array types (");
+      type_print(left);
+      fprintf(stderr, ")\n");
+      type_error_count++;
+    }
+    else {
+      if(!expr_arr_typecheck(e -> arr_next)) {
+        type_error_count++;
+      }
+    }
+    type_delete(left);
+    type_delete(right);
+    return type_copy(right);
+  }
+  else {
+    if(left -> kind == TYPE_FUNCTION) {
+      fprintf(stderr, "TYPE_ERROR: cannot use assignment operator on a function\n");
+      type_error_count++;
+      type_delete(left);
+      type_delete(right);
+      return type_copy(right);
+    }
+    else {
+      type_delete(left);
+      type_delete(right);
+      return type_copy(left);
+    }
+  }
 }
+
+int expr_arr_typecheck();
+
+struct type *expr_arr_type();
 
 struct type *expr_typecheck(struct expr *e) {
   if(!e) return 0;
@@ -491,15 +528,19 @@ struct type *expr_typecheck(struct expr *e) {
       return expr_bool_typecheck(e, 1);
     case EXPR_NOT:
       return expr_bool_typecheck(e, 2);
+
+      // TODO: the below do not quite work yet
     case EXPR_EQ:
       break;
     case EXPR_ARREQ:
       break;
     case EXPR_ARR:
-      break;
+      if(!expr_arr_typecheck) {
+        type_error_count++;
+      }
+
     case EXPR_GROUP:
       return expr_typecheck(e -> right);
-      break;
     case EXPR_FUNC:
       if(e -> symbol -> type -> kind != TYPE_FUNCTION) {
         fprintf(stderr, "TYPE_ERROR: parameter types for function %s do not match arguments\n", e -> left -> name);
@@ -512,7 +553,8 @@ struct type *expr_typecheck(struct expr *e) {
       }
       // return function return type
       return type_copy(e -> left -> symbol -> type -> subtype);
-      break;
+
+      //end TODO
     case EXPR_TRUE:
       return type_create(TYPE_BOOLEAN, 0, 0, 0);
     case EXPR_FALSE:
@@ -526,6 +568,5 @@ struct type *expr_typecheck(struct expr *e) {
     case EXPR_IDENT:
       return type_copy(e -> symbol -> type);
   }
-  return ti;
 }
 
