@@ -7,8 +7,8 @@ str: string = "hello world";
 fxn : function  integer () =
 {
 	arr[3][2] = 5;
-	x = arr[2][3][x*2];
+	x = arr[2][3];
 	x++;
 	return z;
 	c:char = str[0];
-}
+} 

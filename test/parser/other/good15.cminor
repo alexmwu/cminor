@@ -1,5 +1,3 @@
-@badtest
-// no while loops in cminor
 /*
 This program displays a square bouncing around on the screen.
 Click to reset the square in a new place.
@@ -58,7 +56,7 @@ main: function integer () =
 
 	gfx_open(xsize,ysize,"Bounce!");
 
-	while(true) {
+	for(;;) {
 		print "x: ", x, " y: ", y, " vx: ", vx, " vy: ", vy, "\n";
 
 		if(gfx_event_waiting()) {

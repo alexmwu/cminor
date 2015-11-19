@@ -269,3 +269,75 @@ void expr_resolve(struct expr *e) {
     }
   }
 }
+
+struct type *expr_typecheck(struct expr *e) {
+  if(!e) return 0;
+  switch(e -> kind) {
+    case EXPR_PLUS:
+
+      break;
+    case EXPR_MIN:
+      break;
+    case EXPR_MUL:
+      break;
+    case EXPR_DIV:
+      break;
+    case EXPR_MOD:
+      break;
+    case EXPR_PLUSPLUS:
+      break;
+    case EXPR_MINMIN:
+      break;
+    case EXPR_EXP:
+      break;
+    case EXPR_LT:
+      break;
+    case EXPR_LE:
+      break;
+    case EXPR_GT:
+      break;
+    case EXPR_GE:
+      break;
+    case EXPR_EQEQ:
+      break;
+    case EXPR_NE:
+      break;
+    case EXPR_AND:
+      break;
+    case EXPR_OR:
+      break;
+    case EXPR_NOT:
+      break;
+    case EXPR_EQ:
+      break;
+    case EXPR_ARREQ:
+      break;
+    case EXPR_ARR:
+      break;
+    case EXPR_GROUP:
+      break;
+    case EXPR_FUNC:
+      // check that params match args
+      if(!param_list_typecheck(e -> symbol -> type -> params, e -> right)) {
+        fprintf(stderr, "TYPE_ERROR: parameter types for function %s do not match arguments\n", e -> left -> name);
+        type_error_count++;
+      }
+      // return function return type
+      return type_copy(e -> left -> symbol -> type -> subtype);
+      break;
+    case EXPR_TRUE:
+      return type_create(TYPE_BOOLEAN, 0, 0, 0);
+    case EXPR_FALSE:
+      return type_create(TYPE_BOOLEAN, 0, 0, 0);
+    case EXPR_INTLIT:
+      return type_create(TYPE_INTEGER, 0, 0, 0);
+    case EXPR_CHARLIT:
+      return type_create(TYPE_CHARACTER, 0, 0, 0);
+    case EXPR_STRLIT:
+      return type_create(TYPE_STRING, 0, 0, 0);
+    case EXPR_IDENT:
+      return type_copy(e -> symbol -> type);
+  }
+  return ti;
+}
+

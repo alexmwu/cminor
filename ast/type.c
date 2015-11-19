@@ -71,11 +71,19 @@ struct type *type_copy(struct type *t) {
 int type_compare(struct type *a, struct type *b) {
   if(a -> kind == b -> kind) {
     switch(a -> kind) {
+      // should never be called on non-default cases
+      // but this handles it if that happens
       case TYPE_ARRAY:
+        fprintf(stderr, "Bad function call on type_compare with type_kind TYPE_ARRAY\n");
+        exit(1);
         break;
       case TYPE_ARRAY_DECL:
+        fprintf(stderr, "Bad function call on type_compare with type_kind TYPE_ARRAY_DECL\n");
+        exit(1);
         break;
       case TYPE_FUNCTION:
+        fprintf(stderr, "Bad function call on type_compare with type_kind TYPE_FUNCTION\n");
+        exit(1);
         break;
       default:
         return 1;
@@ -85,7 +93,10 @@ int type_compare(struct type *a, struct type *b) {
   return 0;
 }
 
+
+// should only be used on type pointers not
+// contained in decls
 void type_delete(struct type *t) {
-
-
+  if(!t) return;
+  free(t);
 }
