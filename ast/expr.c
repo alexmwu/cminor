@@ -81,7 +81,11 @@ void expr_print(struct expr *e) {
       expr_print(e -> right);
       break;
     case EXPR_PLUSPLUS:
-      if(e -> left) {
+      if(e -> left && e -> right) {
+        fprintf(stderr, "Pre/Post error: 2 exprs (should just be one)\n");
+        exit(1);
+      }
+      else if(e -> left) {
         expr_print(e -> left);
         printf("++");
       }
@@ -90,12 +94,16 @@ void expr_print(struct expr *e) {
         expr_print(e -> right);
       }
       else {
-        fprintf(stderr, "Pre/Post error: 0 or 2 identifiers\n");
+        fprintf(stderr, "Pre/Post error: 0 exprs (should have one)\n");
         exit(1);
       }
       break;
     case EXPR_MINMIN:
-      if(e -> left) {
+      if(e -> left && e -> right) {
+        fprintf(stderr, "Pre/Post error: 2 exprs (should just be one)\n");
+        exit(1);
+      }
+      else if(e -> left) {
         expr_print(e -> left);
         printf("--");
       }
@@ -104,7 +112,7 @@ void expr_print(struct expr *e) {
         expr_print(e -> right);
       }
       else {
-        fprintf(stderr, "Pre/Post error: 0 or 2 identifiers\n");
+        fprintf(stderr, "Pre/Post error: 0 exprs (should have one)\n");
         exit(1);
       }
       break;
@@ -270,44 +278,179 @@ void expr_resolve(struct expr *e) {
   }
 }
 
+struct type *expr_arith_typecheck(struct expr *e, int which) {
+  char *arith_type = 0;
+  switch(which) {
+    case 0:
+      arith_type = "add";
+      break;
+    case 1:
+      arith_type = "subtract";
+      break;
+    case 2:
+      arith_type = "multiply";
+      break;
+    case 3:
+      arith_type = "divide";
+      break;
+    case 4:
+      arith_type = "modulo";
+      break;
+    case 5:
+      arith_type = "raise";
+  }
+  struct type *left, *right;
+  left = expr_typecheck(e -> left);
+  right = expr_typecheck(e -> right);
+  if(left -> kind != TYPE_INTEGER || right -> kind != TYPE_INTEGER) {
+    fprintf(stderr, "TYPE_ERROR: cannot %s ", arith_type);
+    type_print(left);
+    fprintf(stderr, " with ");
+    type_print(right);
+    fprintf(stderr, "\n");
+    type_error_count++;
+  }
+  type_delete(left);
+  type_delete(right);
+  return type_create(TYPE_INTEGER, 0, 0, 0);
+}
+
+struct type *expr_comp_typecheck(struct expr *e, int which) {
+  char *comp_type = 0;
+  switch(which) {
+    case 0:
+      comp_type = "less than";
+      break;
+    case 1:
+      comp_type = "less than or equal";
+      break;
+    case 2:
+      comp_type = "greater than";
+      break;
+    case 3:
+      comp_type = "greater than or equal";
+      break;
+  }
+  struct type *left, *right;
+  left = expr_typecheck(e -> left);
+  right = expr_typecheck(e -> right);
+  if(left -> kind != TYPE_INTEGER || right -> kind != TYPE_INTEGER) {
+    fprintf(stderr, "TYPE_ERROR: cannot apply %s on ", comp_type);
+    type_print(left);
+    fprintf(stderr, " and ");
+    type_print(right);
+    fprintf(stderr, "\n");
+    type_error_count++;
+  }
+  type_delete(left);
+  type_delete(right);
+  return type_create(TYPE_BOOLEAN, 0, 0, 0);
+}
+
+struct type *expr_bool_typecheck(struct expr *e, int which) {
+  char *boolop_type = 0;
+  switch(which) {
+    case 0:
+      boolop_type  = "and";
+      break;
+    case 1:
+      boolop_type  = "or";
+      break;
+    case 2:
+      boolop_type  = "not";
+      break;
+  }
+  struct type *left, *right;
+  right = expr_typecheck(e -> right);
+  if(which == 2) {
+    if(right -> kind != TYPE_BOOLEAN) {
+      fprintf(stderr, "TYPE_ERROR: cannot apply %s on ", boolop_type);
+      type_print(right);
+      fprintf(stderr, "\n");
+      type_error_count++;
+    }
+    type_delete(right);
+    return type_create(TYPE_BOOLEAN, 0, 0, 0);
+  }
+  left = expr_typecheck(e -> left);
+  if(left -> kind != TYPE_BOOLEAN || right -> kind != TYPE_BOOLEAN) {
+    fprintf(stderr, "TYPE_ERROR: cannot apply %s on ", boolop_type);
+    type_print(left);
+    fprintf(stderr, " and ");
+    type_print(right);
+    fprintf(stderr, "\n");
+    type_error_count++;
+  }
+  type_delete(left);
+  type_delete(right);
+  return type_create(TYPE_BOOLEAN, 0, 0, 0);
+}
+
 struct type *expr_typecheck(struct expr *e) {
   if(!e) return 0;
   switch(e -> kind) {
+    struct type *left, *right, *next;
+    // TODO: add a type_file_print function
+    // it allows printing to a file
+    // used for printing to stderr
     case EXPR_PLUS:
-
-      break;
+      return expr_arith_typecheck(e, 0);
     case EXPR_MIN:
-      break;
+      return expr_arith_typecheck(e, 1);
     case EXPR_MUL:
-      break;
+      return expr_arith_typecheck(e, 2);
     case EXPR_DIV:
-      break;
+      return expr_arith_typecheck(e, 3);
     case EXPR_MOD:
-      break;
+      return expr_arith_typecheck(e, 4);
     case EXPR_PLUSPLUS:
-      break;
+      if(e -> right) {
+        fprintf(stderr, "Error: cminor does not support preincrement\n");
+        exit(1);
+      }
+      left = expr_typecheck(e -> left);
+      if(left -> kind != TYPE_INTEGER) {
+        fprintf(stderr, "TYPE_ERROR: cannot use postincrement on a ");
+        type_print(left);
+        printf("\n");
+        type_error_count++;
+      }
+      type_delete(left);
+      return type_create(TYPE_INTEGER, 0, 0, 0);
     case EXPR_MINMIN:
-      break;
+      if(e -> right) {
+        fprintf(stderr, "Error: cminor does not support predecrement\n");
+        exit(1);
+      }
+      left = expr_typecheck(e -> left);
+      if(left -> kind != TYPE_INTEGER) {
+        fprintf(stderr, "TYPE_ERROR: cannot use postincrement on a ");
+        type_print(left);
+        printf("\n");
+        type_error_count++;
+      }
+      type_delete(left);
+      return type_create(TYPE_INTEGER, 0, 0, 0);
     case EXPR_EXP:
-      break;
+      return expr_arith_typecheck(e, 5);
     case EXPR_LT:
-      break;
+      return expr_comp_typecheck(e, 0);
     case EXPR_LE:
-      break;
+      return expr_comp_typecheck(e, 1);
     case EXPR_GT:
-      break;
+      return expr_comp_typecheck(e, 2);
     case EXPR_GE:
-      break;
+      return expr_comp_typecheck(e, 3);
     case EXPR_EQEQ:
       break;
     case EXPR_NE:
       break;
     case EXPR_AND:
-      break;
+      expr_bool_typecheck(e, 0);
     case EXPR_OR:
-      break;
+      expr_bool_typecheck(e, 1);
     case EXPR_NOT:
-      break;
+      expr_bool_typecheck(e, 2);
     case EXPR_EQ:
       break;
     case EXPR_ARREQ:
@@ -315,8 +458,13 @@ struct type *expr_typecheck(struct expr *e) {
     case EXPR_ARR:
       break;
     case EXPR_GROUP:
+      return expr_typecheck(e -> right);
       break;
     case EXPR_FUNC:
+      if(e -> symbol -> type -> kind != TYPE_FUNCTION) {
+        fprintf(stderr, "TYPE_ERROR: parameter types for function %s do not match arguments\n", e -> left -> name);
+        type_error_count++;
+      }
       // check that params match args
       if(!param_list_typecheck(e -> symbol -> type -> params, e -> right)) {
         fprintf(stderr, "TYPE_ERROR: parameter types for function %s do not match arguments\n", e -> left -> name);
