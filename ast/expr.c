@@ -386,6 +386,46 @@ struct type *expr_bool_typecheck(struct expr *e, int which) {
   return type_create(TYPE_BOOLEAN, 0, 0, 0);
 }
 
+struct type *expr_eq_typecheck(struct expr *e, int which) {
+  char *eq_type = 0;
+  switch(which) {
+    case 0:
+      eq_type  = "equals equals";
+      break;
+    case 1:
+      eq_type  = "not equal";
+      break;
+  }
+  struct type *left, *right;
+  left = expr_typecheck(e -> left);
+  right = expr_typecheck(e -> right);
+  if(left -> kind == TYPE_FUNCTION || right -> kind == TYPE_FUNCTION) {
+    fprintf(stderr, "TYPE_ERROR: cannot use %s on a function", eq_type);
+    type_error_count++;
+  }
+  else if(left -> kind == TYPE_ARRAY || right -> kind == TYPE_ARRAY) {
+    fprintf(stderr, "TYPE_ERROR: cannot use %s on an array", eq_type);
+    type_error_count++;
+  }
+  else if(left -> kind == TYPE_ARRAY_DECL || right -> kind == TYPE_ARRAY_DECL) {
+    fprintf(stderr, "TYPE_ERROR: cannot use %s on an array", eq_type);
+    type_error_count++;
+  }
+  else if(left -> kind != right -> kind) {
+    fprintf(stderr, "TYPE_ERROR cannot apply %s on ", eq_type);
+    type_print(left);
+    fprintf(stderr, " and ");
+    type_print(right);
+    fprintf(stderr, "\n");
+    type_error_count++;
+  }
+  return type_create(TYPE_BOOLEAN, 0, 0, 0);
+}
+
+struct type *expr_assign_typecheck(struct expr *e, int which) {
+
+}
+
 struct type *expr_typecheck(struct expr *e) {
   if(!e) return 0;
   switch(e -> kind) {
@@ -442,15 +482,15 @@ struct type *expr_typecheck(struct expr *e) {
     case EXPR_GE:
       return expr_comp_typecheck(e, 3);
     case EXPR_EQEQ:
-      break;
+      return expr_eq_typecheck(e, 0);
     case EXPR_NE:
-      break;
+      return expr_eq_typecheck(e, 1);
     case EXPR_AND:
-      expr_bool_typecheck(e, 0);
+      return expr_bool_typecheck(e, 0);
     case EXPR_OR:
-      expr_bool_typecheck(e, 1);
+      return expr_bool_typecheck(e, 1);
     case EXPR_NOT:
-      expr_bool_typecheck(e, 2);
+      return expr_bool_typecheck(e, 2);
     case EXPR_EQ:
       break;
     case EXPR_ARREQ:
