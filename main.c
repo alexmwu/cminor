@@ -28,6 +28,10 @@ void printGoHelp(char *command) {
 
 int main(int argc, char **argv) {
   yyin = stdin;
+  // TODO: this is a bit of a hack to make printfs print in
+  // sequence with fprintf (rather than flushing only on newlines).
+  // need to add type_fprint style functions in the future
+  setbuf(stdout, NULL);
   if(argc > 1) {  //arguments on top of program name
     if(argc == 3) {
       yyin = fopen(argv[2], "r");

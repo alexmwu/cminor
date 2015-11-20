@@ -159,9 +159,9 @@ void stmt_typecheck(struct stmt *s) {
     case STMT_IF_ELSE:
       expr = expr_typecheck(s -> expr);
       if(expr -> kind != TYPE_BOOLEAN) {
-        fprintf(stderr, "TYPE_ERROR: cannot use a ");
+        fprintf(stderr, "TYPE_ERROR: cannot use a(n) ");
         type_print(expr);
-        fprintf(stderr, " as the if statement expression (requires a boolean)\n");
+        fprintf(stderr, " as the if statement expression requires a boolean\n");
         type_error_count++;
       }
       stmt_typecheck(s -> body);
