@@ -497,11 +497,9 @@ struct type *expr_assign_typecheck(struct expr *e, int which) {
       fprintf(stderr, "TYPE_ERROR: cannot use assignment operator on a function (%s)\n", e -> left -> name);
       type_error_count++;
       type_delete(left);
-      type_delete(right);
       return type_copy(right);
     }
     else {
-      type_delete(left);
       type_delete(right);
       return type_copy(left);
     }
@@ -612,7 +610,7 @@ struct type *expr_typecheck(struct expr *e) {
       // check that params match args
       param_list_typecheck(e -> left -> symbol -> type -> params, e -> right, e -> left -> name);
         // return function return type
-      return type_copy(e -> left -> symbol -> type);
+      return type_copy(e -> left -> symbol -> type -> subtype);
     case EXPR_TRUE:
       return type_create(TYPE_BOOLEAN, 0, 0, 0);
     case EXPR_FALSE:
