@@ -451,7 +451,7 @@ int expr_is_constant(struct expr *e) {
 // of array ident and array expression root
 struct type *expr_arr_indexcheck(struct type *t, struct expr *e) {
   struct type *curr_type = t -> subtype;
-  struct expr *a_next = e;
+  struct expr *a_next = e -> arr_next;
   while(a_next) {
     // means that there were no more nested
     // subtypes in the declaration
@@ -491,8 +491,8 @@ struct type *expr_assign_typecheck(struct expr *e, int which) {
     }
     else {
       // just return the type of the expr
-      arr_next = expr_arr_indexcheck(left, e);
-      if(!expr_arr_indexcheck(left, e)) {
+      arr_next = expr_arr_indexcheck(e -> left -> symbol -> type, e);
+      if(!arr_next) {
         return type_copy(right);
       }
     }
