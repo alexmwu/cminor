@@ -55,20 +55,24 @@ void param_list_typecheck(struct param_list *p_list, struct expr *exp_list, cons
         type_print(curr_type);
         fprintf(stderr, ")\n");
         type_error_count++;
+        return;
     }
     curr_param = curr_param -> next;
     curr_exp = curr_exp -> next;
   }
   // if there is still a param or expression
   if(curr_param) {
-    fprintf(stderr, "TYPE_ERROR: there are more parameters than arguments (");
-    param_list_print(curr_param);
-    fprintf(stderr, ")\n");
+    fprintf(stderr, "TYPE_ERROR: there are more parameters (");
+    param_list_print(p_list);
+    fprintf(stderr, ") than arguments");
+    expr_typecheck_err_print(stderr, exp_list);
     type_error_count++;
   }
   else if(curr_exp) {
-    fprintf(stderr, "TYPE_ERROR: there are more arguments than parameters (");
+    fprintf(stderr, "TYPE_ERROR: there are more arguments (");
     expr_print(curr_exp);
+    fprintf(stderr, ") than parameters (");
+    param_list_print(p_list);
     fprintf(stderr, ")\n");
     type_error_count++;
   }

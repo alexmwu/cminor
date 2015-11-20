@@ -1,0 +1,7 @@
+a: function void(arr: array[] array[] integer, b: array[] array[] array[] integer);
+
+main: function void() = {
+  c: array[2] array[3] array[1] integer;
+  d: array[4] array[1] integer;
+  a(d, c);
+}
