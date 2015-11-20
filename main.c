@@ -104,7 +104,7 @@ int main(int argc, char **argv) {
         printf("Resolve error count: %d\n", resolve_error_count);
         exit(1);
       }
-      /*decl_typecheck();*/
+      decl_typecheck(programRoot);
       decl_free(programRoot);
       if(type_error_count) {
         printf("Type error count: %d\n", type_error_count);
