@@ -278,6 +278,12 @@ void expr_resolve(struct expr *e) {
   }
 }
 
+void expr_typecheck_err_print(FILE *f, struct expr *e) {
+  fprintf(f, " (");
+  expr_print(e);
+  fprintf(f, ")\n");
+}
+
 struct type *expr_arith_typecheck(struct expr *e, int which) {
   char *arith_type = 0;
   switch(which) {
@@ -307,7 +313,7 @@ struct type *expr_arith_typecheck(struct expr *e, int which) {
     type_print(left);
     fprintf(stderr, " with ");
     type_print(right);
-    fprintf(stderr, "\n");
+    expr_typecheck_err_print(stderr, e);
     type_error_count++;
   }
   type_delete(left);
@@ -339,7 +345,7 @@ struct type *expr_comp_typecheck(struct expr *e, int which) {
     type_print(left);
     fprintf(stderr, " and ");
     type_print(right);
-    fprintf(stderr, "\n");
+    expr_typecheck_err_print(stderr, e);
     type_error_count++;
   }
   type_delete(left);
@@ -366,7 +372,7 @@ struct type *expr_bool_typecheck(struct expr *e, int which) {
     if(right -> kind != TYPE_BOOLEAN) {
       fprintf(stderr, "TYPE_ERROR: cannot apply %s on ", boolop_type);
       type_print(right);
-      fprintf(stderr, "\n");
+      expr_typecheck_err_print(stderr, e);
       type_error_count++;
     }
     type_delete(right);
@@ -378,7 +384,7 @@ struct type *expr_bool_typecheck(struct expr *e, int which) {
     type_print(left);
     fprintf(stderr, " and ");
     type_print(right);
-    fprintf(stderr, "\n");
+    expr_typecheck_err_print(stderr, e);
     type_error_count++;
   }
   type_delete(left);
@@ -401,14 +407,17 @@ struct type *expr_eq_typecheck(struct expr *e, int which) {
   right = expr_typecheck(e -> right);
   if(left -> kind == TYPE_FUNCTION || right -> kind == TYPE_FUNCTION) {
     fprintf(stderr, "TYPE_ERROR: cannot use %s on a function", eq_type);
+    expr_typecheck_err_print(stderr, e);
     type_error_count++;
   }
   else if(left -> kind == TYPE_ARRAY || right -> kind == TYPE_ARRAY) {
     fprintf(stderr, "TYPE_ERROR: cannot use %s on an array", eq_type);
+    expr_typecheck_err_print(stderr, e);
     type_error_count++;
   }
   else if(left -> kind == TYPE_ARRAY_DECL || right -> kind == TYPE_ARRAY_DECL) {
     fprintf(stderr, "TYPE_ERROR: cannot use %s on an array", eq_type);
+    expr_typecheck_err_print(stderr, e);
     type_error_count++;
   }
   else if(left -> kind != right -> kind) {
@@ -416,7 +425,7 @@ struct type *expr_eq_typecheck(struct expr *e, int which) {
     type_print(left);
     fprintf(stderr, " and ");
     type_print(right);
-    fprintf(stderr, "\n");
+    expr_typecheck_err_print(stderr, e);
     type_error_count++;
   }
   return type_create(TYPE_BOOLEAN, 0, 0, 0);
@@ -467,9 +476,9 @@ struct type *expr_assign_typecheck(struct expr *e, int which) {
   right = expr_typecheck(e -> right);
   if(which == 1) {
     if(left -> kind != TYPE_ARRAY || left -> kind != TYPE_ARRAY_DECL) {
-      fprintf(stderr, "TYPE_ERROR: cannot use array assignment on non-array types (");
+      fprintf(stderr, "TYPE_ERROR: cannot use array assignment on non-array type ");
       type_print(left);
-      fprintf(stderr, ")\n");
+      expr_typecheck_err_print(stderr, e);
       type_error_count++;
     }
     else {
@@ -485,7 +494,7 @@ struct type *expr_assign_typecheck(struct expr *e, int which) {
   }
   else {
     if(left -> kind == TYPE_FUNCTION) {
-      fprintf(stderr, "TYPE_ERROR: cannot use assignment operator on a function\n");
+      fprintf(stderr, "TYPE_ERROR: cannot use assignment operator on a function (%s)\n", e -> left -> name);
       type_error_count++;
       type_delete(left);
       type_delete(right);
@@ -514,9 +523,9 @@ struct type *expr_typecheck(struct expr *e) {
       if(!e -> left) {
         right = expr_typecheck(e -> right);
         if(right -> kind != TYPE_INTEGER) {
-          fprintf(stderr, "TYPE_ERROR: unary minus only works on integers (does not work on ");
+          fprintf(stderr, "TYPE_ERROR: unary minus only works on integers, not ");
           type_print(right);
-          fprintf(stderr, ")\n");
+          expr_typecheck_err_print(stderr, e);
           type_error_count++;
         }
         type_delete(right);
@@ -538,7 +547,7 @@ struct type *expr_typecheck(struct expr *e) {
       if(left -> kind != TYPE_INTEGER) {
         fprintf(stderr, "TYPE_ERROR: cannot use postincrement on a ");
         type_print(left);
-        printf("\n");
+        expr_typecheck_err_print(stderr, e);
         type_error_count++;
       }
       type_delete(left);
@@ -550,9 +559,9 @@ struct type *expr_typecheck(struct expr *e) {
       }
       left = expr_typecheck(e -> left);
       if(left -> kind != TYPE_INTEGER) {
-        fprintf(stderr, "TYPE_ERROR: cannot use postincrement on a ");
+        fprintf(stderr, "TYPE_ERROR: cannot use postdecrement on a ");
         type_print(left);
-        printf("\n");
+        expr_typecheck_err_print(stderr, e);
         type_error_count++;
       }
       type_delete(left);
@@ -597,7 +606,7 @@ struct type *expr_typecheck(struct expr *e) {
       return expr_typecheck(e -> right);
     case EXPR_FUNC:
       if(e -> left -> symbol -> type -> kind != TYPE_FUNCTION) {
-        fprintf(stderr, "TYPE_ERROR: identifier for function call %s is not a function\n", e -> left -> name);
+        fprintf(stderr, "TYPE_ERROR: identifier (%s) for function call is not a function\n", e -> left -> name);
         type_error_count++;
       }
       // check that params match args
