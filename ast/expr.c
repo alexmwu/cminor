@@ -451,18 +451,18 @@ struct type *expr_arr_indexcheck(struct type *t, struct expr *e) {
     // return current type if both end at
     // same time
     if(!curr_type -> subtype && !a_next) {
-      return curr_type;
+      return type_copy(curr_type);
     }
     curr_type = curr_type -> subtype;
   }
   // if there is left over subtype, that is
   // ok (it will evaluate to an array type)
-  return curr_type;
+  return type_copy(curr_type);
 }
 
 // 0 is standard assignment, 1 is array assign
 struct type *expr_assign_typecheck(struct expr *e, int which) {
-  struct type *left, *right, *arr_next, *curr;
+  struct type *left, *right, *arr_next;
   left = expr_typecheck(e -> left);
   right = expr_typecheck(e -> right);
   if(which == 1) {
@@ -473,7 +473,10 @@ struct type *expr_assign_typecheck(struct expr *e, int which) {
       type_error_count++;
     }
     else {
-      if(!expr_arr_indexcheck(e -> symbol -> type, e)) {
+      // just return the type of the expr
+      arr_next = expr_arr_indexcheck(left, e);
+      if(!expr_arr_indexcheck(left, e)) {
+        return type_copy(right);
       }
     }
     type_delete(left);
@@ -496,6 +499,7 @@ struct type *expr_assign_typecheck(struct expr *e, int which) {
   }
 }
 
+// need to type_delete the result
 struct type *expr_typecheck(struct expr *e) {
   if(!e) return 0;
   switch(e -> kind) {
@@ -573,17 +577,22 @@ struct type *expr_typecheck(struct expr *e) {
       return expr_bool_typecheck(e, 1);
     case EXPR_NOT:
       return expr_bool_typecheck(e, 2);
-
-      // TODO: the below do not quite work yet
     case EXPR_EQ:
-      break;
+      return expr_assign_typecheck(e, 0);
     case EXPR_ARREQ:
-      break;
+      return expr_assign_typecheck(e, 1);
     case EXPR_ARR:
-      // just fail and return the expr type
-      if(!expr_arr_indexcheck(e -> symbol -> type, e)) {
-        return expr_typecheck(e);
+      left = expr_arr_indexcheck(e -> symbol -> type, e);
+      // just return last type in arr subtypes
+      if(!left) {
+        next = e -> symbol -> type;
+        while(next -> subtype) {
+          next = next -> subtype;
+        }
+        type_delete(left);
+        return type_copy(next);
       }
+      return left;
     case EXPR_GROUP:
       return expr_typecheck(e -> right);
     case EXPR_FUNC:
