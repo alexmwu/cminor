@@ -422,9 +422,36 @@ struct type *expr_eq_typecheck(struct expr *e, int which) {
   return type_create(TYPE_BOOLEAN, 0, 0, 0);
 }
 
-// TODO: finish this
-void expr_arr_typecheck(struct type *t, struct expr *e) {
+int expr_is_constant(struct expr *e) {
+  if(e -> kind == EXPR_TRUE || e -> kind == EXPR_FALSE || e -> kind == EXPR_INTLIT || e -> kind == EXPR_CHARLIT || e -> kind == EXPR_STRLIT || e -> kind == EXPR_IDENT) {
+    return 1;
+  }
+  return 0;
+}
 
+// checks if number of indices into array
+// is correct
+int expr_arr_indexcheck(struct type *t, struct expr *e) {
+  struct type *curr_type = t;
+  struct expr *a_next = e;
+  while(a_next) {
+    // means that there were no more nested
+    // subtypes in the declaration
+    if(!curr_type) {
+      fprintf(stderr, "TYPE_ERROR: there are fewer nested arrays (");
+      type_print(t);
+      fprintf(stderr, ") in the declaration than the assignment (");
+      expr_print(e);
+      fprintf(stderr, ") gives\n");
+      type_error_count++;
+      return 0;
+    }
+    curr_type = curr_type -> subtype;
+    a_next = a_next -> arr_next;
+  }
+  // if there is left over subtype, that is
+  // ok (it will evaluate to an array type)
+  return 1;
 }
 
 // 0 is standard assignment, 1 is array assign
@@ -440,7 +467,7 @@ struct type *expr_assign_typecheck(struct expr *e, int which) {
       type_error_count++;
     }
     else {
-      if(!expr_arr_typecheck(e -> symbol -> type, e -> arr_next)) {
+      if(!expr_arr_indexcheck(e -> symbol -> type, e)) {
         type_error_count++;
       }
     }

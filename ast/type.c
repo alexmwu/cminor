@@ -71,6 +71,7 @@ struct type *type_copy(struct type *t) {
 int type_compare(struct type *a, struct type *b) {
   if(a -> kind == b -> kind) {
     switch(a -> kind) {
+      // non defaults should never be called
       case TYPE_ARRAY:
         if(type_compare(a -> subtype, b -> subtype))
           return 1;
