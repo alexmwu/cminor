@@ -20,16 +20,6 @@ void scope_enter() {
   curr_scope = new_scope;
 }
 
-void scope_table_delete(struct hash_table *ht) {
-  char **key = malloc(sizeof *key);
-  struct symbol *value;
-  hash_table_firstkey(ht);
-  while(hash_table_nextkey(ht, key, (void **) &value)) {
-    free(value);
-  }
-  free(key);
-}
-
 void scope_print_table(struct hash_table *ht, char **key, struct symbol *value) {
   hash_table_firstkey(ht);
   while(hash_table_nextkey(ht, key, (void **) &value)) {
@@ -50,23 +40,12 @@ void scope_print_all() {
 }
 
 void scope_exit() {
-  /*scope_table_delete(curr_scope -> table);*/
   hash_table_clear(curr_scope -> table);
   hash_table_delete(curr_scope -> table);
   struct scope_list *exited_scope = curr_scope;
   curr_scope = curr_scope -> prev;
   free(exited_scope);
 }
-
-/*
- *void scope_exit_keep_symbols() {
- *  hash_table_clear(curr_scope -> table);
- *  hash_table_delete(curr_scope -> table);
- *  struct scope_list *exited_scope = curr_scope;
- *  curr_scope = curr_scope -> prev;
- *  free(exited_scope);
- *}
- */
 
 void scope_bind(const char *name, struct symbol *s) {
   int outCode = hash_table_insert(curr_scope -> table, name, s);
