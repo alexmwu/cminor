@@ -69,6 +69,7 @@ struct type *type_copy(struct type *t) {
 }
 
 int type_compare(struct type *a, struct type *b) {
+  if(!a || !b) return 0;
   if(a -> kind == b -> kind) {
     switch(a -> kind) {
       // non defaults should never be called

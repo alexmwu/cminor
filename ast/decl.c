@@ -80,7 +80,7 @@ void decl_resolve(struct decl *d, symbol_t kind, int which) {
 void decl_typecheck(struct decl *d) {
   if(!d) return;
   struct type *value = expr_typecheck(d -> value);
-  if(!type_compare(d -> type, value)) {
+  if(value && !type_compare(d -> type, value)) {
     fprintf(stderr, "TYPE_ERROR: type declaration value (");
     type_print(value);
     fprintf(stderr, ") for %s does not match declared value (", d -> name -> name);
