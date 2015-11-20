@@ -612,7 +612,7 @@ struct type *expr_typecheck(struct expr *e) {
       // check that params match args
       param_list_typecheck(e -> left -> symbol -> type -> params, e -> right, e -> left -> name);
         // return function return type
-      return type_copy(e -> left -> symbol -> type -> subtype);
+      return type_copy(e -> left -> symbol -> type);
     case EXPR_TRUE:
       return type_create(TYPE_BOOLEAN, 0, 0, 0);
     case EXPR_FALSE:
