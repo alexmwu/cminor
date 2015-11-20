@@ -1,2 +1,4 @@
-arr: array [3] = {1,2,3}
+main: function boolean() = {
+  return (5<3) || false;
+}
 

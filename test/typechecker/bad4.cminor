@@ -4,4 +4,6 @@ b: integer;
 main: integer = {
   add();
   b();
+  b[4];
 }
+

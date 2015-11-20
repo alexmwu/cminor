@@ -483,22 +483,29 @@ struct type *expr_assign_typecheck(struct expr *e, int which) {
   left = expr_typecheck(e -> left);
   right = expr_typecheck(e -> right);
   if(which == 1) {
-    if(left -> kind != TYPE_ARRAY || left -> kind != TYPE_ARRAY_DECL) {
+    if(left -> kind != TYPE_ARRAY && left -> kind != TYPE_ARRAY_DECL) {
       fprintf(stderr, "TYPE_ERROR: cannot use array assignment on non-array type ");
       type_print(left);
       expr_typecheck_err_print(stderr, e);
       type_error_count++;
     }
     else {
-      // just return the type of the expr
-      arr_next = expr_arr_indexcheck(left, e);
-      if(!expr_arr_indexcheck(left, e)) {
-        return type_copy(right);
+       arr_next = expr_arr_indexcheck(e -> left -> symbol -> type, e);
+      // just return last type in arr subtypes
+      if(!arr_next) {
+        struct type *next;
+        next = e -> symbol -> type;
+        while(next -> subtype) {
+          next = next -> subtype;
+        }
+        type_delete(left);
+        type_delete(right);
+        return next;
       }
+      return arr_next;
     }
     type_delete(left);
-    type_delete(right);
-    return type_copy(right);
+    return right;
   }
   else {
     if(left -> kind == TYPE_FUNCTION) {
@@ -597,7 +604,7 @@ struct type *expr_typecheck(struct expr *e) {
     case EXPR_ARREQ:
       return expr_assign_typecheck(e, 1);
     case EXPR_ARR:
-      if((e -> left -> symbol -> type -> kind != TYPE_ARRAY) || (e -> left -> symbol -> type -> kind != TYPE_ARRAY_DECL)) {
+      if((e -> left -> symbol -> type -> kind != TYPE_ARRAY) && (e -> left -> symbol -> type -> kind != TYPE_ARRAY_DECL)) {
         fprintf(stderr, "TYPE_ERROR: the identifier (");
         expr_print(e -> left);
         fprintf(stderr, ") is not of type array\n");
