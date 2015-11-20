@@ -45,8 +45,10 @@ void param_list_resolve(struct param_list *a, int which) {
 void param_list_typecheck(struct param_list *p_list, struct expr *exp_list, const char *name) {
   struct param_list *curr_param = p_list;
   struct expr *curr_exp = exp_list;
-  struct type *curr_type;
+  struct type *curr_type = 0;
   while(curr_param && curr_exp) {
+    // TODO: somehow this causes a memory leak
+    if(curr_type) type_delete(curr_type);
     curr_type = expr_typecheck(curr_exp);
     if(!type_compare(curr_param -> type, curr_type)) {
         fprintf(stderr, "TYPE_ERROR: parameter type (");
