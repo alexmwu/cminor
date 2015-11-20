@@ -148,22 +148,51 @@ void stmt_resolve(struct stmt *s, int which) {
 void stmt_typecheck(struct stmt *s) {
   if(!s) return;
   switch(s -> kind) {
+    struct type *expr;
     case STMT_DECL:
+      decl_typecheck(s -> decl);
       break;
     case STMT_EXPR:
+      // need to typecheck, but don't need type
+      type_delete(expr_typecheck(s -> expr));
       break;
     case STMT_IF_ELSE:
+      expr = expr_typecheck(s -> expr);
+      if(expr -> kind != TYPE_BOOLEAN) {
+        fprintf(stderr, "TYPE_ERROR: cannot use a ");
+        type_print(expr);
+        fprintf(stderr, " as the if statement expression (requires a boolean)\n");
+        type_error_count++;
+      }
+      stmt_typecheck(s -> body);
+      stmt_typecheck(s -> else_body);
       break;
     case STMT_FOR:
+      type_delete(expr_typecheck(s -> init_expr));
+      expr = expr_typecheck(s -> expr);
+      // need to check that the middle
+      // expression is actually there
+      if(expr -> kind != TYPE_BOOLEAN && !expr) {
+        fprintf(stderr, "TYPE_ERROR: cannot use a ");
+        type_print(expr);
+        fprintf(stderr, " as the middle expression requires a boolean (or an empty expression)\n");
+        type_error_count++;
+      }
+      expr_typecheck(s -> next_expr);
+      stmt_typecheck(s -> body);
       break;
     case STMT_WHILE:
       break;
     case STMT_PRINT:
+      type_delete(expr_typecheck(s -> expr));
       break;
     case STMT_RET:
+      type_delete(expr_typecheck(s -> expr));
       break;
     case STMT_BLOCK:
+      stmt_typecheck(s -> body);
       break;
   }
+  stmt_typecheck(s -> next);
 }
 
