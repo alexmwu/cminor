@@ -145,7 +145,7 @@ void stmt_resolve(struct stmt *s, int which) {
   stmt_resolve(s -> next, which + 1);
 }
 
-void stmt_typecheck(struct stmt *s) {
+void stmt_typecheck(struct stmt *s, struct type *ret) {
   if(!s) return;
   switch(s -> kind) {
     struct type *expr;
@@ -166,8 +166,8 @@ void stmt_typecheck(struct stmt *s) {
         fprintf(stderr, ") requires a boolean\n");
         type_error_count++;
       }
-      stmt_typecheck(s -> body);
-      stmt_typecheck(s -> else_body);
+      stmt_typecheck(s -> body, ret);
+      stmt_typecheck(s -> else_body, ret);
       type_delete(expr);
       break;
     case STMT_FOR:
@@ -182,7 +182,7 @@ void stmt_typecheck(struct stmt *s) {
         type_error_count++;
       }
       expr_typecheck(s -> next_expr);
-      stmt_typecheck(s -> body);
+      stmt_typecheck(s -> body, ret);
       type_delete(expr);
       break;
     case STMT_WHILE:
@@ -191,12 +191,21 @@ void stmt_typecheck(struct stmt *s) {
       type_delete(expr_typecheck(s -> expr));
       break;
     case STMT_RET:
-      type_delete(expr_typecheck(s -> expr));
+      expr = expr_typecheck(s -> expr);
+      if(!type_compare(expr, ret)) {
+        fprintf(stderr, "TYPE_ERROR: the return statement (return ");
+        expr_print(s -> expr);
+        fprintf(stderr, ") does not match the function return type (");
+        type_print(ret);
+        fprintf(stderr, ")\n");
+        type_error_count++;
+      }
+      type_delete(expr);
       break;
     case STMT_BLOCK:
-      stmt_typecheck(s -> body);
+      stmt_typecheck(s -> body, ret);
       break;
   }
-  stmt_typecheck(s -> next);
+  stmt_typecheck(s -> next, ret);
 }
 

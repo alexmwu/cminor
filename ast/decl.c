@@ -95,7 +95,12 @@ void decl_typecheck(struct decl *d) {
     type_error_count++;
   }
   type_delete(value);
-  stmt_typecheck(d -> code);
+  if(d -> type -> kind == TYPE_FUNCTION) {
+    stmt_typecheck(d -> code, d -> type -> subtype);
+  }
+  else {
+    stmt_typecheck(d -> code, 0);
+  }
   decl_typecheck(d -> next);
 }
 
