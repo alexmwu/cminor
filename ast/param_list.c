@@ -56,6 +56,8 @@ void param_list_typecheck(struct param_list *p_list, struct expr *exp_list, cons
         fprintf(stderr, ")\n");
         type_error_count++;
     }
+    curr_param = curr_param -> next;
+    curr_exp = curr_exp -> next;
   }
   // if there is still a param or expression
   if(curr_param) {
