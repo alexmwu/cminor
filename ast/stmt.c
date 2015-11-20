@@ -168,6 +168,7 @@ void stmt_typecheck(struct stmt *s) {
       }
       stmt_typecheck(s -> body);
       stmt_typecheck(s -> else_body);
+      type_delete(expr);
       break;
     case STMT_FOR:
       type_delete(expr_typecheck(s -> init_expr));
@@ -182,6 +183,7 @@ void stmt_typecheck(struct stmt *s) {
       }
       expr_typecheck(s -> next_expr);
       stmt_typecheck(s -> body);
+      type_delete(expr);
       break;
     case STMT_WHILE:
       break;
