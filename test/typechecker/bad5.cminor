@@ -1,0 +1,10 @@
+add: function void(a: integer, b: boolean);
+sub: function void(a: integer);
+b: integer;
+
+main: integer = {
+  t: boolean;
+  add(b);
+  sub(b, t);
+}
+

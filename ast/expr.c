@@ -423,7 +423,7 @@ struct type *expr_eq_typecheck(struct expr *e, int which) {
 }
 
 // TODO: finish this
-int expr_arr_typecheck(struct type *t, struct expr *e) {
+void expr_arr_typecheck(struct type *t, struct expr *e) {
 
 }
 
@@ -560,11 +560,9 @@ struct type *expr_typecheck(struct expr *e) {
         type_error_count++;
       }
       // check that params match args
-      if(!param_list_typecheck(e -> symbol -> type -> params, e -> right)) {
-        fprintf(stderr, "TYPE_ERROR: parameter types for function %s do not match arguments\n", e -> left -> name);
-        type_error_count++;
-      }
-      // return function return type
+      param_list_typecheck(e -> symbol -> type -> params, e -> right, e -> left -> name);
+
+        // return function return type
       return type_copy(e -> left -> symbol -> type -> subtype);
 
       // end TODO

@@ -41,13 +41,33 @@ void param_list_resolve(struct param_list *a, int which) {
   param_list_resolve(a -> next, which + 1);
 }
 
-
-// TODO: finish this
-int param_list_typecheck(struct param_list *p_list, struct expr *exp_list) {
+void param_list_typecheck(struct param_list *p_list, struct expr *exp_list, const char *name) {
   struct param_list *curr_param;
   struct expr *curr_exp;
+  struct type *curr_type;
   while(curr_param && curr_exp) {
-    if(!type_compare(curr_param -> type)) return 0;
+    curr_type = expr_typecheck(curr_exp);
+    if(!type_compare(curr_param -> type, curr_type)) {
+        fprintf(stderr, "TYPE_ERROR: parameter type (");
+        type_print(curr_param -> type);
+        fprintf(stderr, ") for function %s does not match argument (", name);
+        type_print(curr_type);
+        fprintf(stderr, ")\n");
+        type_error_count++;
+    }
+  }
+  // if there is still a param or expression
+  if(curr_param) {
+    fprintf(stderr, "TYPE_ERROR: there are more parameters than arguments (");
+    param_list_print(curr_param);
+    fprintf(stderr, ")\n");
+    type_error_count++;
+  }
+  else if(curr_exp) {
+    fprintf(stderr, "TYPE_ERROR: there are more arguments than parameters (");
+    expr_print(curr_exp);
+    fprintf(stderr, ")\n");
+    type_error_count++;
   }
 }
 
