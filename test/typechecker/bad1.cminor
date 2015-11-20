@@ -1,4 +1,11 @@
+// redeclaration
+// non boolean if stmt expr
+// non integer return
+
 main: function integer() = {
   a: integer;
   a: integer;
+  if(a)
+    return;
 }
+

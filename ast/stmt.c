@@ -161,7 +161,9 @@ void stmt_typecheck(struct stmt *s) {
       if(expr -> kind != TYPE_BOOLEAN) {
         fprintf(stderr, "TYPE_ERROR: cannot use a(n) ");
         type_print(expr);
-        fprintf(stderr, " as the if statement expression requires a boolean\n");
+        fprintf(stderr, " as the if statement expression (currently ");
+        expr_print(s -> expr);
+        fprintf(stderr, ") requires a boolean\n");
         type_error_count++;
       }
       stmt_typecheck(s -> body);
