@@ -606,6 +606,8 @@ struct type *expr_typecheck(struct expr *e) {
       if(e -> left -> symbol -> type -> kind != TYPE_FUNCTION) {
         fprintf(stderr, "TYPE_ERROR: identifier (%s) for function call is not a function\n", e -> left -> name);
         type_error_count++;
+        // return the type of the identifier
+        return type_copy(e -> left -> symbol -> type);
       }
       // check that params match args
       param_list_typecheck(e -> left -> symbol -> type -> params, e -> right, e -> left -> name);
