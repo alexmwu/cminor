@@ -80,6 +80,7 @@ void decl_resolve(struct decl *d, symbol_t kind, int which) {
 void decl_typecheck(struct decl *d) {
   if(!d) return;
   struct type *value = expr_typecheck(d -> value);
+  // check that expr exists
   if(value && !type_compare(d -> type, value)) {
     fprintf(stderr, "TYPE_ERROR: type declaration value (");
     type_print(value);
@@ -88,7 +89,7 @@ void decl_typecheck(struct decl *d) {
     fprintf(stderr, ")\n");
     type_error_count++;
   }
-  if(d -> symbol -> kind == SYMBOL_GLOBAL && !expr_is_constant(d -> value)) {
+  if(value && d -> symbol -> kind == SYMBOL_GLOBAL && !expr_is_constant(d -> value)) {
     fprintf(stderr, "TYPE_ERROR: global variables need to have constant type declarations\n");
     type_error_count++;
   }
