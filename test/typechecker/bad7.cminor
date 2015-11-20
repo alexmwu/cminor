@@ -5,6 +5,6 @@ main: function integer() = {
   c: boolean = b();
   b[c];
   d: array[5] char;
-  d[c];
+  b[c] = 4;
 }
 

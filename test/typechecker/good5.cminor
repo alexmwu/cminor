@@ -5,3 +5,4 @@ main: function void() = {
   d: array[4] array[1] integer;
   a(d, c);
 }
+

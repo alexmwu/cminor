@@ -1,5 +1,7 @@
-main: function integer() = {
+main: function void() = {
   a: array [2] array[2] integer {{4, 4}, {3, 3}};
   a[0][0] = 2;
+  b: array[3] boolean = {true, true, false}
+  return 0;
 }
 

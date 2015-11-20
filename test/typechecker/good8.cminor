@@ -1,0 +1,8 @@
+main: function void() = {
+
+}
+
+main1: function void() = {
+  return;
+}
+

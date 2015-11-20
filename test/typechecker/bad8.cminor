@@ -1,0 +1,8 @@
+main: function void() = {
+  return false;
+}
+
+main1: function integer() = {
+  return 1;
+}
+

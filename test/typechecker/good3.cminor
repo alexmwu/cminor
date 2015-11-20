@@ -2,7 +2,7 @@ arr: array[] integer;
 
 hi: function void(x: array [] integer, y: array [] array [] integer);
 
-main: function integer() = {
+main: function void() = {
   a: array [3] array[4] integer;
   b: array [4] integer;
   hi(b, a);
