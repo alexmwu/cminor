@@ -15,6 +15,8 @@ typedef enum {
 	TYPE_VOID
 } type_kind_t;
 
+// Add array size to struct
+// to allow for index checks
 struct type {
 	type_kind_t kind;
 	struct param_list *params;

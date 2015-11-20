@@ -430,9 +430,10 @@ int expr_is_constant(struct expr *e) {
 }
 
 // checks if number of indices into array
-// is correct
-int expr_arr_indexcheck(struct type *t, struct expr *e) {
-  struct type *curr_type = t;
+// is correct; call with symbol -> type
+// of array ident and array expression root
+struct type *expr_arr_indexcheck(struct type *t, struct expr *e) {
+  struct type *curr_type = t -> subtype;
   struct expr *a_next = e;
   while(a_next) {
     // means that there were no more nested
@@ -446,12 +447,17 @@ int expr_arr_indexcheck(struct type *t, struct expr *e) {
       type_error_count++;
       return 0;
     }
-    curr_type = curr_type -> subtype;
     a_next = a_next -> arr_next;
+    // return current type if both end at
+    // same time
+    if(!curr_type -> subtype && !a_next) {
+      return curr_type;
+    }
+    curr_type = curr_type -> subtype;
   }
   // if there is left over subtype, that is
   // ok (it will evaluate to an array type)
-  return 1;
+  return curr_type;
 }
 
 // 0 is standard assignment, 1 is array assign
@@ -468,7 +474,6 @@ struct type *expr_assign_typecheck(struct expr *e, int which) {
     }
     else {
       if(!expr_arr_indexcheck(e -> symbol -> type, e)) {
-        type_error_count++;
       }
     }
     type_delete(left);
@@ -575,10 +580,10 @@ struct type *expr_typecheck(struct expr *e) {
     case EXPR_ARREQ:
       break;
     case EXPR_ARR:
-      if(!expr_arr_typecheck) {
-        type_error_count++;
+      // just fail and return the expr type
+      if(!expr_arr_indexcheck(e -> symbol -> type, e)) {
+        return expr_typecheck(e);
       }
-
     case EXPR_GROUP:
       return expr_typecheck(e -> right);
     case EXPR_FUNC:
@@ -588,11 +593,8 @@ struct type *expr_typecheck(struct expr *e) {
       }
       // check that params match args
       param_list_typecheck(e -> symbol -> type -> params, e -> right, e -> left -> name);
-
         // return function return type
       return type_copy(e -> left -> symbol -> type -> subtype);
-
-      // end TODO
     case EXPR_TRUE:
       return type_create(TYPE_BOOLEAN, 0, 0, 0);
     case EXPR_FALSE:
