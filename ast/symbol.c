@@ -13,8 +13,8 @@ struct symbol *symbol_create(symbol_t kind, struct type *type, struct expr *name
 
 void symbol_free(struct symbol *s) {
   if(!s) return;
-  type_free(s -> type);
   // not owned by the symbol
+  /*type_free(s -> type);*/
   /*expr_free(s -> name);*/
   free(s);
 }
