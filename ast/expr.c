@@ -428,6 +428,8 @@ struct type *expr_eq_typecheck(struct expr *e, int which) {
     expr_typecheck_err_print(stderr, e);
     type_error_count++;
   }
+  type_delete(left);
+  type_delete(right);
   return type_create(TYPE_BOOLEAN, 0, 0, 0);
 }
 
