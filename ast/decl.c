@@ -90,9 +90,22 @@ void decl_typecheck(struct decl *d) {
     fprintf(stderr, ")\n");
     type_error_count++;
   }
+  // check that global variables have constant type declarations
   if(value && d -> symbol -> kind == SYMBOL_GLOBAL && !expr_is_constant(d -> value)) {
     fprintf(stderr, "TYPE_ERROR: global variables need to have constant type declarations\n");
     type_error_count++;
+  }
+  // check initializer lists and expression
+  if(d -> type -> kind == TYPE_ARRAY_DECL) {
+    struct expr *v = d -> value;
+    if(v -> kind != EXPR_INTLIT) {
+      // not constant; print error
+      fprintf(stderr, "TYPE_ERROR: must use constant integers when declaring arrays (");
+      expr_print(v);
+      fprintf(stderr, ")\n");
+      type_error_count++;
+    }
+
   }
   type_delete(value);
   if(d -> type -> kind == TYPE_FUNCTION) {

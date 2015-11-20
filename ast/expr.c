@@ -434,7 +434,13 @@ struct type *expr_eq_typecheck(struct expr *e, int which) {
 }
 
 int expr_is_constant(struct expr *e) {
-  if(e -> kind == EXPR_TRUE || e -> kind == EXPR_FALSE || e -> kind == EXPR_INTLIT || e -> kind == EXPR_CHARLIT || e -> kind == EXPR_STRLIT || e -> kind == EXPR_IDENT) {
+  // check to see if there is a next expression
+  // if so, array initializer lists typechecking
+  // will handle it
+  if(e -> next) {
+    return 1;
+  }
+  else if(e -> kind == EXPR_TRUE || e -> kind == EXPR_FALSE || e -> kind == EXPR_INTLIT || e -> kind == EXPR_CHARLIT || e -> kind == EXPR_STRLIT || e -> kind == EXPR_IDENT) {
     return 1;
   }
   return 0;
@@ -591,7 +597,16 @@ struct type *expr_typecheck(struct expr *e) {
     case EXPR_ARREQ:
       return expr_assign_typecheck(e, 1);
     case EXPR_ARR:
-      left = expr_arr_indexcheck(e -> symbol -> type, e);
+      if((e -> left -> symbol -> type -> kind != TYPE_ARRAY) || (e -> left -> symbol -> type -> kind != TYPE_ARRAY_DECL)) {
+        fprintf(stderr, "TYPE_ERROR: the identifier (");
+        expr_print(e -> left);
+        fprintf(stderr, ") is not of type array\n");
+        type_error_count++;
+        // don't know what else to return, so
+        // return an integer
+        return type_create(TYPE_INTEGER, 0, 0, 0);
+      }
+      left = expr_arr_indexcheck(e -> left -> symbol -> type, e);
       // just return last type in arr subtypes
       if(!left) {
         next = e -> symbol -> type;
