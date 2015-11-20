@@ -222,15 +222,7 @@ unary: TNOT unary
      | prepost
      ;
 
-prepost: TIDENT TPLUSPLUS
-          { $$ = expr_create(EXPR_PLUSPLUS, expr_create_name($1), 0, 0); }
-       | TPLUSPLUS TIDENT
-          { $$ = expr_create(EXPR_PLUSPLUS, 0, expr_create_name($2), 0); }
-       | TIDENT TMINMIN
-          { $$ = expr_create(EXPR_MINMIN, expr_create_name($1), 0, 0); }
-       | TMINMIN TIDENT
-          { $$ = expr_create(EXPR_MINMIN, 0, expr_create_name($2), 0); }
-       | group_arr_func TPLUSPLUS
+prepost: group_arr_func TPLUSPLUS
           { $$ = expr_create(EXPR_PLUSPLUS, $1, 0, 0); }
        | TPLUSPLUS group_arr_func
           { $$ = expr_create(EXPR_PLUSPLUS, 0, $2, 0); }
