@@ -42,8 +42,8 @@ void param_list_resolve(struct param_list *a, int which) {
 }
 
 void param_list_typecheck(struct param_list *p_list, struct expr *exp_list, const char *name) {
-  struct param_list *curr_param;
-  struct expr *curr_exp;
+  struct param_list *curr_param = p_list;
+  struct expr *curr_exp = exp_list;
   struct type *curr_type;
   while(curr_param && curr_exp) {
     curr_type = expr_typecheck(curr_exp);
