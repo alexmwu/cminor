@@ -601,7 +601,7 @@ struct type *expr_typecheck(struct expr *e) {
         type_error_count++;
       }
       // check that params match args
-      param_list_typecheck(e -> symbol -> type -> params, e -> right, e -> left -> name);
+      param_list_typecheck(e -> left -> symbol -> type -> params, e -> right, e -> left -> name);
         // return function return type
       return type_copy(e -> left -> symbol -> type -> subtype);
     case EXPR_TRUE:
