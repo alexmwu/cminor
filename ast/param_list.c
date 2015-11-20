@@ -70,7 +70,7 @@ void param_list_typecheck(struct param_list *p_list, struct expr *exp_list, cons
   }
   else if(curr_exp) {
     fprintf(stderr, "TYPE_ERROR: there are more arguments (");
-    expr_print(curr_exp);
+    expr_print(exp_list);
     fprintf(stderr, ") than parameters (");
     param_list_print(p_list);
     fprintf(stderr, ")\n");

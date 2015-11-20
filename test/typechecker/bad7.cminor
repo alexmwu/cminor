@@ -2,4 +2,9 @@ main: function integer() = {
   a: function integer();
   b: function integer();
   b = a;
+  c: boolean = b();
+  b[c];
+  d: array[5] char;
+  d[c];
 }
+
