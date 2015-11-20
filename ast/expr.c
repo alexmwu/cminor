@@ -596,8 +596,8 @@ struct type *expr_typecheck(struct expr *e) {
     case EXPR_GROUP:
       return expr_typecheck(e -> right);
     case EXPR_FUNC:
-      if(e -> symbol -> type -> kind != TYPE_FUNCTION) {
-        fprintf(stderr, "TYPE_ERROR: parameter types for function %s do not match arguments\n", e -> left -> name);
+      if(e -> left -> symbol -> type -> kind != TYPE_FUNCTION) {
+        fprintf(stderr, "TYPE_ERROR: identifier for function call %s is not a function\n", e -> left -> name);
         type_error_count++;
       }
       // check that params match args
