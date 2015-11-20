@@ -97,7 +97,7 @@ void decl_typecheck(struct decl *d) {
   }
   // check initializer lists and expression
   if(d -> type -> kind == TYPE_ARRAY_DECL) {
-    struct expr *v = d -> value;
+    struct expr *v = d -> type -> expr;
     if(v -> kind != EXPR_INTLIT) {
       // not constant; print error
       fprintf(stderr, "TYPE_ERROR: must use constant integers when declaring arrays (");
