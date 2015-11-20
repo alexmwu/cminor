@@ -2,7 +2,7 @@ c: void;
 
 main: function void () = {
   a: integer;
-  if(a)
+  if(a<2)
     b: integer = 5;
     c;
 }

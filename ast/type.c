@@ -87,6 +87,18 @@ int type_compare(struct type *a, struct type *b) {
         return 1;
     }
   }
+  else if(a -> kind == TYPE_ARRAY_DECL && b -> kind == TYPE_ARRAY) {
+    if(type_compare(a -> subtype, b -> subtype))
+      return 1;
+    else
+      return 0;
+  }
+  else if(a -> kind == TYPE_ARRAY && b -> kind = TYPE_ARRAY_DECL) {
+    if(type_compare(a -> subtype, b -> subtype))
+      return 1;
+    else
+      return 0;
+  }
   return 0;
 }
 

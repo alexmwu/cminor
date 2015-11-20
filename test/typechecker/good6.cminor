@@ -1,0 +1,7 @@
+main: function integer(a: array[] integer) = {
+  c: array[3] integer;
+  d: array[2] integer;
+  a = d;
+  c = a;
+}
+
