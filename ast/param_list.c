@@ -37,6 +37,7 @@ void param_list_resolve(struct param_list *a, int which) {
   if(!a) return;
   struct symbol *new = symbol_create(SYMBOL_PARAM, a -> type, a -> name);
   new -> which = which;
+  a -> symbol = new;
   scope_bind(a -> name -> name, new);
   param_list_resolve(a -> next, which + 1);
 }
