@@ -499,11 +499,11 @@ struct type *expr_assign_typecheck(struct expr *e, int which) {
       fprintf(stderr, "TYPE_ERROR: cannot use assignment operator on a function (%s)\n", e -> left -> name);
       type_error_count++;
       type_delete(left);
-      return type_copy(right);
+      return right;
     }
     else {
       type_delete(right);
-      return type_copy(left);
+      return left;
     }
   }
 }
