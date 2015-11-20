@@ -6,3 +6,9 @@ main1: function void() = {
   return;
 }
 
+main2: function integer() = {
+  a: integer;
+  return a;
+  return 2;
+}
+

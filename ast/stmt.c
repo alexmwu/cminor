@@ -192,6 +192,10 @@ void stmt_typecheck(struct stmt *s, struct type *ret) {
       break;
     case STMT_RET:
       expr = expr_typecheck(s -> expr);
+      if(!s -> expr) {
+        type_delete(expr);
+        expr = type_create(TYPE_VOID, 0, 0, 0);
+      }
       if(!type_compare(expr, ret)) {
         fprintf(stderr, "TYPE_ERROR: the return statement (return ");
         expr_print(s -> expr);
