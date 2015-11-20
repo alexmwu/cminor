@@ -55,6 +55,7 @@ void param_list_typecheck(struct param_list *p_list, struct expr *exp_list, cons
         type_print(curr_type);
         fprintf(stderr, ")\n");
         type_error_count++;
+        type_delete(curr_type);
         return;
     }
     curr_param = curr_param -> next;
@@ -76,5 +77,6 @@ void param_list_typecheck(struct param_list *p_list, struct expr *exp_list, cons
     fprintf(stderr, ")\n");
     type_error_count++;
   }
+  type_delete(curr_type);
 }
 
