@@ -1,6 +1,7 @@
 #ifndef EXPR_H
 #define EXPR_H
 
+#include <stdio.h>
 #include "symbol.h"
 #include "scope.h"
 
