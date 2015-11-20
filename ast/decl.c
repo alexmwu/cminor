@@ -94,6 +94,7 @@ void decl_typecheck(struct decl *d) {
     fprintf(stderr, "TYPE_ERROR: global variables need to have constant type declarations\n");
     type_error_count++;
   }
+  type_delete(value);
   stmt_typecheck(d -> code);
   decl_typecheck(d -> next);
 }
