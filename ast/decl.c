@@ -59,6 +59,7 @@ void decl_resolve(struct decl *d, symbol_t kind, int which) {
   if(!d) return;
   struct symbol *sym = symbol_create(kind, d -> type, d -> name);
   sym -> which = which;
+  d -> symbol = sym;
   struct symbol *old = scope_lookup(d -> name -> name);
   if(old) {
     fprintf(stderr, "%s is a redeclaration. Already declared as %s variable\n", d -> name -> name, symbol_kind_print(old -> kind));
