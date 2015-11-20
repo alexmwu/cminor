@@ -50,13 +50,23 @@ void scope_print_all() {
 }
 
 void scope_exit() {
-  scope_table_delete(curr_scope -> table);
+  /*scope_table_delete(curr_scope -> table);*/
   hash_table_clear(curr_scope -> table);
   hash_table_delete(curr_scope -> table);
   struct scope_list *exited_scope = curr_scope;
   curr_scope = curr_scope -> prev;
   free(exited_scope);
 }
+
+/*
+ *void scope_exit_keep_symbols() {
+ *  hash_table_clear(curr_scope -> table);
+ *  hash_table_delete(curr_scope -> table);
+ *  struct scope_list *exited_scope = curr_scope;
+ *  curr_scope = curr_scope -> prev;
+ *  free(exited_scope);
+ *}
+ */
 
 void scope_bind(const char *name, struct symbol *s) {
   int outCode = hash_table_insert(curr_scope -> table, name, s);
