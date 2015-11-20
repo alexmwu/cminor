@@ -490,22 +490,15 @@ struct type *expr_assign_typecheck(struct expr *e, int which) {
       type_error_count++;
     }
     else {
-       arr_next = expr_arr_indexcheck(e -> left -> symbol -> type, e);
-      // just return last type in arr subtypes
-      if(!arr_next) {
-        struct type *next;
-        next = e -> symbol -> type;
-        while(next -> subtype) {
-          next = next -> subtype;
-        }
-        type_delete(left);
-        type_delete(right);
-        return next;
+      // just return the type of the expr
+      arr_next = expr_arr_indexcheck(left, e);
+      if(!expr_arr_indexcheck(left, e)) {
+        return type_copy(right);
       }
-      return arr_next;
     }
     type_delete(left);
-    return right;
+    type_delete(right);
+    return type_copy(right);
   }
   else {
     if(left -> kind == TYPE_FUNCTION) {
