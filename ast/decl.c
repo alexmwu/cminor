@@ -78,6 +78,14 @@ void decl_resolve(struct decl *d, symbol_t kind, int which) {
   decl_resolve(d -> next, kind, which);
 }
 
+// takes a type (should be array) and expr_list
+// and checks to see if array initalizer (in
+// form of expr_list) matches type declared
+// supports multideimensional arrays
+void decl_array_initializer_typecheck(struct type *t, struct expr *e) {
+
+}
+
 void decl_typecheck(struct decl *d) {
   if(!d) return;
   struct type *value = expr_typecheck(d -> value);
@@ -105,7 +113,9 @@ void decl_typecheck(struct decl *d) {
       fprintf(stderr, ")\n");
       type_error_count++;
     }
+    struct type *t = d -> type;
 
+    decl_array_initializer_typecheck(d -> type, d -> value);
   }
   type_delete(value);
   if(d -> type -> kind == TYPE_FUNCTION) {

@@ -38,7 +38,7 @@ void print_integer( int x )
 	printf("%d",x);
 }
 
-/*TODO: write a function to handle \n and \0 so they get printed out like code*/
+/*TODO: write a function to handle \n and \0 so they get printed out like code (called print_code_string, for example*/
 void print_string( const char *s )
 {
 	printf("%s",s);
@@ -51,7 +51,7 @@ void print_boolean( int b )
 
 void print_character( char c )
 {
-	printf("'%c'",c);
+	printf("%c",c);
 }
 
 int integer_power( int x, int y )

@@ -225,7 +225,9 @@ void expr_print(struct expr *e) {
       print_integer(e -> literal_value);
       break;
     case EXPR_CHARLIT:
+      printf("'");
       print_character(e -> char_literal);
+      printf("'");
       break;
     case EXPR_STRLIT:
       printf("\"");

@@ -21,8 +21,8 @@ AST_HEADER = $(wildcard $(AST_DIR)/*.h)
 AST_OBJ = $(notdir $(AST_SRC:.c=.o))
 
 # codegen library functions
-CODEGEN_SRC = $(wildcard $(CODEGEN_DIR/*.c)
-CODEGEN_HEADER = $(wildcard $(CODEGEN_DIR/*.h)
+CODEGEN_SRC = $(wildcard $(CODEGEN_DIR)/*.c)
+CODEGEN_HEADER = $(wildcard $(CODEGEN_DIR)/*.h)
 CODEGEN_OBJ = $(notdir $(CODEGEN_SRC:.c=.o))
 
 # scanner/parser inputs to Lex/Yacc and Lex/Yacc generated code
