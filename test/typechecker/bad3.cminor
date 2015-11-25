@@ -1,6 +1,6 @@
 main: function integer () = {
   arr: array[5] boolean;
-  arr[4<3] = 5;
+  arr['c'][4] = 5;
   arr[4<3] = 'c';
 }
 

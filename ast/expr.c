@@ -452,6 +452,7 @@ int expr_is_constant(struct expr *e) {
 struct type *expr_arr_indexcheck(struct type *t, struct expr *e) {
   struct type *curr_type = t -> subtype;
   struct expr *a_next = e -> arr_next;
+  struct type *exp_type = 0;
   while(a_next) {
     // means that there were no more nested
     // subtypes in the declaration
@@ -463,6 +464,17 @@ struct type *expr_arr_indexcheck(struct type *t, struct expr *e) {
       fprintf(stderr, ") gives\n");
       type_error_count++;
       return 0;
+    }
+
+    // if not an integer expr
+    exp_type = expr_typecheck(a_next);
+    if(exp_type -> kind != TYPE_INTEGER) {
+      fprintf(stderr, "TYPE_ERROR: index into an array must be of type integer. Current expr (");
+      expr_print(a_next);
+      fprintf(stderr, ") is of type ");
+      type_print(exp_type);
+      fprintf(stderr, "\n");
+      type_error_count++;
     }
     a_next = a_next -> arr_next;
     // return current type if both end at
