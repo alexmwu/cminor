@@ -507,6 +507,14 @@ struct type *expr_assign_typecheck(struct expr *e, int which) {
       if(!arr_next) {
         return type_copy(right);
       }
+      if(!type_compare(arr_next, right)) {
+        fprintf(stderr, "TYPE_ERROR: value of index into array (");
+        type_print(arr_next);
+        fprintf(stderr, ") does not match the type of the expression (");
+        type_print(right);
+        fprintf(stderr, ")\n");
+        type_error_count++;
+      }
     }
     type_delete(left);
     type_delete(right);
