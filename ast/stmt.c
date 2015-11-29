@@ -149,6 +149,7 @@ void stmt_typecheck(struct stmt *s, struct type *ret) {
   if(!s) return;
   switch(s -> kind) {
     struct type *expr;
+    struct expr *curr;
     case STMT_DECL:
       decl_typecheck(s -> decl);
       break;
@@ -188,7 +189,12 @@ void stmt_typecheck(struct stmt *s, struct type *ret) {
     case STMT_WHILE:
       break;
     case STMT_PRINT:
-      type_delete(expr_typecheck(s -> expr));
+      curr = s -> expr;
+      while(curr) {
+        expr = expr_typecheck(s -> expr);
+        type_delete(expr);
+        curr = curr -> next;
+      }
       break;
     case STMT_RET:
       expr = expr_typecheck(s -> expr);
