@@ -1,6 +1,6 @@
 a: function void();
 b: array[3] integer;
 main: function integer() = {
-  print 5*2, 5<6, true, 'a', "dsklfj";
+  print 5*2, 5<6, true + 5, a, b, a+b;
   print;
 }

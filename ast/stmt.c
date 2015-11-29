@@ -195,9 +195,10 @@ void stmt_typecheck(struct stmt *s, struct type *ret) {
         if(!type_is_atomic(expr)) {
           fprintf(stderr, "TYPE_ERROR: cannot print (print ");
           expr_print(s -> expr);
-          fprintf(stderr, ") a non-atomic value\n");
+          fprintf(stderr, ") a non-atomic value (");
           type_print(expr);
-          // only need to print once
+          fprintf(stderr, ")\n");
+          type_error_count++;
         }
         type_delete(expr);
         curr = curr -> next;
