@@ -26,6 +26,7 @@ typedef enum {
   EXPR_EQ,
   EXPR_ARREQ,
   EXPR_ARR,
+  EXPR_ARR_INITLIST,
   EXPR_GROUP,
   EXPR_FUNC,
   EXPR_TRUE,
@@ -44,7 +45,10 @@ struct expr {
 
   // used by expr_lists
   struct expr *next;
+  // used by array indices
   struct expr *arr_next;
+  // used by array initializer lists
+  struct expr *next_list;
 
 	/* used by leaf expr types */
 	const char *name;

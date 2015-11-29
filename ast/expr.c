@@ -200,6 +200,25 @@ void expr_print(struct expr *e) {
         curr_arr = curr_arr -> arr_next;
       }
       break;
+    case EXPR_ARR_INITLIST:
+      printf("{");
+      /*print nested array_initlist*/
+      expr_print(e -> left);
+      /*
+       *print expr list if one exists (should
+       *only be at end of linked list created
+       *by following the left pointer)
+       */
+      expr_print(e -> right);
+      printf("}");
+      /*print array initializer lists*/
+      curr_arr = e -> next_list;
+      while(curr_arr) {
+        printf(", ");
+        expr_print(e -> next_list);
+        curr_arr = curr_arr -> next_list;
+      }
+      break;
     case EXPR_GROUP:
       printf("(");
       /*
@@ -443,6 +462,16 @@ int expr_is_constant(struct expr *e) {
     return 1;
   }
   else if(e -> kind == EXPR_TRUE || e -> kind == EXPR_FALSE || e -> kind == EXPR_INTLIT || e -> kind == EXPR_CHARLIT || e -> kind == EXPR_STRLIT || e -> kind == EXPR_IDENT) {
+    if(e -> kind == EXPR_IDENT) {
+      struct type *t = e -> symbol -> type;
+      // can just check if type is boolean, character,
+      // integer, or string because the name has already
+      // been resolved at this point and decl_typecheck
+      // has previously checked that the declaration is
+      // a constant (will print an error if it is not)
+      if(t -> kind != TYPE_BOOLEAN || t -> kind != TYPE_CHARACTER || t -> kind != TYPE_INTEGER || t -> kind != TYPE_STRING)
+        return 0;
+    }
     return 1;
   }
   return 0;
@@ -536,9 +565,29 @@ struct type *expr_assign_typecheck(struct expr *e, int which) {
   }
 }
 
+// takes a type (should be array) and expr_list
+// and checks to see if array initalizer (in
+// form of expr_list) matches type declared
+struct type *expr_arr_initializer_typecheck(struct expr *e) {
+  struct expr *curr = e;
+  struct type *exp_type;
+  // base type of array (atomics, i.e.,
+  // integers, string, characters, booleans)
+  struct type *base_type;
+
+  while(curr -> left) {
+    curr = curr -> left;
+  }
+  base_type = expr_typecheck(curr -> right);
+
+
+  return exp_type;
+}
+
 // need to type_delete the result
 struct type *expr_typecheck(struct expr *e) {
   if(!e) return 0;
+  struct expr *curr = e;
   switch(e -> kind) {
     struct type *left, *right, *next;
     // TODO: add a type_file_print function
@@ -639,6 +688,8 @@ struct type *expr_typecheck(struct expr *e) {
         return type_copy(next);
       }
       return left;
+    case EXPR_ARR_INITLIST:
+      return expr_arr_initializer_typecheck(e);
     case EXPR_GROUP:
       return expr_typecheck(e -> right);
     case EXPR_FUNC:

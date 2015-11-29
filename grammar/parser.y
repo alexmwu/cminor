@@ -45,7 +45,7 @@ void yyerror(const char *s) { fprintf(stderr, "PARSE_ERROR at line %d: %s\n", yy
 %type <decl> program optional_decl_list decl_list decl
 %type <param_list> optional_param_list param_list param
 %type <stmt> stmt other_stmt matched unmatched optional_stmt_list stmt_list
-%type <expr> expr optional_expr expr_list optional_expr_list assign_expr or_expr and_expr comparison_expr add_expr mul_expr exp_expr unary prepost group_arr_func arr_index_list arr_index atomic
+%type <expr> expr array_init_list array_init optional_expr expr_list optional_expr_list assign_expr or_expr and_expr comparison_expr add_expr mul_expr exp_expr unary prepost group_arr_func arr_index_list arr_index atomic
 %type <type> type
 
 %start program
@@ -76,11 +76,22 @@ decl: TIDENT TCOL type TEQ expr TSEMI
       { $$ = decl_create(expr_create_name($1), $3, $5, 0, 0); }
     | TIDENT TCOL type TSEMI
       { $$ = decl_create(expr_create_name($1), $3, 0, 0, 0); }
-    | TIDENT TCOL type TEQ TLBRACE expr_list TRBRACE TSEMI
-      { $$ = decl_create(expr_create_name($1), $3, $6, 0, 0); }
+    | TIDENT TCOL type TEQ array_init_list TSEMI
+      { $$ = decl_create(expr_create_name($1), $3, $5, 0, 0); }
     | TIDENT TCOL type TEQ TLBRACE optional_stmt_list TRBRACE
       { $$ = decl_create(expr_create_name($1), $3, 0, $6, 0); }
     ;
+
+array_init: TLBRACE expr_list TRBRACE
+            { $$ = expr_create(EXPR_ARR_INITLIST, 0, $2, 0); }
+          | TLBRACE array_init_list TRBRACE
+            { $$ = expr_create(EXPR_ARR_INITLIST, $2, 0, 0); }
+          ;
+
+array_init_list: array_init_list TCOMMA array_init
+                  { struct expr *curr = $1; while(curr -> next_list) { curr = curr -> next_list; } curr -> next_list = $3 }
+               | array_init
+               ;
 
 type: TSTR
       { $$ = type_create(TYPE_STRING, 0, 0, 0); }
