@@ -33,6 +33,7 @@ void type_free(struct type *t);
 struct type *type_copy(struct type *t);
 int type_compare(struct type *a, struct type *b);
 void type_delete(struct type *t);
+int type_is_atomic(struct type *t);
 
 #endif
 

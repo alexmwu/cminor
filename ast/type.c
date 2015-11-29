@@ -109,3 +109,10 @@ void type_delete(struct type *t) {
   if(!t) return;
   free(t);
 }
+
+int type_is_atomic(struct type *t) {
+  if(t -> kind != TYPE_BOOLEAN || t -> kind != TYPE_CHARACTER || t -> kind != TYPE_INTEGER || t -> kind != TYPE_STRING)
+    return 0;
+  return 1;
+}
+
