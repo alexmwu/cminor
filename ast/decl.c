@@ -92,7 +92,11 @@ void decl_typecheck(struct decl *d) {
   }
   // check that global variables have constant type declarations
   if(value && d -> symbol -> kind == SYMBOL_GLOBAL && !expr_is_constant(d -> value)) {
-    fprintf(stderr, "TYPE_ERROR: global variables need to have constant type declarations\n");
+    fprintf(stderr, "TYPE_ERROR: global variables (");
+    expr_print(d -> name);
+    fprintf(stderr, ") need to have constant type declarations (have type of ");
+    type_print(value);
+    fprintf(stderr, ")\n");
     type_error_count++;
   }
 /*
