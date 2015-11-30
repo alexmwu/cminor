@@ -565,23 +565,108 @@ struct type *expr_assign_typecheck(struct expr *e, int which) {
   }
 }
 
-// takes a type (should be array) and expr_list
+// takes a base type (should be atomic) and expr_list
 // and checks to see if array initalizer (in
 // form of expr_list) matches type declared
-struct type *expr_arr_initializer_typecheck(struct expr *e) {
-  struct expr *curr = e;
-  struct type *exp_type;
-  // base type of array (atomics, i.e.,
-  // integers, string, characters, booleans)
-  struct type *base_type;
+void expr_arr_init_typecheck(struct expr *name, struct expr *e, struct type *t, struct type *base, int count) {
+  if(!e) return;
+  // check that the lengths of the expr match
+  struct expr *curr_expr;
 
-  while(curr -> left) {
-    curr = curr -> left;
+  // go to leaf nested init list, check that
+  // e -> left exists beforehand because of
+  // possible null ptr dereferencing with
+  // t -> subtype
+  if(e -> left) {
+    if(!t -> subtype) {
+      fprintf(stderr, "TYPE_ERROR: initializer list for ");
+      expr_print(name);
+      fprintf(stderr, " has more subarrays (");
+      expr_print(e -> left);
+      fprintf(stderr, ") than declared\n");
+      type_error_count++;
+      // stop typechecking
+      return;
+    }
+    int newCount = t -> subtype -> expr -> literal_value;
+    // give newCount to nested array (based on
+    // the nested type constant size declaration
+    expr_arr_init_typecheck(name, e -> left, t -> subtype, base, newCount);
   }
-  base_type = expr_typecheck(curr -> right);
+  // if not e -> left and t -> subtype
+  else if(t -> subtype) {
+    fprintf(stderr, "TYPE_ERROR: initializer list for ");
+    expr_print(name);
+    fprintf(stderr, " has fewer subarrays (");
+    expr_print(e -> left);
+    fprintf(stderr, ") than declared\n");
+    type_error_count++;
+    // stop typechecking
+    return;
+  }
+
+  // type compare expr_typecheck result of
+  // expr_list with base
+  if(!e -> right) {
+    struct type *curr_type = expr_typecheck(e);
+    if(!type_compare(curr_type, base)) {
+      fprintf(stderr, "TYPE_ERROR: initializer expression for ");
+      expr_print(name);
+      fprintf(stderr, " (");
+      expr_print(e);
+      fprintf(stderr, ") does not match base type for the array (");
+      type_print(base);
+      fprintf(stderr, ")\n");
+      type_error_count++;
+    }
+    type_delete(curr_type);
+  }
+  // not a leaf expr node
+  else {
+    expr_arr_init_typecheck(name, e -> right, t, base, count);
+  }
 
 
-  return exp_type;
+   /*
+    *The below sees if the initializer list
+    *exceeds/doesn't meet the declared bounds
+    */
+
+  // initializer list has more elements than
+  // were declared. this may not get called
+  // as count always breaks on count == 0
+  if(count < 0) {
+
+    /*************************************/
+    // TODO: remove this
+    printf("TODO: this may not get called\n");
+    /*************************************/
+
+    fprintf(stderr, "TYPE_ERROR: initializer list for ");
+    expr_print(name);
+    fprintf(stderr, " has more elements than were declared\n");
+    type_error_count++;
+    // don't need to return as it skips rest
+    // of code
+  }
+  // count >= 0 and e -> next_list exists
+  else if(e -> next_list) {
+    // more array init lists than declared
+    if(count == 0) {
+      fprintf(stderr, "TYPE_ERROR: initializer list for ");
+      expr_print(name);
+      fprintf(stderr, " has more elements than were declared\n");
+      type_error_count++;
+      // don't need to return
+    }
+    expr_arr_init_typecheck(name, e -> next_list);
+  }
+  // implicit !e -> next_list
+  // init list has less elems than declared
+  else if(count > 0) {
+    fprintf(stderr, "TYPE_ERROR");
+    type_error_count++;
+  }
 }
 
 // need to type_delete the result
@@ -689,7 +774,10 @@ struct type *expr_typecheck(struct expr *e) {
       }
       return left;
     case EXPR_ARR_INITLIST:
-      return expr_arr_initializer_typecheck(e);
+      fprintf(stderr, "Bad call on expr_typecheck (EXPR_ARR_INITLIST should only be called by special case in decl_typcheck\n");
+      // program (not user) error
+      exit(1);
+      /*return expr_arr_init_typecheck(e);*/
     case EXPR_GROUP:
       return expr_typecheck(e -> right);
     case EXPR_FUNC:

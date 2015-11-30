@@ -145,7 +145,7 @@ void stmt_resolve(struct stmt *s, int which) {
   stmt_resolve(s -> next, which + 1);
 }
 
-void stmt_typecheck(struct stmt *s, struct type *ret) {
+void stmt_typecheck(struct stmt *s, struct type *ret, int *returned) {
   if(!s) return;
   switch(s -> kind) {
     struct type *expr;

@@ -81,8 +81,9 @@ void decl_resolve(struct decl *d, symbol_t kind, int which) {
 void decl_typecheck(struct decl *d) {
   if(!d) return;
   struct type *value = expr_typecheck(d -> value);
-  // check that expr exists
-  if(value && !type_compare(d -> type, value)) {
+  // check that expr exists (and it is not a
+  // special case of initializer list)
+  if(value && d -> value -> kind != EXPR_ARR_INITLIST && !type_compare(d -> type, value)) {
     fprintf(stderr, "TYPE_ERROR: type declaration value (");
     type_print(value);
     fprintf(stderr, ") for %s does not match declared value (", d -> name -> name);
@@ -91,13 +92,46 @@ void decl_typecheck(struct decl *d) {
     type_error_count++;
   }
   // check that global variables have constant type declarations
-  if(value && d -> symbol -> kind == SYMBOL_GLOBAL && !expr_is_constant(d -> value)) {
+  if(value && d -> value -> kind != EXPR_ARR_INITLIST && d -> symbol -> kind == SYMBOL_GLOBAL && !expr_is_constant(d -> value)) {
     fprintf(stderr, "TYPE_ERROR: global variables (");
     expr_print(d -> name);
-    fprintf(stderr, ") need to have constant type declarations (have type of ");
+    fprintf(stderr, ") need to have constant type declarations (has type of ");
     type_print(value);
     fprintf(stderr, ")\n");
     type_error_count++;
+  }
+
+  if(d -> type -> kind == TYPE_ARRAY_DECL) {
+    if(d -> value -> kind != EXPR_ARR_INITLIST) {
+      fprintf(stderr, "Bad initialization: array declaration expression for (");
+      expr_print(d -> name);
+      fprintf(stderr, "does not have kind EXPR_ARR_INITLIST\n");
+      // program (not user) error
+      exit(1);
+    }
+    else {
+      struct type *curr = d -> type;
+      while(curr -> subtype) {
+        curr = curr -> subtype;
+      }
+      if(!type_is_atomic(curr)) {
+        fprintf(stderr, "TYPE_ERROR: the base type (final nested type) of the array is not an atomic type (has type ");
+        type_print(curr);
+        fprintf(stderr, ")\n");
+        type_error_count++;
+      }
+      else {
+        int count = d -> type -> expr -> literal_value;
+        if(count <= 0) {
+          fprintf(stderr, "TYPE_ERROR: declared size of array ");
+          expr_print(d -> name);
+          fprintf(stderr, " is not a positive number (%d)\n", count);
+          type_error_count++;
+        }
+        else
+          expr_arr_init_typecheck(d -> name, d -> value, curr, count);
+      }
+    }
   }
 /*
  *  // check initializer lists and expression

@@ -30,6 +30,11 @@ struct stmt * stmt_create( stmt_kind_t kind, struct decl *d, struct expr *init_e
 void stmt_print( struct stmt *s, int indent );
 void stmt_free(struct stmt *s);
 void stmt_resolve(struct stmt *s, int which);
-void stmt_typecheck(struct stmt *s, struct type *ret);
+// ret and returned are for function
+// declarations. ret is the type
+// that the function should return
+// returned is whether there was
+// a return statement
+void stmt_typecheck(struct stmt *s, struct type *ret, int *returned);
 
 #endif
