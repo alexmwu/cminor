@@ -70,6 +70,7 @@ void expr_print( struct expr *e );
 void expr_free(struct expr *e);
 void expr_resolve(struct expr *e);
 int expr_is_constant(struct expr *e);
+int expr_is_num_constant(struct expr *e);
 void expr_arr_init_typecheck(struct expr *name, struct expr *e, struct type *t, struct type *base, int count);
 void expr_typecheck_err_print(FILE *f, struct expr *e);
 struct type *expr_typecheck(struct expr *e);

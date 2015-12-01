@@ -101,6 +101,14 @@ void decl_typecheck(struct decl *d) {
         fprintf(stderr, ")\n");
         type_error_count++;
       }
+      else if(!expr_is_num_constant(d -> type -> expr)) {
+        fprintf(stderr, "TYPE_ERROR: arrays (");
+        expr_print(d -> name);
+        fprintf(stderr, ") need to have constant integer type declarations (has type of ");
+        type_print(d -> type);
+        fprintf(stderr, ")\n");
+        type_error_count++;
+      }
       else {
         int count = d -> type -> expr -> literal_value;
         // stop processing if count <= 0
@@ -119,7 +127,7 @@ void decl_typecheck(struct decl *d) {
   struct type *value;
   // bit hacky, but want to check expr, not decl
   // (though they should be tied, they may not be)
-  if(d -> value -> kind == EXPR_ARR_INITLIST) {
+  if(d -> value && d -> value -> kind == EXPR_ARR_INITLIST) {
     value = 0;
   }
   // value variable used for rest of typecheck

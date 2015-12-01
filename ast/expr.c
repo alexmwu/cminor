@@ -477,6 +477,10 @@ int expr_is_constant(struct expr *e) {
   return 0;
 }
 
+int expr_is_num_constant(struct expr *e) {
+  return expr_is_constant(e) && (e -> kind == EXPR_INTLIT);
+}
+
 // checks if number of indices into array
 // is correct; call with symbol -> type
 // of array ident and array expression root
@@ -577,7 +581,8 @@ void expr_arr_init_typecheck(struct expr *name, struct expr *e, struct type *t, 
   // possible null ptr dereferencing with
   // t -> subtype
   if(e -> left) {
-    if(!t -> subtype) {
+    // add one more for base atomic subtype
+    if(!t -> subtype -> subtype) {
       fprintf(stderr, "TYPE_ERROR: initializer list for ");
       expr_print(name);
       fprintf(stderr, " has more subarrays (");
@@ -599,8 +604,9 @@ void expr_arr_init_typecheck(struct expr *name, struct expr *e, struct type *t, 
     // the nested type constant size declaration
     expr_arr_init_typecheck(name, e -> left, t -> subtype, base, newCount);
   }
-  // if not e -> left and t -> subtype
-  else if(t -> subtype) {
+  // if !e -> left is implicit in the else
+  // add one more for base atomic subtype
+  else if(t -> subtype -> subtype) {
     fprintf(stderr, "TYPE_ERROR: initializer list for ");
     expr_print(name);
     fprintf(stderr, " has fewer subarrays (");
