@@ -778,7 +778,7 @@ struct type *expr_typecheck(struct expr *e) {
       }
       return left;
     case EXPR_ARR_INITLIST:
-      fprintf(stderr, "Bad call on expr_typecheck (EXPR_ARR_INITLIST should only be called by special case in decl_typcheck\n");
+      fprintf(stderr, "Bad call on expr_typecheck (EXPR_ARR_INITLIST should only be called by special case in decl_typcheck)\n");
       // program (not user) error
       exit(1);
       /*return expr_arr_init_typecheck(e);*/

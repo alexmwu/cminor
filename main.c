@@ -87,7 +87,9 @@ int main(int argc, char **argv) {
       exit(outCode);
     }
     else if(strcmp(argv[1], "-resolve") == 0) {
-      yyparse();
+      if(yyparse()) {
+        exit(1);
+      }
       scope_enter();
       decl_resolve(programRoot, SYMBOL_GLOBAL, 0);
       scope_exit();
@@ -99,7 +101,9 @@ int main(int argc, char **argv) {
       exit(0);
     }
     else if(strcmp(argv[1], "-typecheck") == 0) {
-      yyparse();
+      if(yyparse()) {
+        exit(1);
+      }
       scope_enter();
       decl_resolve(programRoot, SYMBOL_GLOBAL, 0);
       scope_exit();
