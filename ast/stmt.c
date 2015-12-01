@@ -167,8 +167,8 @@ void stmt_typecheck(struct stmt *s, struct type *ret, int *returned) {
         fprintf(stderr, ") requires a boolean\n");
         type_error_count++;
       }
-      stmt_typecheck(s -> body, ret);
-      stmt_typecheck(s -> else_body, ret);
+      stmt_typecheck(s -> body, ret, returned);
+      stmt_typecheck(s -> else_body, ret, returned);
       type_delete(expr);
       break;
     case STMT_FOR:
@@ -183,7 +183,7 @@ void stmt_typecheck(struct stmt *s, struct type *ret, int *returned) {
         type_error_count++;
       }
       expr_typecheck(s -> next_expr);
-      stmt_typecheck(s -> body, ret);
+      stmt_typecheck(s -> body, ret, returned);
       type_delete(expr);
       break;
     case STMT_WHILE:
