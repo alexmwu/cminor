@@ -581,7 +581,7 @@ void expr_arr_init_typecheck(struct expr *name, struct expr *e, struct type *t, 
       fprintf(stderr, "TYPE_ERROR: initializer list for ");
       expr_print(name);
       fprintf(stderr, " has more subarrays (");
-      expr_print(e -> left);
+      expr_print(e);
       fprintf(stderr, ") than declared\n");
       type_error_count++;
       // stop typechecking
@@ -604,7 +604,7 @@ void expr_arr_init_typecheck(struct expr *name, struct expr *e, struct type *t, 
     fprintf(stderr, "TYPE_ERROR: initializer list for ");
     expr_print(name);
     fprintf(stderr, " has fewer subarrays (");
-    expr_print(e -> left);
+    expr_print(e);
     fprintf(stderr, ") than declared\n");
     type_error_count++;
     // stop typechecking

@@ -4,4 +4,6 @@ c: array[2] array [3] integer = {{2, 1}, {true}, {"sdf", 's', 4}};
 d: array[2*3] integer;
 e: array[true] integer;
 f: array['c'] integer;
+g: array [2] array [3] integer = {2, 3};
+h: array [2] integer = {{2, 3}, {2, 3}};
 

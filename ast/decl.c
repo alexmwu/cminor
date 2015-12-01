@@ -80,27 +80,8 @@ void decl_resolve(struct decl *d, symbol_t kind, int which) {
 
 void decl_typecheck(struct decl *d) {
   if(!d) return;
-  struct type *value = expr_typecheck(d -> value);
-  // check that expr exists (and it is not a
-  // special case of initializer list)
-  if(value && d -> value -> kind != EXPR_ARR_INITLIST && !type_compare(d -> type, value)) {
-    fprintf(stderr, "TYPE_ERROR: type declaration value (");
-    type_print(value);
-    fprintf(stderr, ") for %s does not match declared value (", d -> name -> name);
-    type_print(d -> type);
-    fprintf(stderr, ")\n");
-    type_error_count++;
-  }
-  // check that global variables have constant type declarations
-  if(value && d -> value -> kind != EXPR_ARR_INITLIST && d -> symbol -> kind == SYMBOL_GLOBAL && !expr_is_constant(d -> value)) {
-    fprintf(stderr, "TYPE_ERROR: global variables (");
-    expr_print(d -> name);
-    fprintf(stderr, ") need to have constant type declarations (has type of ");
-    type_print(value);
-    fprintf(stderr, ")\n");
-    type_error_count++;
-  }
 
+  // need to place this first
   if(d -> type -> kind == TYPE_ARRAY_DECL) {
     if(d -> value && d -> value -> kind != EXPR_ARR_INITLIST) {
       fprintf(stderr, "Bad initialization: array declaration expression for (");
@@ -133,6 +114,36 @@ void decl_typecheck(struct decl *d) {
           expr_arr_init_typecheck(d -> name, d -> value, d -> type, curr, count);
       }
     }
+  }
+
+  struct type *value;
+  // bit hacky, but want to check expr, not decl
+  // (though they should be tied, they may not be)
+  if(d -> value -> kind == EXPR_ARR_INITLIST) {
+    value = 0;
+  }
+  // value variable used for rest of typecheck
+  else
+    value = expr_typecheck(d -> value);
+
+  // check that expr exists (and it is not a
+  // special case of initializer list)
+  if(value && d -> value -> kind != EXPR_ARR_INITLIST && !type_compare(d -> type, value)) {
+    fprintf(stderr, "TYPE_ERROR: type declaration value (");
+    type_print(value);
+    fprintf(stderr, ") for %s does not match declared value (", d -> name -> name);
+    type_print(d -> type);
+    fprintf(stderr, ")\n");
+    type_error_count++;
+  }
+  // check that global variables have constant type declarations
+  if(value && d -> value -> kind != EXPR_ARR_INITLIST && d -> symbol -> kind == SYMBOL_GLOBAL && !expr_is_constant(d -> value)) {
+    fprintf(stderr, "TYPE_ERROR: global variables (");
+    expr_print(d -> name);
+    fprintf(stderr, ") need to have constant type declarations (has type of ");
+    type_print(value);
+    fprintf(stderr, ")\n");
+    type_error_count++;
   }
 
   type_delete(value);
