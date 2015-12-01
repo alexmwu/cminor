@@ -6,3 +6,4 @@ main: function void () = {
     b: integer = 5;
     c;
 }
+

@@ -620,8 +620,6 @@ void expr_arr_init_typecheck(struct expr *name, struct expr *e, struct type *t, 
   // type compare expr_typecheck result of
   // expr_list with base
   if(!e -> left && !e -> right) {
-    expr_print(e);
-    printf("sladkfjsadlfj\n");
     struct type *curr_type = expr_typecheck(e);
     if(!type_compare(curr_type, base)) {
       fprintf(stderr, "TYPE_ERROR: initializer expression for ");

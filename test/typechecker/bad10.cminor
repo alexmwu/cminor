@@ -1,4 +1,4 @@
 // need to return something
 main: function boolean() = {
-
+  a: void;
 }

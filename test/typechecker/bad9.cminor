@@ -1,6 +1,6 @@
 a: array[2] integer = {3, 4, 5};
 b: array[3] integer = {2, 1};
-c: array[2] array [3] integer = {{2, 1}, {true}, {"sdf", 's', 4}};
+c: array[2] array [3] integer = {{2, 1}, {true}, {"sdf", 's', 4, false}};
 d: array[2*3] integer;
 e: array[true] integer;
 f: array['c'] integer;
