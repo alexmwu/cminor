@@ -118,11 +118,12 @@ void decl_typecheck(struct decl *d) {
           fprintf(stderr, " is not a positive number (%d)\n", count);
           type_error_count++;
         }
-        else {
-          // calling d -> value -> next_list
-          // because top level is useless
+        // calling d -> value -> next_list
+        // because top level is useless
+        // also need to check if d -> value
+        // exists (otherwise segfault)
+        else if(d -> value)
           expr_arr_init_typecheck(d -> name, d -> value -> next_list, d -> type, curr, count);
-        }
       }
     }
   }
