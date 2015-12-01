@@ -1,0 +1,6 @@
+a: integer;
+b: boolean;
+main: function void() = {
+  a: integer;
+  b: string;
+}
