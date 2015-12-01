@@ -205,6 +205,8 @@ void stmt_typecheck(struct stmt *s, struct type *ret, int *returned) {
       }
       break;
     case STMT_RET:
+      // always set to 1
+      *returned = 1;
       expr = expr_typecheck(s -> expr);
       if(!s -> expr) {
         type_delete(expr);
@@ -221,9 +223,9 @@ void stmt_typecheck(struct stmt *s, struct type *ret, int *returned) {
       type_delete(expr);
       break;
     case STMT_BLOCK:
-      stmt_typecheck(s -> body, ret);
+      stmt_typecheck(s -> body, ret, returned);
       break;
   }
-  stmt_typecheck(s -> next, ret);
+  stmt_typecheck(s -> next, ret, returned);
 }
 

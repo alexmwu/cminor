@@ -589,6 +589,13 @@ void expr_arr_init_typecheck(struct expr *name, struct expr *e, struct type *t, 
       return;
     }
     int newCount = t -> subtype -> expr -> literal_value;
+    if(newCount <= 0) {
+      fprintf(stderr, "TYPE_ERROR: declared size of array ");
+      expr_print(name);
+      fprintf(stderr, " is not a positive number (%d)\n", count);
+      type_error_count++;
+      return;
+    }
     // give newCount to nested array (based on
     // the nested type constant size declaration
     expr_arr_init_typecheck(name, e -> left, t -> subtype, base, newCount);
@@ -623,7 +630,7 @@ void expr_arr_init_typecheck(struct expr *name, struct expr *e, struct type *t, 
   }
   // not a leaf expr node
   else {
-    expr_arr_init_typecheck(name, e -> right, t, base, count);
+    expr_arr_init_typecheck(name, e -> right, t, base, count--);
   }
 
 
@@ -633,15 +640,9 @@ void expr_arr_init_typecheck(struct expr *name, struct expr *e, struct type *t, 
     */
 
   // initializer list has more elements than
-  // were declared. this may not get called
-  // as count always breaks on count == 0
+  // were declared. this will never get called
+  // however, should exist as a check
   if(count < 0) {
-
-    /*************************************/
-    // TODO: remove this
-    printf("TODO: this may not get called\n");
-    /*************************************/
-
     fprintf(stderr, "TYPE_ERROR: initializer list for ");
     expr_print(name);
     fprintf(stderr, " has more elements than were declared\n");
@@ -659,13 +660,16 @@ void expr_arr_init_typecheck(struct expr *name, struct expr *e, struct type *t, 
       type_error_count++;
       // don't need to return
     }
-    expr_arr_init_typecheck(name, e -> next_list);
+    expr_arr_init_typecheck(name, e -> next_list, t, base, count--);
   }
   // implicit !e -> next_list
   // init list has less elems than declared
   else if(count > 0) {
-    fprintf(stderr, "TYPE_ERROR");
+    fprintf(stderr, "TYPE_ERROR: initializer list for ");
+    expr_print(name);
+    fprintf(stderr, " has fewer elements than were declared\n");
     type_error_count++;
+    // don't need to return
   }
 }
 

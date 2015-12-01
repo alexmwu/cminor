@@ -3,4 +3,6 @@ b: array[3] integer;
 main: function integer() = {
   print 5*2, 5<6, true + 5, a, b, a+b;
   print;
+  // should also return something
 }
+

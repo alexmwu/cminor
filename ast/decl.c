@@ -122,6 +122,7 @@ void decl_typecheck(struct decl *d) {
       }
       else {
         int count = d -> type -> expr -> literal_value;
+        // stop processing if count <= 0
         if(count <= 0) {
           fprintf(stderr, "TYPE_ERROR: declared size of array ");
           expr_print(d -> name);
@@ -129,32 +130,25 @@ void decl_typecheck(struct decl *d) {
           type_error_count++;
         }
         else
-          expr_arr_init_typecheck(d -> name, d -> value, curr, count);
+          expr_arr_init_typecheck(d -> name, d -> value, d -> type, curr, count);
       }
     }
   }
-/*
- *  // check initializer lists and expression
- *  if(d -> type -> kind == TYPE_ARRAY_DECL) {
- *    struct expr *v = d -> type -> expr;
- *    if(v -> kind != EXPR_INTLIT) {
- *      // not constant; print error
- *      fprintf(stderr, "TYPE_ERROR: must use constant integers when declaring arrays (");
- *      expr_print(v);
- *      fprintf(stderr, ")\n");
- *      type_error_count++;
- *    }
- *    struct type *t = d -> type;
- *
- *    decl_array_initializer_typecheck(d -> type, d -> value);
- *  }
- */
+
   type_delete(value);
+  int returnedValue = 0;
+  int *returned = &returnedValue;
   if(d -> type -> kind == TYPE_FUNCTION) {
-    stmt_typecheck(d -> code, d -> type -> subtype);
+    stmt_typecheck(d -> code, d -> type -> subtype, returned);
+    // if the function did not return anything
+    // and it does not return void
+    if(!*returned && d -> type -> subtype -> kind != TYPE_VOID) {
+      fprintf(stderr, "TYPE_ERROR: ");
+      type_error_count++;
+    }
   }
   else {
-    stmt_typecheck(d -> code, 0);
+    stmt_typecheck(d -> code, 0, returned);
   }
   decl_typecheck(d -> next);
 }
