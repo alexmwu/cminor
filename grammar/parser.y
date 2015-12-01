@@ -89,7 +89,7 @@ array_init: TLBRACE expr_list TRBRACE
           ;
 
 array_init_list: array_init_list TCOMMA array_init
-                  { struct expr *curr = $1; while(curr -> next_list) { curr = curr -> next_list; } curr -> next_list = $3 }
+                  { struct expr *curr = $1; while(curr -> next_list) { curr = curr -> next_list; } curr -> next_list = $3; }
                | array_init
                ;
 

@@ -571,7 +571,6 @@ struct type *expr_assign_typecheck(struct expr *e, int which) {
 void expr_arr_init_typecheck(struct expr *name, struct expr *e, struct type *t, struct type *base, int count) {
   if(!e) return;
   // check that the lengths of the expr match
-  struct expr *curr_expr;
 
   // go to leaf nested init list, check that
   // e -> left exists beforehand because of
@@ -615,6 +614,8 @@ void expr_arr_init_typecheck(struct expr *name, struct expr *e, struct type *t, 
   // type compare expr_typecheck result of
   // expr_list with base
   if(!e -> left && !e -> right) {
+    expr_print(e);
+    printf("sladkfjsadlfj\n");
     struct type *curr_type = expr_typecheck(e);
     if(!type_compare(curr_type, base)) {
       fprintf(stderr, "TYPE_ERROR: initializer expression for ");
@@ -676,7 +677,6 @@ void expr_arr_init_typecheck(struct expr *name, struct expr *e, struct type *t, 
 // need to type_delete the result
 struct type *expr_typecheck(struct expr *e) {
   if(!e) return 0;
-  struct expr *curr = e;
   switch(e -> kind) {
     struct type *left, *right, *next;
     // TODO: add a type_file_print function

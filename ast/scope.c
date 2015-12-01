@@ -29,7 +29,7 @@ void scope_print_table(struct hash_table *ht, char **key, struct symbol *value) 
 
 void scope_print_all() {
   char **key = malloc(sizeof *key);
-  struct symbol *value;
+  struct symbol *value = 0;
   struct scope_list *ptr = curr_scope;
   while(ptr) {
     printf("New scope:\n");
