@@ -102,7 +102,7 @@ void decl_typecheck(struct decl *d) {
   }
 
   if(d -> type -> kind == TYPE_ARRAY_DECL) {
-    if(d -> value -> kind != EXPR_ARR_INITLIST) {
+    if(d -> value && d -> value -> kind != EXPR_ARR_INITLIST) {
       fprintf(stderr, "Bad initialization: array declaration expression for (");
       expr_print(d -> name);
       fprintf(stderr, "does not have kind EXPR_ARR_INITLIST\n");
