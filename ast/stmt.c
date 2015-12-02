@@ -113,6 +113,7 @@ void stmt_resolve(struct stmt *s, int which) {
   switch(s -> kind) {
     case STMT_DECL:
       decl_resolve(s -> decl, SYMBOL_LOCAL, which);
+      which++;
       break;
     case STMT_EXPR:
       expr_resolve(s -> expr);
@@ -142,7 +143,7 @@ void stmt_resolve(struct stmt *s, int which) {
       scope_exit();
       break;
   }
-  stmt_resolve(s -> next, which + 1);
+  stmt_resolve(s -> next, which);
 }
 
 void stmt_typecheck(struct stmt *s, struct type *ret, int *returned) {

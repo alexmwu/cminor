@@ -288,8 +288,9 @@ void expr_resolve(struct expr *e) {
     struct symbol *s = scope_lookup(e -> name);
     if(s) {
       e -> symbol = s;
-      if(s -> kind == SYMBOL_GLOBAL)
-        printf("%s resolves to global %s\n", e -> name, s -> name -> name);
+      if(s -> kind == SYMBOL_GLOBAL) {
+        printf("%s resolves to global\n", e -> name);
+      }
       else {
         printf("%s resolves to %s %d\n", e -> name, symbol_kind_print(s -> kind), s -> which);
       }
