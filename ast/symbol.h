@@ -12,6 +12,11 @@ typedef enum {
 
 struct symbol {
 	symbol_t kind;
+  // for locals and function declarations
+  // for locals, it enumerates the variable #
+  // for functions, if which is 1, it has been
+  // declared but not defined. if it is 2, it
+  // has been both declared and defined
 	int which;
 	struct type *type;
 	struct expr *name;

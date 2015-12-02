@@ -545,7 +545,7 @@ struct type *expr_assign_typecheck(struct expr *e, int which) {
       // just return the type of the expr
       arr_next = expr_arr_indexcheck(e -> left -> symbol -> type, e);
       if(!arr_next) {
-        return type_copy(right);
+        return right;
       }
       if(!type_compare(arr_next, right)) {
         fprintf(stderr, "TYPE_ERROR: value of index into array (");

@@ -1,0 +1,16 @@
+a: function void();
+b: function void();
+b: function void();
+a: function void() = {
+
+}
+a: function void() = {
+
+}
+c: function void() = {
+
+}
+
+c: function void() = {
+
+}

@@ -57,15 +57,56 @@ void decl_free(struct decl *d) {
 
 void decl_resolve(struct decl *d, symbol_t kind, int which) {
   if(!d) return;
-  struct symbol *sym = symbol_create(kind, d -> type, d -> name);
-  sym -> which = which;
-  d -> symbol = sym;
   struct symbol *old = scope_curr_lookup(d -> name -> name);
-  if(old) {
+  if(old && symbol -> type -> kind != TYPE_FUNCTION) {
     fprintf(stderr, "%s is a redeclaration. Already declared as %s variable\n", d -> name -> name, symbol_kind_print(old -> kind));
     resolve_error_count++;
   }
+  // implicit that symbol type kind if function
+  else if(old) {
+    if(kind != SYMBOL_LOCAL) {
+      fprintf(stderr, "TYPE_ERROR: functions must be declared in global scope (");
+      expr_print(d -> name);
+      fprintf(stderr, " is in ");
+      symbol_kind_print(kind);
+      fprintf(stderr, ")\n");
+      resolve_error_count++;
+    }
+    // function already been declared
+    else if(old -> which == 1) {
+        if(d -> code) {
+          old -> which = 2;
+        }
+        // redeclaration of function
+        else {
+          fprintf(stderr, "%s is a redeclaration. Already declared as %s variable\n", d -> name -> name, symbol_kind_print(old -> kind));
+          resolve_error_count++;
+        }
+    }
+    // function already declared/defined
+    else if(old -> which == 2) {
+      fprintf(stderr, "%s is a redeclaration/redefinition. Already declared as %s variable\n", d -> name -> name, symbol_kind_print(old -> kind));
+      resolve_error_count++;
+    }
+  }
   else {
+    struct symbol *sym = symbol_create(kind, d -> type, d -> name);
+    if(d -> type == TYPE_FUNCTION) {
+      // 2 represents that a function has
+      // been defined and declared
+      if(d -> code) {
+        sym -> which = 2;
+      }
+      // 1 means that a function has only
+      // been defined
+      else {
+        sym -> which = 1;
+      }
+    }
+    else {
+      sym -> which = which;
+    }
+    d -> symbol = sym;
     scope_bind(d -> name -> name, sym);
   }
   expr_resolve(d -> value);
