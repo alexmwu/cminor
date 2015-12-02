@@ -10,3 +10,6 @@ The spec is located in the spec folder. It is subject to change.
 Building this project requires gcc or clang, Flex, and Bison.
 
 It has been tested on the OSX and RHEL gcc (gcc in OSX links to clang), Flex, and Bison
+
+* May not (probably will not) support Windows C compilation
+

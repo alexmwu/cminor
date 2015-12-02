@@ -1,5 +1,6 @@
 #include "expr.h"
 #include "library.h"
+#include "../codegen/register.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -825,6 +826,78 @@ struct type *expr_typecheck(struct expr *e) {
       return type_create(TYPE_STRING, 0, 0, 0);
     case EXPR_IDENT:
       return type_copy(e -> symbol -> type);
+  }
+}
+
+void expr_arith_codegen(struct expr *e, FILE *f) {
+  expr_codegen(e -> left, f);
+  expr_codegen(e -> right, f);
+  fprintf(f, "ADDQ %s, %s", register_name(e -> left -> reg), register_name(e -> right -> reg));
+  e -> reg = e -> right -> reg;
+  register_free(e -> left -> reg);
+}
+
+void expr_codegen(struct expr *e, FILE *f) {
+  if(!e) return;
+  switch(e -> kind) {
+    case EXPR_PLUS:
+      break;
+    case EXPR_MIN:
+      break;
+    case EXPR_MUL:
+      break;
+    case EXPR_DIV:
+      break;
+    case EXPR_MOD:
+      break;
+    case EXPR_PLUSPLUS:
+      break;
+    case EXPR_MINMIN:
+      break;
+    case EXPR_EXP:
+      break;
+    case EXPR_LT:
+      break;
+    case EXPR_LE:
+      break;
+    case EXPR_GT:
+      break;
+    case EXPR_GE:
+      break;
+    case EXPR_EQEQ:
+      break;
+    case EXPR_NE:
+      break;
+    case EXPR_AND:
+      break;
+    case EXPR_OR:
+      break;
+    case EXPR_NOT:
+      break;
+    case EXPR_EQ:
+      break;
+    case EXPR_ARREQ:
+      break;
+    case EXPR_ARR:
+      break;
+    case EXPR_ARR_INITLIST:
+      break;
+    case EXPR_GROUP:
+      break;
+    case EXPR_FUNC:
+      break;
+    case EXPR_TRUE:
+      break;
+    case EXPR_FALSE:
+      break;
+    case EXPR_INTLIT:
+      break;
+    case EXPR_CHARLIT:
+      break;
+    case EXPR_STRLIT:
+      break;
+    case EXPR_IDENT:
+      break;
   }
 }
 
