@@ -10,6 +10,7 @@ struct expr *expr_create(expr_t kind, struct expr *left, struct expr *right, str
   e -> right = right;
   e -> next = next;
   e -> arr_next = 0;
+  e -> next_list = 0;
   e -> name = 0;
   e -> string_literal = 0;
   e -> symbol = 0;
