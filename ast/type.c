@@ -60,6 +60,7 @@ void type_free(struct type *t) {
 
 // will cause issues upon freeing
 struct type *type_copy(struct type *t) {
+  if(!t) return 0;
   struct type *new = malloc(sizeof *new);
   new -> kind = t -> kind;
   new -> params = t -> params;
