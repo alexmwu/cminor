@@ -84,6 +84,11 @@ int type_compare(struct type *a, struct type *b) {
           return 1;
         else
           return 0;
+      case TYPE_FUNCTION:
+        if(type_compare(a -> subtype, b -> subtype))
+          return 1;
+        else
+          return 0;
       default:
         return 1;
     }
