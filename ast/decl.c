@@ -58,22 +58,24 @@ void decl_free(struct decl *d) {
 void decl_resolve(struct decl *d, symbol_t kind, int which) {
   if(!d) return;
   struct symbol *old = scope_curr_lookup(d -> name -> name);
-  if(old && old -> type -> kind != TYPE_FUNCTION) {
+
+  // ensure that function decls are global
+  if(d -> type -> kind == TYPE_FUNCTION && kind != SYMBOL_GLOBAL) {
+    fprintf(stderr, "TYPE_ERROR: functions must be declared in global scope (");
+    expr_print(d -> name);
+    fprintf(stderr, " is in ");
+    symbol_kind_print(kind);
+    fprintf(stderr, ")\n");
+    resolve_error_count++;
+  }
+  else if(old && old -> type -> kind != TYPE_FUNCTION) {
     fprintf(stderr, "%s is a redeclaration. Already declared as %s variable\n", d -> name -> name, symbol_kind_print(old -> kind));
     resolve_error_count++;
   }
   // implicit that symbol type kind if function
   else if(old) {
-    if(kind != SYMBOL_GLOBAL) {
-      fprintf(stderr, "TYPE_ERROR: functions must be declared in global scope (");
-      expr_print(d -> name);
-      fprintf(stderr, " is in ");
-      symbol_kind_print(kind);
-      fprintf(stderr, ")\n");
-      resolve_error_count++;
-    }
     // function already been declared
-    else if(old -> which == 1) {
+    if(old -> which == 1) {
         if(d -> code) {
           // a little bit of typechecking in
           // name resolution to ensure that

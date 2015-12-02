@@ -1,5 +1,6 @@
+c: function integer();
+
 main: function void() = {
-  c: function integer();
   b: integer;
   a: boolean = (((5 + 6*5) < (b++ - 2%10--) || true && false)) == !(2^9 != (b = 6*c()));
 }

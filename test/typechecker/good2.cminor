@@ -1,6 +1,7 @@
+a: function integer();
+b: function integer();
+
 main: function void () = {
-  a: function integer();
-  b: function integer();
   c: integer;
   c = a() + b();
 }
