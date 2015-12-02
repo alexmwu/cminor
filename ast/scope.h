@@ -16,7 +16,9 @@ int resolve_error_count;
 void scope_enter();
 void scope_exit();
 void scope_bind(const char *name, struct symbol *s);
-// returns null if symbol not found; need to handle
+// both lookups return null if a symbol is not
+// found; need to handle
+struct symbol *scope_curr_lookup(const char *name);
 struct symbol *scope_lookup(const char *name);
 void scope_print_all();
 

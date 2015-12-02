@@ -55,6 +55,10 @@ void scope_bind(const char *name, struct symbol *s) {
   }
 }
 
+struct symbol *scope_curr_lookup(const char *name) {
+  return hash_table_lookup(curr_scope -> table, name);
+}
+
 struct symbol *scope_lookup(const char *name) {
   struct symbol *tmp;
   // pointer to current table to look at

@@ -270,6 +270,7 @@ void expr_free(struct expr *e) {
   expr_free(e -> right);
   expr_free(e -> next);
   expr_free(e -> arr_next);
+  expr_free(e -> next_list);
   free((char *) e -> name);
   // should not free as decl "owns" the object
   /*symbol_free(e -> symbol);*/
