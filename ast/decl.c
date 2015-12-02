@@ -58,13 +58,13 @@ void decl_free(struct decl *d) {
 void decl_resolve(struct decl *d, symbol_t kind, int which) {
   if(!d) return;
   struct symbol *old = scope_curr_lookup(d -> name -> name);
-  if(old && symbol -> type -> kind != TYPE_FUNCTION) {
+  if(old && old -> type -> kind != TYPE_FUNCTION) {
     fprintf(stderr, "%s is a redeclaration. Already declared as %s variable\n", d -> name -> name, symbol_kind_print(old -> kind));
     resolve_error_count++;
   }
   // implicit that symbol type kind if function
   else if(old) {
-    if(kind != SYMBOL_LOCAL) {
+    if(kind != SYMBOL_GLOBAL) {
       fprintf(stderr, "TYPE_ERROR: functions must be declared in global scope (");
       expr_print(d -> name);
       fprintf(stderr, " is in ");
@@ -75,6 +75,22 @@ void decl_resolve(struct decl *d, symbol_t kind, int which) {
     // function already been declared
     else if(old -> which == 1) {
         if(d -> code) {
+          // a little bit of typechecking in
+          // name resolution to ensure that
+          // definition matches declaration
+          if(!type_compare(d -> type, old -> type)) {
+            fprintf(stderr, "TYPE_ERROR: prototype in definition of function ");
+            expr_print(d -> name);
+            fprintf(stderr, " (");
+            type_print(d -> type);
+            fprintf(stderr, ") does not match prototype in original declaration (");
+            type_print(old -> type);
+            fprintf(stderr, ")\n");
+            // both resolution and type error
+            // but pick one (pick the one that
+            // fails earlier)
+            resolve_error_count++;
+          }
           old -> which = 2;
         }
         // redeclaration of function
@@ -91,7 +107,7 @@ void decl_resolve(struct decl *d, symbol_t kind, int which) {
   }
   else {
     struct symbol *sym = symbol_create(kind, d -> type, d -> name);
-    if(d -> type == TYPE_FUNCTION) {
+    if(d -> type -> kind == TYPE_FUNCTION) {
       // 2 represents that a function has
       // been defined and declared
       if(d -> code) {

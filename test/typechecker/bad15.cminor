@@ -2,15 +2,15 @@ a: function void();
 b: function void();
 b: function void();
 a: function void() = {
-
+  c: integer;
 }
 a: function void() = {
-
+  c: integer;
 }
 c: function void() = {
-
+  c: integer;
 }
 
 c: function void() = {
-
+  c: integer;
 }
