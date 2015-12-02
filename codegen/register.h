@@ -4,11 +4,11 @@
 #define NUM_REGISTERS 7
 
 #ifdef _linux_
-  ASM_ENV = 1
+  #define ASM_ENV 1
 #elif _APPLE_
-  ASM_ENV = 2
+  #define ASM_ENV 2
 #else
-  ASM_ENV = 0
+  #define ASM_ENV 0
 #endif
 
 static const char *register_name_string[NUM_REGISTERS] = {"rbx", "r10", "r11", "r12", "r13", "r14", "r15"};

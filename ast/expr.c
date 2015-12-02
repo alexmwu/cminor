@@ -829,20 +829,52 @@ struct type *expr_typecheck(struct expr *e) {
   }
 }
 
-void expr_arith_codegen(struct expr *e, FILE *f) {
+void expr_add_codegen(struct expr *e, FILE *f, int which) {
+  const char *op;
+  if(which == 0) {
+    op = "ADDQ";
+  }
+  else if(which == 1) {
+    op = "SUBQ";
+  }
+  else {
+    fprintf(stderr, "Error in calling function expr_add_codegen (must be of expr type PLUS or MIN\n");
+    exit(1);
+  }
   expr_codegen(e -> left, f);
   expr_codegen(e -> right, f);
-  fprintf(f, "ADDQ %s, %s", register_name(e -> left -> reg), register_name(e -> right -> reg));
+  fprintf(f, "%s %s, %s\n", op, register_name(e -> left -> reg), register_name(e -> right -> reg));
   e -> reg = e -> right -> reg;
   register_free(e -> left -> reg);
+}
+
+void expr_mul_codegen(struct expr *e, FILE *f, int which) {
+  const char *op;
+  if(which == 0) {
+    op = "IMUL";
+  }
+  else if(which == 1) {
+    op = "IDIV";
+  }
+  else {
+    fprintf(stderr, "Error in calling function expr_add_codegen (must be of expr type MUL or DIV\n");
+    exit(1);
+  }
+
+  expr_codegen(e -> left, f);
+  expr_codegen(e -> right, f);
+  fprintf(f, "MOV %s, %%rax\n", register_name(e -> left -> reg));
+
 }
 
 void expr_codegen(struct expr *e, FILE *f) {
   if(!e) return;
   switch(e -> kind) {
     case EXPR_PLUS:
+      expr_add_codegen(e, f, 0);
       break;
     case EXPR_MIN:
+      expr_add_codegen(e, f, 1);
       break;
     case EXPR_MUL:
       break;
