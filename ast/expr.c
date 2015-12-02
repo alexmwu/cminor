@@ -489,7 +489,7 @@ int expr_is_num_constant(struct expr *e) {
 // is correct; call with symbol -> type
 // of array ident and array expression root
 struct type *expr_arr_indexcheck(struct type *t, struct expr *e) {
-  struct type *curr_type = t -> subtype;
+  struct type *curr_type = t;
   struct expr *a_next = e -> arr_next;
   struct type *exp_type = 0;
   while(a_next) {
