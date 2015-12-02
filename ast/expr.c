@@ -284,6 +284,7 @@ void expr_resolve(struct expr *e) {
   expr_resolve(e -> left);
   expr_resolve(e -> right);
   expr_resolve(e -> next);
+  expr_resolve(e -> arr_next);
   if(e -> kind == EXPR_IDENT) {
     struct symbol *s = scope_lookup(e -> name);
     if(s) {
