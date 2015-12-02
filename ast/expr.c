@@ -554,7 +554,6 @@ struct type *expr_assign_typecheck(struct expr *e, int which) {
       }
     }
     type_delete(left);
-    type_delete(right);
     return type_copy(right);
   }
   else {
