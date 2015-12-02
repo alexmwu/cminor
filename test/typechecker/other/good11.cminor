@@ -9,6 +9,5 @@ main:function void () =
 	{
 		y[count] = x;
 	}
-  x = y;
 }
 

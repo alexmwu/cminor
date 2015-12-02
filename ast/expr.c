@@ -575,6 +575,7 @@ struct type *expr_assign_typecheck(struct expr *e, int which) {
         fprintf(stderr, " (");
         type_print(e -> left -> symbol -> type);
         fprintf(stderr, ")\n");
+        type_error_count++;
       }
       type_delete(right);
       return left;
