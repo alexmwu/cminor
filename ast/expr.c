@@ -542,34 +542,18 @@ struct type *expr_assign_typecheck(struct expr *e, int which) {
       type_error_count++;
     }
     else {
-      // check if no array indexing
-      if(!e -> arr_next) {
-        if(!type_compare(e -> left -> symbol -> type, right)) {
-          fprintf(stderr, "TYPE_ERROR: type value of right assignment (");
-          type_print(right);
-          fprintf(stderr, ") does not match declared value of ");
-          expr_print(e -> left);
-          fprintf(stderr, " (");
-          type_print(e -> left -> symbol -> type);
-          fprintf(stderr, ")\n");
-          return right;
-            }
-        return right;
+      // just return the type of the expr
+      arr_next = expr_arr_indexcheck(e -> left -> symbol -> type, e);
+      if(!arr_next) {
+        return type_copy(right);
       }
-      else {
-        // just return the type of the expr
-        arr_next = expr_arr_indexcheck(e -> left -> symbol -> type, e);
-        if(!arr_next) {
-          return type_copy(right);
-        }
-        if(!type_compare(arr_next, right)) {
-          fprintf(stderr, "TYPE_ERROR: value of index into array (");
-          type_print(arr_next);
-          fprintf(stderr, ") does not match the type of the expression (");
-          type_print(right);
-          fprintf(stderr, ")\n");
-          type_error_count++;
-        }
+      if(!type_compare(arr_next, right)) {
+        fprintf(stderr, "TYPE_ERROR: value of index into array (");
+        type_print(arr_next);
+        fprintf(stderr, ") does not match the type of the expression (");
+        type_print(right);
+        fprintf(stderr, ")\n");
+        type_error_count++;
       }
     }
     type_delete(left);
@@ -583,6 +567,15 @@ struct type *expr_assign_typecheck(struct expr *e, int which) {
       return right;
     }
     else {
+      if(!type_compare(e -> left -> symbol -> type, right)) {
+        fprintf(stderr, "TYPE_ERROR: type value of right assignment (");
+        type_print(right);
+        fprintf(stderr, ") does not match declared value of ");
+        expr_print(e -> left);
+        fprintf(stderr, " (");
+        type_print(e -> left -> symbol -> type);
+        fprintf(stderr, ")\n");
+      }
       type_delete(right);
       return left;
     }
