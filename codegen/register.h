@@ -11,8 +11,6 @@
   #define ASM_ENV 0
 #endif
 
-int ASSEMBLY_ERRORS_FLAG = 0;
-
 static const char *register_name_string[NUM_REGISTERS] = {"rbx", "r10", "r11", "r12", "r13", "r14", "r15"};
 static int register_is_free[NUM_REGISTERS] = {1, 1, 1, 1, 1, 1, 1};
 

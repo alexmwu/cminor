@@ -50,6 +50,45 @@ void type_print(struct type *t) {
   }
 }
 
+void type_fprint(FILE *f, struct type *t) {
+  if(!t) return;
+  switch(t -> kind) {
+    case TYPE_BOOLEAN:
+      fprintf(f, "boolean");
+      break;
+    case TYPE_CHARACTER:
+      fprintf(f, "char");
+      break;
+    case TYPE_INTEGER:
+      fprintf(f, "integer");
+      break;
+    case TYPE_STRING:
+      fprintf(f, "string");
+      break;
+    case TYPE_ARRAY:
+      fprintf(f, "array [] ");
+      type_fprint(f, t -> subtype);
+      break;
+    case TYPE_ARRAY_DECL:
+      fprintf(f, "array ");
+      fprintf(f, "[");
+      expr_fprint(f, t -> expr);
+      fprintf(f, "] ");
+      type_fprint(f, t -> subtype);
+      break;
+    case TYPE_FUNCTION:
+      fprintf(f, "function ");
+      type_fprint(f, t -> subtype);
+      fprintf(f, " (");
+      param_list_fprint(f, t -> params);
+      fprintf(f, ")");
+      break;
+    case TYPE_VOID:
+      fprintf(f, "void");
+      break;
+  }
+}
+
 void type_free(struct type *t) {
   if(!t) return;
   param_list_free(t -> params);

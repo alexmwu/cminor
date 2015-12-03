@@ -33,6 +33,13 @@ void print_indent(int indent) {
   }
 }
 
+void fprint_indent(FILE *f, int indent) {
+  int i;
+  for(i = 0; i < indent; i++) {
+    fprintf(f, "\t");
+  }
+}
+
 void print_integer( int x )
 {
 	printf("%d",x);

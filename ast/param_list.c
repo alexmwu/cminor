@@ -22,6 +22,17 @@ void param_list_print(struct param_list *a) {
   }
 }
 
+void param_list_fprint(FILE *f, struct param_list *a) {
+  if(!a) return;
+  expr_fprint(f, a -> name);
+  fprintf(f, ": ");
+  type_fprint(f, a -> type);
+  if(a -> next) {
+    fprintf(f, ", ");
+    param_list_fprint(f, a -> next);
+  }
+}
+
 void param_list_free(struct param_list *a) {
   if(!a) return;
   expr_free(a -> name);

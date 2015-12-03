@@ -44,6 +44,37 @@ void decl_print(struct decl *d, int indent) {
   decl_print(d -> next, indent);
 }
 
+void decl_fprint(FILE *f, struct decl *d, int indent) {
+  if(!d) return;
+  fprint_indent(f, indent);
+  expr_fprint(f, d -> name);
+  fprintf(f, ": ");
+  type_fprint(f, d -> type);
+  if(d -> value) {
+    fprintf(f, " = ");
+    // expr_list rather than just one expr
+    if(d -> value -> next) {
+      fprintf(f, "{");
+      expr_fprint(f, d -> value);
+      fprintf(f, "}");
+    }
+    else {
+      expr_fprint(f, d -> value);
+    }
+    fprintf(f, ";\n");
+  }
+  else if(d -> code) {
+    fprintf(f, " = ");
+    fprintf(f, "{\n");
+    stmt_fprint(f, d -> code, indent + 1);
+    fprintf(f, "}\n");
+  }
+  else {
+    fprintf(f, ";\n");
+  }
+  decl_fprint(f, d -> next, indent);
+}
+
 void decl_free(struct decl *d) {
   if(!d) return;
   expr_free(d -> name);

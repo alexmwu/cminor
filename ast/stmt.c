@@ -29,6 +29,19 @@ void stmt_print_body(struct stmt *s, int indent) {
   }
 }
 
+void stmt_fprint_body(FILE *f, struct stmt *s, int indent) {
+  if(s -> kind == STMT_BLOCK) {
+    /*pretty print a space if the next stmt is a block*/
+    fprintf(f, " ");
+    stmt_fprint(f, s, indent);
+  }
+  else {
+    /*otherwise, new line*/
+    fprintf(f, "\n");
+    stmt_fprint(f, s, indent + 1);
+  }
+}
+
 void stmt_print(struct stmt *s, int indent) {
   if(!s) return;
   if(s -> kind != STMT_BLOCK)
@@ -94,6 +107,73 @@ void stmt_print(struct stmt *s, int indent) {
       break;
   }
   stmt_print(s -> next, indent);
+}
+
+void stmt_fprint(FILE *f, struct stmt *s, int indent) {
+  if(!s) return;
+  if(s -> kind != STMT_BLOCK)
+    fprint_indent(f, indent);
+
+  switch(s -> kind) {
+    case STMT_DECL:
+      decl_fprint(f, s -> decl, indent - 1);
+      /*don't print new line because decl always prints new lines*/
+      break;
+    case STMT_EXPR:
+      expr_fprint(f, s -> expr);
+      fprintf(f, ";\n");
+      break;
+    case STMT_IF_ELSE:
+      fprintf(f, "if(");
+      expr_fprint(f, s -> expr);
+      fprintf(f, ")");
+      stmt_fprint_body(f, s -> body, indent);
+      if(s -> else_body) {
+        fprint_indent(f, indent);
+        fprintf(f, "else");
+        stmt_fprint_body(f, s -> else_body, indent);
+      }
+      break;
+    case STMT_FOR:
+      fprintf(f, "for(");
+      expr_fprint(f, s -> init_expr);
+      fprintf(f, "; ");
+      expr_fprint(f, s -> expr);
+      fprintf(f, "; ");
+      expr_fprint(f, s -> next_expr);
+      fprintf(f, ")");
+      stmt_fprint_body(f, s -> body, indent);
+      break;
+    case STMT_WHILE:
+      /*
+       *while loops are not in the CMinor spec so this should not get called.
+       *if it does, it breaks immediately
+       */
+      break;
+    case STMT_PRINT:
+      fprintf(f, "print");
+      if(s -> expr) {
+        fprintf(f, " ");
+        expr_fprint(f, s -> expr);
+      }
+      fprintf(f, ";\n");
+      break;
+    case STMT_RET:
+      fprintf(f, "return");
+      if(s -> expr) {
+        fprintf(f, " ");
+        expr_fprint(f, s -> expr);
+      }
+      fprintf(f, ";\n");
+      break;
+    case STMT_BLOCK:
+      fprintf(f, "{\n");
+      stmt_fprint(f, s -> body, indent + 1);
+      fprint_indent(f, indent);
+      fprintf(f, "}\n");
+      break;
+  }
+  stmt_fprint(f, s -> next, indent);
 }
 
 void stmt_free(struct stmt *s) {

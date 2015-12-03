@@ -1,6 +1,7 @@
 #include "expr.h"
 #include "library.h"
 #include "../codegen/register.h"
+#include "../codegen/assembly.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -263,6 +264,224 @@ void expr_print(struct expr *e) {
   if(e -> next) {
     printf(", ");
     expr_print(e -> next);
+  }
+}
+
+void expr_fprint(FILE *f, struct expr *e) {
+  if(!e) return;
+  struct expr *curr_arr;
+  switch(e -> kind) {
+    case EXPR_PLUS:
+      expr_fprint(f, e -> left);
+      fprintf(f, "+");
+      expr_fprint(f, e -> right);
+      break;
+    case EXPR_MIN:
+      if(!e -> left) {
+        fprintf(f, "-");
+        expr_fprint(f, e -> right);
+        break;
+      }
+      expr_fprint(f, e -> left);
+      fprintf(f, "-");
+      expr_fprint(f, e -> right);
+      break;
+    case EXPR_MUL:
+      expr_fprint(f, e -> left);
+      fprintf(f, "*");
+      expr_fprint(f, e -> right);
+      break;
+    case EXPR_DIV:
+      expr_fprint(f, e -> left);
+      fprintf(f, "/");
+      expr_fprint(f, e -> right);
+      break;
+    case EXPR_MOD:
+      expr_fprint(f, e -> left);
+      fprintf(f, "%%");
+      expr_fprint(f, e -> right);
+      break;
+    case EXPR_PLUSPLUS:
+      if(e -> left && e -> right) {
+        fprintf(stderr, "Pre/Post error: 2 exprs (should just be one)\n");
+        exit(1);
+      }
+      else if(e -> left) {
+        expr_fprint(f, e -> left);
+        fprintf(f, "++");
+      }
+      else if(e -> right) {
+        fprintf(f, "++");
+        expr_fprint(f, e -> right);
+      }
+      else {
+        fprintf(stderr, "Pre/Post error: 0 exprs (should have one)\n");
+        exit(1);
+      }
+      break;
+    case EXPR_MINMIN:
+      if(e -> left && e -> right) {
+        fprintf(stderr, "Pre/Post error: 2 exprs (should just be one)\n");
+        exit(1);
+      }
+      else if(e -> left) {
+        expr_fprint(f, e -> left);
+        fprintf(f, "--");
+      }
+      else if(e -> right) {
+        fprintf(f, "--");
+        expr_fprint(f, e -> right);
+      }
+      else {
+        fprintf(stderr, "Pre/Post error: 0 exprs (should have one)\n");
+        exit(1);
+      }
+      break;
+    case EXPR_EXP:
+      expr_fprint(f, e -> left);
+      fprintf(f, "^");
+      expr_fprint(f, e -> right);
+      break;
+    case EXPR_LT:
+      expr_fprint(f, e -> left);
+      fprintf(f, "<");
+      expr_fprint(f, e -> right);
+      break;
+    case EXPR_LE:
+      expr_fprint(f, e -> left);
+      fprintf(f, "<=");
+      expr_fprint(f, e -> right);
+      break;
+    case EXPR_GT:
+      expr_fprint(f, e -> left);
+      fprintf(f, ">");
+      expr_fprint(f, e -> right);
+      break;
+    case EXPR_GE:
+      expr_fprint(f, e -> left);
+      fprintf(f, ">=");
+      expr_fprint(f, e -> right);
+      break;
+    case EXPR_EQEQ:
+      expr_fprint(f, e -> left);
+      fprintf(f, "==");
+      expr_fprint(f, e -> right);
+      break;
+    case EXPR_NE:
+      expr_fprint(f, e -> left);
+      fprintf(f, "!=");
+      expr_fprint(f, e -> right);
+      break;
+    case EXPR_AND:
+      expr_fprint(f, e -> left);
+      fprintf(f, "&&");
+      expr_fprint(f, e -> right);
+      break;
+    case EXPR_OR:
+      expr_fprint(f, e -> left);
+      fprintf(f, "||");
+      expr_fprint(f, e -> right);
+      break;
+    case EXPR_NOT:
+      fprintf(f, "!");
+      if(!e -> right) {
+        fprintf(stderr, "NOT Error: no right expression\n");
+        exit(1);
+      }
+      expr_fprint(f, e -> right);
+      break;
+    case EXPR_ARREQ:
+      /*
+       *EXPR_ARREQ has left of ident, right of expr (for index),
+       *and next of expr (what it is set to).
+       */
+      expr_fprint(f, e -> left);
+      curr_arr = e -> arr_next;
+      while(curr_arr) {
+        fprintf(f, "[");
+        expr_fprint(f, curr_arr);
+        fprintf(f, "]");
+        curr_arr = curr_arr -> arr_next;
+      }
+      fprintf(f, " = ");
+      expr_fprint(f, e -> right);
+      break;
+    case EXPR_EQ:
+      expr_fprint(f, e -> left);
+      fprintf(f, " = ");
+      expr_fprint(f, e -> right);
+      break;
+    case EXPR_ARR:
+      expr_fprint(f, e -> left);
+      curr_arr = e -> arr_next;
+      while(curr_arr) {
+        fprintf(f, "[");
+        expr_fprint(f, curr_arr);
+        fprintf(f, "]");
+        curr_arr = curr_arr -> arr_next;
+      }
+      break;
+    case EXPR_ARR_INITLIST:
+      fprintf(f, "{");
+      /*print nested array_initlist*/
+      expr_fprint(f, e -> left);
+      /*
+       *print expr list if one exists (should
+       *only be at end of linked list created
+       *by following the left pointer)
+       */
+      expr_fprint(f, e -> right);
+      fprintf(f, "}");
+      /*print array initializer lists*/
+      curr_arr = e -> next_list;
+      while(curr_arr) {
+        fprintf(f, ", ");
+        expr_fprint(f, e -> next_list);
+        curr_arr = curr_arr -> next_list;
+      }
+      break;
+    case EXPR_GROUP:
+      fprintf(f, "(");
+      /*
+       *Grouping is defined as one expression around paren
+       *(so just print e->right which should be just one expr)
+       */
+      expr_fprint(f, e -> right);
+      fprintf(f, ")");
+      break;
+    case EXPR_FUNC:
+      expr_fprint(f, e -> left);
+      fprintf(f, "(");
+      expr_fprint(f, e -> right);
+      fprintf(f, ")");
+      break;
+    case EXPR_TRUE:
+      print_boolean(1);
+      break;
+    case EXPR_FALSE:
+      print_boolean(0);
+      break;
+    case EXPR_INTLIT:
+      print_integer(e -> literal_value);
+      break;
+    case EXPR_CHARLIT:
+      fprintf(f, "'");
+      print_character(e -> char_literal);
+      fprintf(f, "'");
+      break;
+    case EXPR_STRLIT:
+      fprintf(f, "\"");
+      print_string(e -> string_literal);
+      fprintf(f, "\"");
+      break;
+    case EXPR_IDENT:
+      print_string(e -> name);
+      break;
+  }
+  /*print expr_lists*/
+  if(e -> next) {
+    fprintf(f, ", ");
+    expr_fprint(f, e -> next);
   }
 }
 
@@ -829,6 +1048,16 @@ struct type *expr_typecheck(struct expr *e) {
   }
 }
 
+void expr_assembly_comment(FILE *f, struct expr *e, const char *op) {
+  if(ASSEMBLY_COMMENT_FLAG) {
+    fprintf(f, "\n#  ");
+    expr_fprint(f, e -> left);
+    fprintf(f, " %s ", op);
+    expr_fprint(f, e -> right);
+    fprintf(f, "\n");
+  }
+}
+
 void expr_add_codegen(struct expr *e, FILE *f, int which) {
   const char *op;
   if(which == 0) {
@@ -843,49 +1072,54 @@ void expr_add_codegen(struct expr *e, FILE *f, int which) {
   }
   expr_codegen(e -> left, f);
   expr_codegen(e -> right, f);
+
   fprintf(f, "%s %s, %s\n", op, register_name(e -> left -> reg), register_name(e -> right -> reg));
   e -> reg = e -> right -> reg;
   register_free(e -> left -> reg);
-}
-
-void expr_mul_codegen(struct expr *e, FILE *f, int which) {
-  if(which == 0) {
-    op = "IMUL";
-  }
-  else if(which == 1) {
-    op = "IDIV";
-  }
-  else {
-    fprintf(stderr, "Error in calling function expr_add_codegen (must be of expr type MUL or DIV\n");
-    exit(1);
-  }
-
 }
 
 void expr_codegen(struct expr *e, FILE *f) {
   if(!e) return;
   switch(e -> kind) {
     case EXPR_PLUS:
+      expr_assembly_comment(f, e, "add");
       expr_add_codegen(e, f, 0);
       break;
     case EXPR_MIN:
+      expr_assembly_comment(f, e, "minus");
       expr_add_codegen(e, f, 1);
       break;
     case EXPR_MUL:
       expr_codegen(e -> left, f);
       expr_codegen(e -> right, f);
-      fprintf(f, "MOV %s, %%rax\n", register_name(e -> left -> reg));
-      fprintf(f, "IMUL %s\n", register_name(e -> right -> reg));
-      fprintf(f, "MOV %%rax, %s\n", register_name(e -> right -> reg));
+      expr_assembly_comment(f, e, "multiply");
+      fprintf(f, "MOVQ %s, %%rax\n", register_name(e -> left -> reg));
+      fprintf(f, "IMULQ %s\n", register_name(e -> right -> reg));
+      fprintf(f, "MOVQ %%rax, %s\n", register_name(e -> right -> reg));
       e -> reg = e -> right -> reg;
       register_free(e -> left -> reg);
       break;
     case EXPR_DIV:
       expr_codegen(e -> left, f);
       expr_codegen(e -> right, f);
-      fprintf(f, "MOV %s, %%rax\n"
+      expr_assembly_comment(f, e, "divide");
+      fprintf(f, "MOVQ %s, %%rax\n", register_name(e -> left -> reg));
+      fprintf(f, "CDQO\n");
+      fprintf(f, "IDIVQ %s\n", register_name(e -> right -> reg));
+      fprintf(f, "MOVQ %%rax, %s\n", register_name(e -> right -> reg));
+      e -> reg = e -> right -> reg;
+      register_free(e -> left -> reg);
       break;
     case EXPR_MOD:
+      expr_codegen(e -> left, f);
+      expr_codegen(e -> right, f);
+      expr_assembly_comment(f, e, "modulo");
+      fprintf(f, "MOVQ %s, %%rax\n", register_name(e -> left -> reg));
+      fprintf(f, "CDQO\n");
+      fprintf(f, "IDIVQ %s\n", register_name(e -> right -> reg));
+      fprintf(f, "MOVQ %%rax, %s\n", register_name(e -> right -> reg));
+      e -> reg = e -> right -> reg;
+      register_free(e -> left -> reg);
       break;
     case EXPR_PLUSPLUS:
       break;

@@ -70,6 +70,7 @@ struct expr * expr_create_character_literal( char c );
 struct expr * expr_create_string_literal( const char *str );
 
 void expr_print( struct expr *e );
+void expr_fprint(FILE *f, struct expr *e);
 
 void expr_free(struct expr *e);
 

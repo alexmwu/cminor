@@ -15,6 +15,7 @@ struct param_list {
 
 struct param_list * param_list_create( struct expr *name, struct type *type, struct param_list *next );
 void param_list_print( struct param_list *a );
+void param_list_fprint(FILE *f, struct param_list *a);
 void param_list_free(struct param_list *a);
 void param_list_resolve(struct param_list *a, int which);
 void param_list_typecheck(struct param_list *p_list, struct expr *exp_list, const char *name);

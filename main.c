@@ -4,7 +4,7 @@
 #include "scanner.yy.h"
 #include "parser.tab.h"
 #include "ast/decl.h"
-#include "codegen/register.h"
+#include "codegen/assembly.h"
 
 extern FILE *yyin;
 extern int yyparse();
@@ -153,7 +153,7 @@ int main(int argc, char **argv) {
       fclose(f);
     }
     else if(strcmp(argv[1], "-codegen_debug") == 0) {
-      ASSEMBLY_ERRORS_FLAG = 1;
+      ASSEMBLY_COMMENT_FLAG = 1;
       if(argc != 4) {
         fprintf(stderr, "No file output name for option '%s'\n", argv[1]);
         exit(1);
