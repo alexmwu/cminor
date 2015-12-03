@@ -849,7 +849,6 @@ void expr_add_codegen(struct expr *e, FILE *f, int which) {
 }
 
 void expr_mul_codegen(struct expr *e, FILE *f, int which) {
-  const char *op;
   if(which == 0) {
     op = "IMUL";
   }
@@ -860,10 +859,6 @@ void expr_mul_codegen(struct expr *e, FILE *f, int which) {
     fprintf(stderr, "Error in calling function expr_add_codegen (must be of expr type MUL or DIV\n");
     exit(1);
   }
-
-  expr_codegen(e -> left, f);
-  expr_codegen(e -> right, f);
-  fprintf(f, "MOV %s, %%rax\n", register_name(e -> left -> reg));
 
 }
 
@@ -877,8 +872,18 @@ void expr_codegen(struct expr *e, FILE *f) {
       expr_add_codegen(e, f, 1);
       break;
     case EXPR_MUL:
+      expr_codegen(e -> left, f);
+      expr_codegen(e -> right, f);
+      fprintf(f, "MOV %s, %%rax\n", register_name(e -> left -> reg));
+      fprintf(f, "IMUL %s\n", register_name(e -> right -> reg));
+      fprintf(f, "MOV %%rax, %s\n", register_name(e -> right -> reg));
+      e -> reg = e -> right -> reg;
+      register_free(e -> left -> reg);
       break;
     case EXPR_DIV:
+      expr_codegen(e -> left, f);
+      expr_codegen(e -> right, f);
+      fprintf(f, "MOV %s, %%rax\n"
       break;
     case EXPR_MOD:
       break;
