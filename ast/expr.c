@@ -948,7 +948,13 @@ struct type *expr_typecheck(struct expr *e) {
         exit(1);
       }
       left = expr_typecheck(e -> left);
-      if(left -> kind != TYPE_INTEGER) {
+      if(e -> left -> kind != EXPR_IDENT) {
+        fprintf(stderr, "TYPE_ERROR: increment must be used on an identifier");
+        expr_typecheck_err_print(stderr, e);
+        type_error_count++;
+      }
+      // already checked that it is an ident
+      else if(left -> kind != TYPE_INTEGER) {
         fprintf(stderr, "TYPE_ERROR: cannot use postincrement on a ");
         type_fprint(stderr, left);
         expr_typecheck_err_print(stderr, e);
@@ -962,7 +968,13 @@ struct type *expr_typecheck(struct expr *e) {
         exit(1);
       }
       left = expr_typecheck(e -> left);
-      if(left -> kind != TYPE_INTEGER) {
+      if(e -> left -> kind != EXPR_IDENT) {
+        fprintf(stderr, "TYPE_ERROR: increment must be used on an identifier");
+        expr_typecheck_err_print(stderr, e);
+        type_error_count++;
+      }
+      // already checked that it is an ident
+      else if(left -> kind != TYPE_INTEGER) {
         fprintf(stderr, "TYPE_ERROR: cannot use postdecrement on a ");
         type_fprint(stderr, left);
         expr_typecheck_err_print(stderr, e);
@@ -1058,6 +1070,7 @@ void expr_assembly_comment(FILE *f, struct expr *e, const char *op) {
   }
 }
 
+// add and subtract
 void expr_add_codegen(struct expr *e, FILE *f, int which) {
   const char *op;
   if(which == 0) {
@@ -1073,20 +1086,74 @@ void expr_add_codegen(struct expr *e, FILE *f, int which) {
   expr_codegen(e -> left, f);
   expr_codegen(e -> right, f);
 
+  expr_assembly_comment(f, e, op);
   fprintf(f, "%s %s, %s\n", op, register_name(e -> left -> reg), register_name(e -> right -> reg));
   e -> reg = e -> right -> reg;
   register_free(e -> left -> reg);
+}
+
+// divide and modulo
+void expr_div_codegen(struct expr *e, FILE *f, int which) {
+  const char *op, *reg;
+  if(which == 0) {
+    op = "DIV";
+    reg = "%%rax";
+  }
+  else if(which == 1) {
+    op = "MOD";
+    reg = "%%rdx";
+  }
+  else {
+    fprintf(stderr, "Error in calling function expr_div_codegen (must be of expr type DIV or MOD\n");
+    exit(1);
+  }
+  expr_codegen(e -> left, f);
+  expr_codegen(e -> right, f);
+  expr_assembly_comment(f, e, op);
+  if(ASSEMBLY_COMMENT_FLAG) {
+    fprintf(f, "\n# May have to move rdx into another register to save\n");
+  }
+  fprintf(f, "MOVQ %s, %%rax\n", register_name(e -> left -> reg));
+  fprintf(f, "CDQO\n");
+  fprintf(f, "IDIVQ %s\n", register_name(e -> right -> reg));
+  fprintf(f, "MOVQ %s, %s\n", reg, register_name(e -> right -> reg));
+  e -> reg = e -> right -> reg;
+  register_free(e -> left -> reg);
+}
+
+// postincrement and postdecrement
+void expr_post_increment(struct expr *e, FILE *f, int which) {
+  const char *op;
+  if(which == 0) {
+    op = "";
+  }
+  else if(which == 1) {
+    op = "SUBQ";
+  }
+  else {
+    fprintf(stderr, "Error in calling function expr_post_increment (must be of expr type PLUSPLUS or MINMIN\n");
+    exit(1);
+  }
+  expr_codegen(e -> left, f);
+  // has already been done typechecked but still call it to see
+  // if any errors occur
+  expr_codegen(e -> right, f);
+  expr_assembly_comment(f, e, op);
+  fprintf(f, "MOVQ %s, %%rax\n", register_name(e -> left -> reg));
+  fprintf(f, "INCQ %%rax\n");
+  fprintf(f, "MOVQ %%rax, %s\n", register_name(e -> left -> reg));
+  e -> reg = e -> left -> reg;
+  // will cause errors with reg_name[0]
+  /*register_free(e -> right -> reg);*/
 }
 
 void expr_codegen(struct expr *e, FILE *f) {
   if(!e) return;
   switch(e -> kind) {
     case EXPR_PLUS:
-      expr_assembly_comment(f, e, "add");
       expr_add_codegen(e, f, 0);
       break;
     case EXPR_MIN:
-      expr_assembly_comment(f, e, "minus");
       expr_add_codegen(e, f, 1);
       break;
     case EXPR_MUL:
@@ -1100,26 +1167,10 @@ void expr_codegen(struct expr *e, FILE *f) {
       register_free(e -> left -> reg);
       break;
     case EXPR_DIV:
-      expr_codegen(e -> left, f);
-      expr_codegen(e -> right, f);
-      expr_assembly_comment(f, e, "divide");
-      fprintf(f, "MOVQ %s, %%rax\n", register_name(e -> left -> reg));
-      fprintf(f, "CDQO\n");
-      fprintf(f, "IDIVQ %s\n", register_name(e -> right -> reg));
-      fprintf(f, "MOVQ %%rax, %s\n", register_name(e -> right -> reg));
-      e -> reg = e -> right -> reg;
-      register_free(e -> left -> reg);
+      expr_div_codegen(e, f, 0);
       break;
     case EXPR_MOD:
-      expr_codegen(e -> left, f);
-      expr_codegen(e -> right, f);
-      expr_assembly_comment(f, e, "modulo");
-      fprintf(f, "MOVQ %s, %%rax\n", register_name(e -> left -> reg));
-      fprintf(f, "CDQO\n");
-      fprintf(f, "IDIVQ %s\n", register_name(e -> right -> reg));
-      fprintf(f, "MOVQ %%rax, %s\n", register_name(e -> right -> reg));
-      e -> reg = e -> right -> reg;
-      register_free(e -> left -> reg);
+      expr_div_codegen(e, f, 1);
       break;
     case EXPR_PLUSPLUS:
       break;

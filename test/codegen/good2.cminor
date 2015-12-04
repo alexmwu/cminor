@@ -1,5 +1,6 @@
 x: integer = 10;
 
 main: function integer() = {
-  return 5 + 10;
+  return 5 + x;
 }
+
