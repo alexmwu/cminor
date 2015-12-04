@@ -513,7 +513,7 @@ void expr_resolve(struct expr *e) {
         printf("%s resolves to global\n", e -> name);
       }
       else {
-        printf("%s resolves to %s %d\n", e -> name, symbol_kind_print(s -> kind), s -> which);
+        printf("%s resolves to %s %d\n", e -> name, symbol_kind_string(s -> kind), s -> which);
       }
     }
     else {
@@ -525,7 +525,7 @@ void expr_resolve(struct expr *e) {
 
 void expr_typecheck_err_print(FILE *f, struct expr *e) {
   fprintf(f, " (");
-  expr_print(e);
+  expr_fprint(f, e);
   fprintf(f, ")\n");
 }
 
@@ -555,9 +555,9 @@ struct type *expr_arith_typecheck(struct expr *e, int which) {
   right = expr_typecheck(e -> right);
   if(left -> kind != TYPE_INTEGER || right -> kind != TYPE_INTEGER) {
     fprintf(stderr, "TYPE_ERROR: cannot %s ", arith_type);
-    type_print(left);
+    type_fprint(stderr, left);
     fprintf(stderr, " with ");
-    type_print(right);
+    type_fprint(stderr, right);
     expr_typecheck_err_print(stderr, e);
     type_error_count++;
   }
@@ -587,9 +587,9 @@ struct type *expr_comp_typecheck(struct expr *e, int which) {
   right = expr_typecheck(e -> right);
   if(left -> kind != TYPE_INTEGER || right -> kind != TYPE_INTEGER) {
     fprintf(stderr, "TYPE_ERROR: cannot apply %s on ", comp_type);
-    type_print(left);
+    type_fprint(stderr, left);
     fprintf(stderr, " and ");
-    type_print(right);
+    type_fprint(stderr, right);
     expr_typecheck_err_print(stderr, e);
     type_error_count++;
   }
@@ -616,7 +616,7 @@ struct type *expr_bool_typecheck(struct expr *e, int which) {
   if(which == 2) {
     if(right -> kind != TYPE_BOOLEAN) {
       fprintf(stderr, "TYPE_ERROR: cannot apply %s on ", boolop_type);
-      type_print(right);
+      type_fprint(stderr, right);
       expr_typecheck_err_print(stderr, e);
       type_error_count++;
     }
@@ -626,9 +626,9 @@ struct type *expr_bool_typecheck(struct expr *e, int which) {
   left = expr_typecheck(e -> left);
   if(left -> kind != TYPE_BOOLEAN || right -> kind != TYPE_BOOLEAN) {
     fprintf(stderr, "TYPE_ERROR: cannot apply %s on ", boolop_type);
-    type_print(left);
+    type_fprint(stderr, left);
     fprintf(stderr, " and ");
-    type_print(right);
+    type_fprint(stderr, right);
     expr_typecheck_err_print(stderr, e);
     type_error_count++;
   }
@@ -718,9 +718,9 @@ struct type *expr_arr_indexcheck(struct type *t, struct expr *e) {
     // subtypes in the declaration
     if(!curr_type) {
       fprintf(stderr, "TYPE_ERROR: there are fewer nested arrays (");
-      type_print(t);
+      type_fprint(stderr, t);
       fprintf(stderr, ") in the declaration than the assignment (");
-      expr_print(e);
+      expr_fprint(stderr, e);
       fprintf(stderr, ") gives\n");
       type_error_count++;
       return 0;
@@ -730,9 +730,9 @@ struct type *expr_arr_indexcheck(struct type *t, struct expr *e) {
     exp_type = expr_typecheck(a_next);
     if(exp_type -> kind != TYPE_INTEGER) {
       fprintf(stderr, "TYPE_ERROR: index into an array must be of type integer. Current expr (");
-      expr_print(a_next);
+      expr_fprint(stderr, a_next);
       fprintf(stderr, ") is of type ");
-      type_print(exp_type);
+      type_fprint(stderr, exp_type);
       fprintf(stderr, "\n");
       type_error_count++;
     }
@@ -757,7 +757,7 @@ struct type *expr_assign_typecheck(struct expr *e, int which) {
   if(which == 1) {
     if(left -> kind != TYPE_ARRAY && left -> kind != TYPE_ARRAY_DECL) {
       fprintf(stderr, "TYPE_ERROR: cannot use array assignment on non-array type ");
-      type_print(left);
+      type_fprint(stderr, left);
       expr_typecheck_err_print(stderr, e);
       type_error_count++;
     }
@@ -769,9 +769,9 @@ struct type *expr_assign_typecheck(struct expr *e, int which) {
       }
       if(!type_compare(arr_next, right)) {
         fprintf(stderr, "TYPE_ERROR: value of index into array (");
-        type_print(arr_next);
+        type_fprint(stderr, arr_next);
         fprintf(stderr, ") does not match the type of the expression (");
-        type_print(right);
+        type_fprint(stderr, right);
         fprintf(stderr, ")\n");
         type_error_count++;
       }
@@ -789,11 +789,11 @@ struct type *expr_assign_typecheck(struct expr *e, int which) {
     else {
       if(!type_compare(e -> left -> symbol -> type, right)) {
         fprintf(stderr, "TYPE_ERROR: type value of right assignment (");
-        type_print(right);
+        type_fprint(stderr, right);
         fprintf(stderr, ") does not match declared value of ");
-        expr_print(e -> left);
+        expr_fprint(stderr, e -> left);
         fprintf(stderr, " (");
-        type_print(e -> left -> symbol -> type);
+        type_fprint(stderr, e -> left -> symbol -> type);
         fprintf(stderr, ")\n");
         type_error_count++;
       }
@@ -818,9 +818,9 @@ void expr_arr_init_typecheck(struct expr *name, struct expr *e, struct type *t, 
     // add one more for base atomic subtype
     if(!t -> subtype -> subtype) {
       fprintf(stderr, "TYPE_ERROR: initializer list for ");
-      expr_print(name);
+      expr_fprint(stderr, name);
       fprintf(stderr, " has more subarrays (");
-      expr_print(e);
+      expr_fprint(stderr, e);
       fprintf(stderr, ") than declared\n");
       type_error_count++;
       // stop typechecking
@@ -829,7 +829,7 @@ void expr_arr_init_typecheck(struct expr *name, struct expr *e, struct type *t, 
     int newCount = t -> subtype -> expr -> literal_value;
     if(newCount <= 0) {
       fprintf(stderr, "TYPE_ERROR: declared size of array ");
-      expr_print(name);
+      expr_fprint(stderr, name);
       fprintf(stderr, " is not a positive number (%d)\n", count);
       type_error_count++;
       return;
@@ -842,9 +842,9 @@ void expr_arr_init_typecheck(struct expr *name, struct expr *e, struct type *t, 
   // add one more for base atomic subtype
   else if(t -> subtype -> subtype) {
     fprintf(stderr, "TYPE_ERROR: initializer list for ");
-    expr_print(name);
+    expr_fprint(stderr, name);
     fprintf(stderr, " has fewer subarrays (");
-    expr_print(e);
+    expr_fprint(stderr, e);
     fprintf(stderr, ") than declared\n");
     type_error_count++;
     // stop typechecking
@@ -857,9 +857,9 @@ void expr_arr_init_typecheck(struct expr *name, struct expr *e, struct type *t, 
     struct type *curr_type = expr_typecheck(e);
     if(!type_compare(curr_type, base)) {
       fprintf(stderr, "TYPE_ERROR: initializer expression for ");
-      expr_print(name);
+      expr_fprint(stderr, name);
       fprintf(stderr, " (");
-      expr_print(e);
+      expr_fprint(stderr, e);
       fprintf(stderr, ") does not match base type for the array (");
       type_print(base);
       fprintf(stderr, ")\n");
@@ -883,7 +883,7 @@ void expr_arr_init_typecheck(struct expr *name, struct expr *e, struct type *t, 
   // however, should exist as a check
   if(count < 0) {
     fprintf(stderr, "TYPE_ERROR: initializer list for ");
-    expr_print(name);
+    expr_fprint(stderr, name);
     fprintf(stderr, " has more elements than were declared\n");
     type_error_count++;
     // don't need to return as it skips rest
@@ -894,7 +894,7 @@ void expr_arr_init_typecheck(struct expr *name, struct expr *e, struct type *t, 
     // more array init lists than declared
     if(count == 0) {
       fprintf(stderr, "TYPE_ERROR: initializer list for ");
-      expr_print(name);
+      expr_fprint(stderr, name);
       fprintf(stderr, " has more elements than were declared\n");
       type_error_count++;
       // don't need to return
@@ -905,7 +905,7 @@ void expr_arr_init_typecheck(struct expr *name, struct expr *e, struct type *t, 
   // init list has less elems than declared
   else if(count > 0) {
     fprintf(stderr, "TYPE_ERROR: initializer list for ");
-    expr_print(name);
+    expr_fprint(stderr, name);
     fprintf(stderr, " has fewer elements than were declared\n");
     type_error_count++;
     // don't need to return
@@ -928,7 +928,7 @@ struct type *expr_typecheck(struct expr *e) {
         right = expr_typecheck(e -> right);
         if(right -> kind != TYPE_INTEGER) {
           fprintf(stderr, "TYPE_ERROR: unary minus only works on integers, not ");
-          type_print(right);
+          type_fprint(stderr, right);
           expr_typecheck_err_print(stderr, e);
           type_error_count++;
         }
@@ -950,7 +950,7 @@ struct type *expr_typecheck(struct expr *e) {
       left = expr_typecheck(e -> left);
       if(left -> kind != TYPE_INTEGER) {
         fprintf(stderr, "TYPE_ERROR: cannot use postincrement on a ");
-        type_print(left);
+        type_fprint(stderr, left);
         expr_typecheck_err_print(stderr, e);
         type_error_count++;
       }
@@ -964,7 +964,7 @@ struct type *expr_typecheck(struct expr *e) {
       left = expr_typecheck(e -> left);
       if(left -> kind != TYPE_INTEGER) {
         fprintf(stderr, "TYPE_ERROR: cannot use postdecrement on a ");
-        type_print(left);
+        type_fprint(stderr, left);
         expr_typecheck_err_print(stderr, e);
         type_error_count++;
       }
@@ -997,7 +997,7 @@ struct type *expr_typecheck(struct expr *e) {
     case EXPR_ARR:
       if((e -> left -> symbol -> type -> kind != TYPE_ARRAY) && (e -> left -> symbol -> type -> kind != TYPE_ARRAY_DECL)) {
         fprintf(stderr, "TYPE_ERROR: the identifier (");
-        expr_print(e -> left);
+        expr_fprint(stderr, e -> left);
         fprintf(stderr, ") is not of type array\n");
         type_error_count++;
         // don't know what else to return, so

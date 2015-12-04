@@ -242,9 +242,9 @@ void stmt_typecheck(struct stmt *s, struct type *ret, int *returned) {
       expr = expr_typecheck(s -> expr);
       if(expr -> kind != TYPE_BOOLEAN) {
         fprintf(stderr, "TYPE_ERROR: cannot use a(n) ");
-        type_print(expr);
+        type_fprint(stderr, expr);
         fprintf(stderr, " as the if statement expression (currently ");
-        expr_print(s -> expr);
+        expr_fprint(stderr, s -> expr);
         fprintf(stderr, ") requires a boolean\n");
         type_error_count++;
       }
@@ -259,7 +259,7 @@ void stmt_typecheck(struct stmt *s, struct type *ret, int *returned) {
       // expression is actually there
       if(expr -> kind != TYPE_BOOLEAN && !expr) {
         fprintf(stderr, "TYPE_ERROR: cannot use a ");
-        type_print(expr);
+        type_fprint(stderr, expr);
         fprintf(stderr, " as the middle expression requires a boolean (or an empty expression)\n");
         type_error_count++;
       }
@@ -275,9 +275,9 @@ void stmt_typecheck(struct stmt *s, struct type *ret, int *returned) {
         expr = expr_typecheck(curr);
         if(!type_is_atomic(expr)) {
           fprintf(stderr, "TYPE_ERROR: cannot print (print ");
-          expr_print(s -> expr);
+          expr_fprint(stderr, s -> expr);
           fprintf(stderr, ") a non-atomic value (");
-          type_print(expr);
+          type_fprint(stderr, expr);
           fprintf(stderr, ")\n");
           type_error_count++;
         }
@@ -295,9 +295,9 @@ void stmt_typecheck(struct stmt *s, struct type *ret, int *returned) {
       }
       if(!type_compare(expr, ret)) {
         fprintf(stderr, "TYPE_ERROR: the return statement (return ");
-        expr_print(s -> expr);
+        expr_fprint(stderr, s -> expr);
         fprintf(stderr, ") does not match the function return type (");
-        type_print(ret);
+        type_fprint(stderr, ret);
         fprintf(stderr, ")\n");
         type_error_count++;
       }

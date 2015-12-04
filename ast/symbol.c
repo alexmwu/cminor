@@ -19,7 +19,7 @@ void symbol_free(struct symbol *s) {
   free(s);
 }
 
-const char *symbol_kind_print(symbol_t k) {
+const char *symbol_kind_string(symbol_t k) {
   switch(k) {
     case SYMBOL_LOCAL:
       return "local";

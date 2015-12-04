@@ -93,14 +93,12 @@ void decl_resolve(struct decl *d, symbol_t kind, int which) {
   // ensure that function decls are global
   if(d -> type -> kind == TYPE_FUNCTION && kind != SYMBOL_GLOBAL) {
     fprintf(stderr, "TYPE_ERROR: functions must be declared in global scope (");
-    expr_print(d -> name);
-    fprintf(stderr, " is in ");
-    symbol_kind_print(kind);
-    fprintf(stderr, ")\n");
+    expr_fprint(stderr, d -> name);
+    fprintf(stderr, " is %s)\n", symbol_kind_string(kind));
     resolve_error_count++;
   }
   else if(old && old -> type -> kind != TYPE_FUNCTION) {
-    fprintf(stderr, "%s is a redeclaration. Already declared as %s variable\n", d -> name -> name, symbol_kind_print(old -> kind));
+    fprintf(stderr, "%s is a redeclaration. Already declared as %s variable\n", d -> name -> name, symbol_kind_string(old -> kind));
     resolve_error_count++;
   }
   // implicit that symbol type kind if function
@@ -113,11 +111,11 @@ void decl_resolve(struct decl *d, symbol_t kind, int which) {
           // definition matches declaration
           if(!type_compare(d -> type, old -> type)) {
             fprintf(stderr, "TYPE_ERROR: prototype in definition of function ");
-            expr_print(d -> name);
+            expr_fprint(stderr, d -> name);
             fprintf(stderr, " (");
-            type_print(d -> type);
+            type_fprint(stderr, d -> type);
             fprintf(stderr, ") does not match prototype in original declaration (");
-            type_print(old -> type);
+            type_fprint(stderr, old -> type);
             fprintf(stderr, ")\n");
             // both resolution and type error
             // but pick one (pick the one that
@@ -128,13 +126,13 @@ void decl_resolve(struct decl *d, symbol_t kind, int which) {
         }
         // redeclaration of function
         else {
-          fprintf(stderr, "%s is a redeclaration. Already declared as %s variable\n", d -> name -> name, symbol_kind_print(old -> kind));
+          fprintf(stderr, "%s is a redeclaration. Already declared as %s variable\n", d -> name -> name, symbol_kind_string(old -> kind));
           resolve_error_count++;
         }
     }
     // function already declared/defined
     else if(old -> which == 2) {
-      fprintf(stderr, "%s is a redeclaration/redefinition. Already declared as %s variable\n", d -> name -> name, symbol_kind_print(old -> kind));
+      fprintf(stderr, "%s is a redeclaration/redefinition. Already declared as %s variable\n", d -> name -> name, symbol_kind_string(old -> kind));
       resolve_error_count++;
     }
   }
@@ -187,15 +185,15 @@ void decl_typecheck(struct decl *d) {
       }
       if(!type_is_atomic(curr)) {
         fprintf(stderr, "TYPE_ERROR: the base type (final nested type) of the array is not an atomic type (has type ");
-        type_print(curr);
+        type_fprint(stderr, curr);
         fprintf(stderr, ")\n");
         type_error_count++;
       }
       else if(!expr_is_num_constant(d -> type -> expr)) {
         fprintf(stderr, "TYPE_ERROR: arrays (");
-        expr_print(d -> name);
+        expr_fprint(stderr, d -> name);
         fprintf(stderr, ") need to have constant integer type declarations (has type of ");
-        type_print(d -> type);
+        type_fprint(stderr, d -> type);
         fprintf(stderr, ")\n");
         type_error_count++;
       }
@@ -204,7 +202,7 @@ void decl_typecheck(struct decl *d) {
         // stop processing if count <= 0
         if(count <= 0) {
           fprintf(stderr, "TYPE_ERROR: declared size of array ");
-          expr_print(d -> name);
+          expr_fprint(stderr, d -> name);
           fprintf(stderr, " is not a positive number (%d)\n", count);
           type_error_count++;
         }
@@ -232,18 +230,18 @@ void decl_typecheck(struct decl *d) {
   // special case of initializer list)
   if(value && d -> value -> kind != EXPR_ARR_INITLIST && !type_compare(d -> type, value)) {
     fprintf(stderr, "TYPE_ERROR: type declaration value (");
-    type_print(value);
+    type_fprint(stderr, value);
     fprintf(stderr, ") for %s does not match declared value (", d -> name -> name);
-    type_print(d -> type);
+    type_fprint(stderr, d -> type);
     fprintf(stderr, ")\n");
     type_error_count++;
   }
   // check that global variables have constant type declarations
   if(value && d -> value -> kind != EXPR_ARR_INITLIST && d -> symbol -> kind == SYMBOL_GLOBAL && !expr_is_constant(d -> value)) {
     fprintf(stderr, "TYPE_ERROR: global variables (");
-    expr_print(d -> name);
+    expr_fprint(stderr, d -> name);
     fprintf(stderr, ") need to have constant type declarations (has type of ");
-    type_print(value);
+    type_fprint(stderr, value);
     fprintf(stderr, ")\n");
     type_error_count++;
   }
@@ -259,9 +257,9 @@ void decl_typecheck(struct decl *d) {
     if(d -> code && !(*returned) && d -> type -> subtype -> kind != TYPE_VOID) {
       type_print(d -> type);
       fprintf(stderr, "TYPE_ERROR: no return in a function (");
-      expr_print(d -> name);
+      expr_fprint(stderr, d -> name);
       fprintf(stderr, ") of return type ");
-      type_print(d -> type -> subtype);
+      type_fprint(stderr, d -> type -> subtype);
       fprintf(stderr, "\n");
       type_error_count++;
     }

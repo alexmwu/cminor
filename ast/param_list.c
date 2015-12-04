@@ -63,9 +63,9 @@ void param_list_typecheck(struct param_list *p_list, struct expr *exp_list, cons
     curr_type = expr_typecheck(curr_exp);
     if(!type_compare(curr_param -> type, curr_type)) {
         fprintf(stderr, "TYPE_ERROR: parameter type (");
-        type_print(curr_param -> type);
+        type_fprint(stderr, curr_param -> type);
         fprintf(stderr, ") for function %s does not match argument (", name);
-        type_print(curr_type);
+        type_fprint(stderr, curr_type);
         fprintf(stderr, ")\n");
         type_error_count++;
         type_delete(curr_type);
@@ -77,16 +77,16 @@ void param_list_typecheck(struct param_list *p_list, struct expr *exp_list, cons
   // if there is still a param or expression
   if(curr_param) {
     fprintf(stderr, "TYPE_ERROR: there are more parameters (");
-    param_list_print(p_list);
+    param_list_fprint(stderr, p_list);
     fprintf(stderr, ") than arguments");
     expr_typecheck_err_print(stderr, exp_list);
     type_error_count++;
   }
   else if(curr_exp) {
     fprintf(stderr, "TYPE_ERROR: there are more arguments (");
-    expr_print(exp_list);
+    expr_fprint(stderr, exp_list);
     fprintf(stderr, ") than parameters (");
-    param_list_print(p_list);
+    param_list_fprint(stderr, p_list);
     fprintf(stderr, ")\n");
     type_error_count++;
   }
