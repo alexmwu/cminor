@@ -22,6 +22,7 @@ void printHelp() {
   printf("\t-resolve\tRun a file through CMinor resolver and see if there are name resolution errors\n");
   printf("\t-typecheck\tRun a file through CMinor typechecker and see if there are type errors\n");
   printf("\t-codegen\tRun a file through CMinor code generator and produce x86_64 assembly code\n");
+  printf("\t-compile\tRun a file through CMinor code generator followed by gcc and produce machine code (requires gcc)\n");
 }
 
 void printGoHelp(char *command) {
@@ -29,6 +30,12 @@ void printGoHelp(char *command) {
 }
 
 int main(int argc, char **argv) {
+#ifdef _linux_
+#elif _APPLE_
+#else
+  fprintf(stderr, "Non-linux or OSX platform. Other platforms (including Windows) are unsupported\n");
+#endif
+
   yyin = stdin;
   // TODO: this is a bit of a hack to make printfs print in
   // sequence with fprintf (rather than flushing only on newlines).

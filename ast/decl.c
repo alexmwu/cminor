@@ -269,7 +269,23 @@ void decl_typecheck(struct decl *d) {
   decl_typecheck(d -> next);
 }
 
-void decl_codegen(struct decl *d, FILE *f) {
+void decl_codegen(struct decl *d, FILE *f, symbol_t kind) {
+  if(!d) return;
+  if(d -> type -> kind == TYPE_ARRAY_DECL) {
+    fprintf(stderr, "CODEGEN_ERROR: cminor does not have an array implementation\n");
+    exit(1);
+  }
+  // implied global decl or it would have failed in typecheck
+  if(d -> type -> kind == TYPE_FUNCTION) {
+    stmt_codegen(d -> code, f);
+  }
+  else if(kind == SYMBOL_GLOBAL) {
+    expr_codegen(d -> value, f);
+  }
+  // else it is another declaration of type local
+  else {
 
+  }
+  decl_codegen(d -> next, f, kind);
 }
 

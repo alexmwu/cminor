@@ -315,7 +315,7 @@ void stmt_codegen(struct stmt *s, FILE *f) {
   if(!s) return;
   switch(s -> kind) {
     case STMT_DECL:
-      decl_codegen(s -> decl, f);
+      decl_codegen(s -> decl, f, SYMBOL_LOCAL);
       break;
     case STMT_EXPR:
       break;
@@ -356,5 +356,6 @@ void stmt_codegen(struct stmt *s, FILE *f) {
       stmt_codegen(s -> body, f);
       break;
   }
+  stmt_codegen(s -> next, f);
 }
 

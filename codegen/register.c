@@ -14,7 +14,7 @@ int register_alloc() {
       return i;
     }
   }
-  fprintf(stderr, "Out of scratch registers to allocate");
+  fprintf(stderr, "Out of scratch registers to allocate\n");
   exit(1);
 }
 
