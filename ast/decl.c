@@ -1,6 +1,5 @@
 #include "decl.h"
 #include <stdlib.h>
-#include <stdio.h>
 
 struct decl *decl_create(struct expr *name, struct type *t, struct expr *v, struct stmt *c, struct decl *next) {
   struct decl *d = malloc(sizeof *d);
@@ -268,5 +267,9 @@ void decl_typecheck(struct decl *d) {
     stmt_typecheck(d -> code, 0, returned);
   }
   decl_typecheck(d -> next);
+}
+
+void decl_codegen(struct decl *d, FILE *f) {
+  
 }
 

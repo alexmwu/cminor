@@ -1,6 +1,5 @@
 #include "param_list.h"
 #include <stdlib.h>
-#include <stdio.h>
 
 struct param_list *param_list_create(struct expr *name, struct type *type, struct param_list *next) {
   struct param_list *pl = malloc(sizeof *pl);

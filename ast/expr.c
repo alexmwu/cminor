@@ -3,7 +3,6 @@
 #include "../codegen/register.h"
 #include "../codegen/assembly.h"
 #include <stdlib.h>
-#include <stdio.h>
 
 struct expr *expr_create(expr_t kind, struct expr *left, struct expr *right, struct expr *next) {
   struct expr *e = malloc(sizeof *e);
@@ -561,6 +560,14 @@ struct type *expr_arith_typecheck(struct expr *e, int which) {
     expr_typecheck_err_print(stderr, e);
     type_error_count++;
   }
+  // replace expr with function call to integer_power in library.c
+  if(e -> kind == EXPR_EXP) {
+    struct expr *new = malloc(sizeof *new);
+    // create the arg list for integer_power
+    e -> left -> next = e -> right;
+    expr_create(EXPR_FUNC, expr_create_name("integer_power"), e -> left, 0);
+    "";
+  }
   type_delete(left);
   type_delete(right);
   return type_create(TYPE_INTEGER, 0, 0, 0);
@@ -1110,13 +1117,17 @@ void expr_div_codegen(struct expr *e, FILE *f, int which) {
   expr_codegen(e -> left, f);
   expr_codegen(e -> right, f);
   expr_assembly_comment(f, e, op);
-  if(ASSEMBLY_COMMENT_FLAG) {
-    fprintf(f, "\n# May have to move rdx into another register to save\n");
-  }
+
+  // the below moves value of rdx into another register
+  // (this is because rdx is overwritten by the IDIV instr)
+  int tmpReg = register_alloc();
+  fprintf(f, "MOVQ %%rdx, %s\n", register_name(tmpReg));
   fprintf(f, "MOVQ %s, %%rax\n", register_name(e -> left -> reg));
   fprintf(f, "CDQO\n");
   fprintf(f, "IDIVQ %s\n", register_name(e -> right -> reg));
   fprintf(f, "MOVQ %s, %s\n", reg, register_name(e -> right -> reg));
+  fprintf(f, "MOVQ %s, %%rdx\n", register_name(tmpReg));
+  register_free(tmpReg);
   e -> reg = e -> right -> reg;
   register_free(e -> left -> reg);
 }
@@ -1125,10 +1136,10 @@ void expr_div_codegen(struct expr *e, FILE *f, int which) {
 void expr_post_increment(struct expr *e, FILE *f, int which) {
   const char *op;
   if(which == 0) {
-    op = "";
+    op = "INCQ";
   }
   else if(which == 1) {
-    op = "SUBQ";
+    op = "DECQ";
   }
   else {
     fprintf(stderr, "Error in calling function expr_post_increment (must be of expr type PLUSPLUS or MINMIN\n");
@@ -1140,7 +1151,7 @@ void expr_post_increment(struct expr *e, FILE *f, int which) {
   expr_codegen(e -> right, f);
   expr_assembly_comment(f, e, op);
   fprintf(f, "MOVQ %s, %%rax\n", register_name(e -> left -> reg));
-  fprintf(f, "INCQ %%rax\n");
+  fprintf(f, "%s %%rax\n", op);
   fprintf(f, "MOVQ %%rax, %s\n", register_name(e -> left -> reg));
   e -> reg = e -> left -> reg;
   // will cause errors with reg_name[0]
@@ -1173,10 +1184,13 @@ void expr_codegen(struct expr *e, FILE *f) {
       expr_div_codegen(e, f, 1);
       break;
     case EXPR_PLUSPLUS:
+      expr_post_increment(e, f, 0);
       break;
     case EXPR_MINMIN:
+      expr_post_increment(e, f, 1);
       break;
     case EXPR_EXP:
+      expr_func_codegen();
       break;
     case EXPR_LT:
       break;

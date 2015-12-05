@@ -1,7 +1,8 @@
 #include "stmt.h"
 #include "library.h"
+#include "../codegen/register.h"
+#include "../codegen/assembly.h"
 #include <stdlib.h>
-#include <stdio.h>
 
 struct stmt *stmt_create(stmt_kind_t kind, struct decl *d, struct expr *init_expr, struct expr *e, struct expr *next_expr, struct stmt *body, struct stmt *else_body) {
   struct stmt *s = malloc(sizeof *s);
@@ -308,5 +309,52 @@ void stmt_typecheck(struct stmt *s, struct type *ret, int *returned) {
       break;
   }
   stmt_typecheck(s -> next, ret, returned);
+}
+
+void stmt_codegen(struct stmt *s, FILE *f) {
+  if(!s) return;
+  switch(s -> kind) {
+    case STMT_DECL:
+      decl_codegen(s -> decl, f);
+      break;
+    case STMT_EXPR:
+      break;
+    case STMT_IF_ELSE:
+      break;
+    case STMT_FOR:
+      break;
+    case STMT_WHILE:
+      break;
+    case STMT_PRINT:
+      break;
+    case STMT_RET:
+      expr_codegen(s -> expr, f);
+      if(ASSEMBLY_COMMENT_FLAG) {
+        fprintf(f, "\n# return statement (return ");
+        expr_fprint(f, s -> expr);
+        fprintf(f, ")\n");
+      }
+      fprintf(f, "MOVQ %s, %%rax\n", register_name(s -> expr -> reg));
+      register_free(s -> expr -> reg);
+
+      // postamble
+      assembly_comment(f, "### function postamble\n");
+      assembly_comment(f, "# restore callee-saved registers\n");
+      fprintf(f, "POPQ %%r15\n");
+      fprintf(f, "POPQ %%r14\n");
+      fprintf(f, "POPQ %%r13\n");
+      fprintf(f, "POPQ %%r12\n");
+      fprintf(f, "POPQ %%rbx\n");
+
+      assembly_comment(f, "# reset stack to base pointer\n");
+      fprintf(f, "MOVQ %%rbp, %%rsp\n");
+      assembly_comment(f, "# restore the old base pointer\n");
+      fprintf(f, "POPQ %%rbp\n");
+      fprintf(f, "RET\n");
+      break;
+    case STMT_BLOCK:
+      stmt_codegen(s -> body, f);
+      break;
+  }
 }
 
