@@ -148,11 +148,12 @@ int main(int argc, char **argv) {
         printf("Type error count: %d\n", type_error_count);
         exit(1);
       }
-      decl_codegen(programRoot, f);
+      assembly_codegen(programRoot, f);
       decl_free(programRoot);
       fclose(f);
     }
     else if(strcmp(argv[1], "-codegen_debug") == 0) {
+      // enable codegen comments
       ASSEMBLY_COMMENT_FLAG = 1;
       if(argc != 4) {
         fprintf(stderr, "No file output name for option '%s'\n", argv[1]);
@@ -180,7 +181,39 @@ int main(int argc, char **argv) {
         printf("Type error count: %d\n", type_error_count);
         exit(1);
       }
-      decl_codegen(programRoot, f);
+      assembly_codegen(programRoot, f);
+      decl_free(programRoot);
+      fclose(f);
+    }
+    // TODO: call system gcc to compile generated code into machine code
+    else if(strcmp(argv[1], "-compile") == 0) {
+      if(argc != 4) {
+        fprintf(stderr, "No file output name for option '%s'\n", argv[1]);
+        exit(1);
+      }
+
+      FILE *f = fopen(argv[3], "w");
+      if(!f) {
+        fprintf(stderr, "Can't open output assembly file %s\n", argv[3]);
+      }
+
+      if(yyparse()) {
+        exit(1);
+      }
+      scope_enter();
+      decl_resolve(programRoot, SYMBOL_GLOBAL, 0);
+      scope_exit();
+      if(resolve_error_count) {
+        decl_free(programRoot);
+        printf("Resolve error count: %d\n", resolve_error_count);
+        exit(1);
+      }
+      decl_typecheck(programRoot);
+      if(type_error_count) {
+        printf("Type error count: %d\n", type_error_count);
+        exit(1);
+      }
+      assembly_codegen(programRoot, f);
       decl_free(programRoot);
       fclose(f);
     }

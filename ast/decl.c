@@ -270,6 +270,6 @@ void decl_typecheck(struct decl *d) {
 }
 
 void decl_codegen(struct decl *d, FILE *f) {
-  
+
 }
 

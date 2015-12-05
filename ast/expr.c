@@ -1069,7 +1069,7 @@ struct type *expr_typecheck(struct expr *e) {
 
 void expr_assembly_comment(FILE *f, struct expr *e, const char *op) {
   if(ASSEMBLY_COMMENT_FLAG) {
-    fprintf(f, "\n#  ");
+    fprintf(f, "\t\n#  ");
     expr_fprint(f, e -> left);
     fprintf(f, " %s ", op);
     expr_fprint(f, e -> right);
@@ -1094,7 +1094,7 @@ void expr_add_codegen(struct expr *e, FILE *f, int which) {
   expr_codegen(e -> right, f);
 
   expr_assembly_comment(f, e, op);
-  fprintf(f, "%s %s, %s\n", op, register_name(e -> left -> reg), register_name(e -> right -> reg));
+  fprintf(f, "\t%s %s, %s\n", op, register_name(e -> left -> reg), register_name(e -> right -> reg));
   e -> reg = e -> right -> reg;
   register_free(e -> left -> reg);
 }
@@ -1121,12 +1121,12 @@ void expr_div_codegen(struct expr *e, FILE *f, int which) {
   // the below moves value of rdx into another register
   // (this is because rdx is overwritten by the IDIV instr)
   int tmpReg = register_alloc();
-  fprintf(f, "MOVQ %%rdx, %s\n", register_name(tmpReg));
-  fprintf(f, "MOVQ %s, %%rax\n", register_name(e -> left -> reg));
-  fprintf(f, "CDQO\n");
-  fprintf(f, "IDIVQ %s\n", register_name(e -> right -> reg));
-  fprintf(f, "MOVQ %s, %s\n", reg, register_name(e -> right -> reg));
-  fprintf(f, "MOVQ %s, %%rdx\n", register_name(tmpReg));
+  fprintf(f, "\tMOVQ %%rdx, %s\n", register_name(tmpReg));
+  fprintf(f, "\tMOVQ %s, %%rax\n", register_name(e -> left -> reg));
+  fprintf(f, "\tCDQO\n");
+  fprintf(f, "\tIDIVQ %s\n", register_name(e -> right -> reg));
+  fprintf(f, "\tMOVQ %s, %s\n", reg, register_name(e -> right -> reg));
+  fprintf(f, "\tMOVQ %s, %%rdx\n", register_name(tmpReg));
   register_free(tmpReg);
   e -> reg = e -> right -> reg;
   register_free(e -> left -> reg);
@@ -1150,9 +1150,9 @@ void expr_post_increment(struct expr *e, FILE *f, int which) {
   // if any errors occur
   expr_codegen(e -> right, f);
   expr_assembly_comment(f, e, op);
-  fprintf(f, "MOVQ %s, %%rax\n", register_name(e -> left -> reg));
-  fprintf(f, "%s %%rax\n", op);
-  fprintf(f, "MOVQ %%rax, %s\n", register_name(e -> left -> reg));
+  fprintf(f, "\tMOVQ %s, %%rax\n", register_name(e -> left -> reg));
+  fprintf(f, "\t%s %%rax\n", op);
+  fprintf(f, "\tMOVQ %%rax, %s\n", register_name(e -> left -> reg));
   e -> reg = e -> left -> reg;
   // will cause errors with reg_name[0]
   /*register_free(e -> right -> reg);*/
@@ -1171,9 +1171,9 @@ void expr_codegen(struct expr *e, FILE *f) {
       expr_codegen(e -> left, f);
       expr_codegen(e -> right, f);
       expr_assembly_comment(f, e, "multiply");
-      fprintf(f, "MOVQ %s, %%rax\n", register_name(e -> left -> reg));
-      fprintf(f, "IMULQ %s\n", register_name(e -> right -> reg));
-      fprintf(f, "MOVQ %%rax, %s\n", register_name(e -> right -> reg));
+      fprintf(f, "\tMOVQ %s, %%rax\n", register_name(e -> left -> reg));
+      fprintf(f, "\tIMULQ %s\n", register_name(e -> right -> reg));
+      fprintf(f, "\tMOVQ %%rax, %s\n", register_name(e -> right -> reg));
       e -> reg = e -> right -> reg;
       register_free(e -> left -> reg);
       break;

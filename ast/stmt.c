@@ -330,27 +330,27 @@ void stmt_codegen(struct stmt *s, FILE *f) {
     case STMT_RET:
       expr_codegen(s -> expr, f);
       if(ASSEMBLY_COMMENT_FLAG) {
-        fprintf(f, "\n# return statement (return ");
+        fprintf(f, "\n\t# return statement (return ");
         expr_fprint(f, s -> expr);
         fprintf(f, ")\n");
       }
-      fprintf(f, "MOVQ %s, %%rax\n", register_name(s -> expr -> reg));
+      fprintf(f, "\tMOVQ %s, %%rax\n", register_name(s -> expr -> reg));
       register_free(s -> expr -> reg);
 
       // postamble
-      assembly_comment(f, "### function postamble\n");
-      assembly_comment(f, "# restore callee-saved registers\n");
-      fprintf(f, "POPQ %%r15\n");
-      fprintf(f, "POPQ %%r14\n");
-      fprintf(f, "POPQ %%r13\n");
-      fprintf(f, "POPQ %%r12\n");
-      fprintf(f, "POPQ %%rbx\n");
+      assembly_comment(f, "\t### function postamble\n");
+      assembly_comment(f, "\t# restore callee-saved registers\n");
+      fprintf(f, "\tPOPQ %%r15\n");
+      fprintf(f, "\tPOPQ %%r14\n");
+      fprintf(f, "\tPOPQ %%r13\n");
+      fprintf(f, "\tPOPQ %%r12\n");
+      fprintf(f, "\tPOPQ %%rbx\n");
 
-      assembly_comment(f, "# reset stack to base pointer\n");
-      fprintf(f, "MOVQ %%rbp, %%rsp\n");
-      assembly_comment(f, "# restore the old base pointer\n");
-      fprintf(f, "POPQ %%rbp\n");
-      fprintf(f, "RET\n");
+      assembly_comment(f, "\t# reset stack to base pointer\n");
+      fprintf(f, "\tMOVQ %%rbp, %%rsp\n");
+      assembly_comment(f, "\t# restore the old base pointer\n");
+      fprintf(f, "\tPOPQ %%rbp\n");
+      fprintf(f, "\tRET\n");
       break;
     case STMT_BLOCK:
       stmt_codegen(s -> body, f);

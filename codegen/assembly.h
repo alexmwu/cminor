@@ -5,11 +5,10 @@
 #include <stdio.h>
 
 #ifdef _linux_
-  #define ASM_ENV 1
 #elif _APPLE_
-  #define ASM_ENV 2
 #else
-  #define ASM_ENV 0
+  fprintf(stderr, "Non-linux or OSX platform. Other platforms (including Windows) are unsupported\n");
+  exit(1);
 #endif
 
 int ASSEMBLY_COMMENT_FLAG = 0;
