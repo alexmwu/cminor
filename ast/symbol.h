@@ -20,6 +20,7 @@ struct symbol {
 	int which;
 	struct type *type;
 	struct expr *name;
+  // original declaration for funcs
   struct decl *orig_decl;
 };
 

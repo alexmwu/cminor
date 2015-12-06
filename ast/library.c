@@ -33,13 +33,6 @@ void print_indent(int indent) {
   }
 }
 
-void fprint_indent(FILE *f, int indent) {
-  int i;
-  for(i = 0; i < indent; i++) {
-    fprintf(f, "\t");
-  }
-}
-
 void print_integer( int x )
 {
 	printf("%d",x);
@@ -59,6 +52,29 @@ void print_boolean( int b )
 void print_character( char c )
 {
 	printf("%c",c);
+}
+
+void fprint_integer(FILE *f, int x) {
+	fprintf(f, "%d",x);
+}
+
+/*TODO: write a function to handle \n and \0 so they get printed out like code (called print_code_string, for example*/
+void fprint_string(FILE *f, const char *s) {
+	fprintf(f, "%s",s);
+}
+
+void fprint_boolean(FILE *f, int b) {
+	fprintf(f, "%s",b?"true":"false");
+}
+
+void fprint_character(FILE *f, char c) {
+	fprintf(f, "%c",c);
+}
+void fprint_indent(FILE *f, int indent) {
+  int i;
+  for(i = 0; i < indent; i++) {
+    fprintf(f, "\t");
+  }
 }
 
 int integer_power( int x, int y )

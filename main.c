@@ -100,7 +100,8 @@ int main(int argc, char **argv) {
         exit(1);
       }
       scope_enter();
-      decl_resolve(programRoot, SYMBOL_GLOBAL, 0);
+      int new_decl = 0;
+      decl_resolve(programRoot, SYMBOL_GLOBAL, &new_decl);
       scope_exit();
       decl_free(programRoot);
       if(resolve_error_count) {
@@ -114,7 +115,8 @@ int main(int argc, char **argv) {
       }
 
       scope_enter();
-      decl_resolve(programRoot, SYMBOL_GLOBAL, 0);
+      int new_decl = 0;
+      decl_resolve(programRoot, SYMBOL_GLOBAL, &new_decl);
       scope_exit();
       if(resolve_error_count) {
         decl_free(programRoot);
@@ -143,7 +145,8 @@ int main(int argc, char **argv) {
         exit(1);
       }
       scope_enter();
-      decl_resolve(programRoot, SYMBOL_GLOBAL, 0);
+      int new_decl = 0;
+      decl_resolve(programRoot, SYMBOL_GLOBAL, &new_decl);
       scope_exit();
       if(resolve_error_count) {
         decl_free(programRoot);
@@ -176,7 +179,8 @@ int main(int argc, char **argv) {
         exit(1);
       }
       scope_enter();
-      decl_resolve(programRoot, SYMBOL_GLOBAL, 0);
+      int new_decl = 0;
+      decl_resolve(programRoot, SYMBOL_GLOBAL, &new_decl);
       scope_exit();
       if(resolve_error_count) {
         decl_free(programRoot);
@@ -208,7 +212,8 @@ int main(int argc, char **argv) {
         exit(1);
       }
       scope_enter();
-      decl_resolve(programRoot, SYMBOL_GLOBAL, 0);
+      int new_decl = 0;
+      decl_resolve(programRoot, SYMBOL_GLOBAL, &new_decl);
       scope_exit();
       if(resolve_error_count) {
         decl_free(programRoot);

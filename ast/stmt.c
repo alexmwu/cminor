@@ -189,12 +189,12 @@ void stmt_free(struct stmt *s) {
   free(s);
 }
 
-void stmt_resolve(struct stmt *s, int which) {
+void stmt_resolve(struct stmt *s, int *which) {
   if(!s) return;
   switch(s -> kind) {
     case STMT_DECL:
       decl_resolve(s -> decl, SYMBOL_LOCAL, which);
-      which++;
+      (*which)++;
       break;
     case STMT_EXPR:
       expr_resolve(s -> expr);
@@ -220,7 +220,9 @@ void stmt_resolve(struct stmt *s, int which) {
       break;
     case STMT_BLOCK:
       scope_enter();
-      stmt_resolve(s -> body, 1);
+      // a new block does not equal a new stack frame
+      // (so should not have new which value of 1)
+      stmt_resolve(s -> body, which);
       scope_exit();
       break;
   }

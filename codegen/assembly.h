@@ -4,7 +4,7 @@
 #include "../ast/decl.h"
 #include <stdio.h>
 
-int ASSEMBLY_COMMENT_FLAG = 0;
+int ASSEMBLY_COMMENT_FLAG;
 void assembly_comment(FILE *f, const char *s);
 
 // entry point for codegen

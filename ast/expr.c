@@ -455,26 +455,26 @@ void expr_fprint(FILE *f, struct expr *e) {
       fprintf(f, ")");
       break;
     case EXPR_TRUE:
-      print_boolean(1);
+      fprint_boolean(f, 1);
       break;
     case EXPR_FALSE:
-      print_boolean(0);
+      fprint_boolean(f, 0);
       break;
     case EXPR_INTLIT:
-      print_integer(e -> literal_value);
+      fprint_integer(f, e -> literal_value);
       break;
     case EXPR_CHARLIT:
       fprintf(f, "'");
-      print_character(e -> char_literal);
+      fprint_character(f, e -> char_literal);
       fprintf(f, "'");
       break;
     case EXPR_STRLIT:
       fprintf(f, "\"");
-      print_string(e -> string_literal);
+      fprint_string(f, e -> string_literal);
       fprintf(f, "\"");
       break;
     case EXPR_IDENT:
-      print_string(e -> name);
+      fprint_string(f, e -> name);
       break;
   }
   /*print expr_lists*/
@@ -566,7 +566,7 @@ struct type *expr_arith_typecheck(struct expr *e, int which) {
     // create the arg list for integer_power
     e -> left -> next = e -> right;
     expr_create(EXPR_FUNC, expr_create_name("integer_power"), e -> left, 0);
-    "";
+    // TODO: replace EXPR_EXP with call to integer_power
   }
   type_delete(left);
   type_delete(right);
@@ -1190,7 +1190,6 @@ void expr_codegen(struct expr *e, FILE *f) {
       expr_post_increment(e, f, 1);
       break;
     case EXPR_EXP:
-      expr_func_codegen();
       break;
     case EXPR_LT:
       break;

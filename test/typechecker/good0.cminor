@@ -3,5 +3,12 @@ a: function integer();
 main: function void (d: integer) = {
   b: integer;
   c: integer = d + a() + b;
+  if(true) {
+    d: integer;
+    d = 5 + b;
+    c = d * 2;
+  }
+  e: integer = 8;
+  c = c + e + d;
 }
 

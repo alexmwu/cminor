@@ -87,7 +87,7 @@ void decl_free(struct decl *d) {
   free(d);
 }
 
-void decl_resolve(struct decl *d, symbol_t kind, int which) {
+void decl_resolve(struct decl *d, symbol_t kind, int *which) {
   if(!d) return;
   struct symbol *old = scope_curr_lookup(d -> name -> name);
 
@@ -140,6 +140,8 @@ void decl_resolve(struct decl *d, symbol_t kind, int which) {
   else {
     struct symbol *sym = symbol_create(kind, d -> type, d -> name);
     if(d -> type -> kind == TYPE_FUNCTION) {
+      sym -> orig_decl = d;
+      struct symbol *curr;
       // 2 represents that a function has
       // been defined and declared
       if(d -> code) {
@@ -152,19 +154,24 @@ void decl_resolve(struct decl *d, symbol_t kind, int which) {
       }
     }
     else {
-      sym -> which = which;
+      sym -> which = *which;
     }
     d -> symbol = sym;
     scope_bind(d -> name -> name, sym);
   }
   expr_resolve(d -> value);
+  // want to typecheck all code, even new ones
   if(d -> code) {
     scope_enter();
-    param_list_resolve(d -> type -> params, 1);
-    stmt_resolve(d -> code, 1);
+    d -> num_params = param_list_resolve(d -> type -> params, 1);
+    int new_scope = 1;
+    stmt_resolve(d -> code, &new_scope);
+    d -> num_locals = new_scope;
+    printf("d -> num_locals = %d\n", new_scope);
     scope_exit();
   }
-  decl_resolve(d -> next, kind, which);
+  int new_decl = 1;
+  decl_resolve(d -> next, kind, &new_decl);
 }
 
 void decl_typecheck(struct decl *d) {

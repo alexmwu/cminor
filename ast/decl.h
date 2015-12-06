@@ -16,6 +16,8 @@ struct decl {
 	struct stmt *code;
 	struct symbol *symbol;
 	struct decl *next;
+  int num_params;
+  int num_locals;
 };
 
 struct decl * decl_create( struct expr *name, struct type *t, struct expr *v, struct stmt *c, struct decl *next );
@@ -25,7 +27,7 @@ void decl_fprint(FILE *f, struct decl *d, int indent);
 
 void decl_free(struct decl *d);
 
-void decl_resolve(struct decl *d, symbol_t kind, int which);
+void decl_resolve(struct decl *d, symbol_t kind, int *which);
 
 void decl_typecheck(struct decl *d);
 

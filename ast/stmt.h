@@ -34,7 +34,7 @@ void stmt_fprint(FILE *f, struct stmt *s, int indent);
 
 void stmt_free(struct stmt *s);
 
-void stmt_resolve(struct stmt *s, int which);
+void stmt_resolve(struct stmt *s, int *which);
 
 // ret and returned are for function
 // declarations. ret is the type

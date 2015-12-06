@@ -1,0 +1,9 @@
+func: function void() = {
+  c: integer = true<5;
+  d: integer = c;
+}
+
+func: function void() = {
+  a: boolean = false;
+  b: boolean = a + true;
+}
