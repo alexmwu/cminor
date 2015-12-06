@@ -564,7 +564,7 @@ struct type *expr_arith_typecheck(struct expr *e, int which) {
   if(e -> kind == EXPR_EXP) {
     struct expr *new = malloc(sizeof *new);
     // create the arg list for integer_power
-    e -> left -> next = e -> right;
+    /*e -> left -> next = e -> right;*/
     expr_create(EXPR_FUNC, expr_create_name("integer_power"), e -> left, 0);
     // TODO: replace EXPR_EXP with call to integer_power
   }

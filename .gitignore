@@ -40,3 +40,9 @@
 
 # Binary
 cminor
+
+# Assembly test files
+good*.s
+bad*.s
+out.s
+

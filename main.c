@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
   // need to add type_fprint style functions in the future
   setbuf(stdout, NULL);
   if(argc > 1) {  //arguments on top of program name
-    if(argc == 3) {
+    if(argc == 3 || argc == 4) {
       yyin = fopen(argv[2], "r");
       if(!yyin) {
         fprintf(stderr, "cminor: error: no such file or directory: %s\n", argv[2]);
@@ -131,14 +131,19 @@ int main(int argc, char **argv) {
       }
     }
     else if(strcmp(argv[1], "-codegen") == 0) {
-      if(argc != 4) {
-        fprintf(stderr, "No file output name for option '%s'\n", argv[1]);
-        exit(1);
+      // pass in output file name
+      FILE *f;
+      if(argc == 4) {
+        f = fopen(argv[3], "w");
+        if(!f) {
+          fprintf(stderr, "Can't open output assembly file %s\n", argv[3]);
+        }
       }
-
-      FILE *f = fopen(argv[3], "w");
-      if(!f) {
-        fprintf(stderr, "Can't open output assembly file %s\n", argv[3]);
+      else if(argc == 3) {
+        char *fileName = strtok(argv[2], ".");
+        char *outFile;
+        asprintf(&outFile, "%s.s", fileName);
+        f = fopen(outFile, "w");
       }
 
       if(yyparse()) {
@@ -165,12 +170,21 @@ int main(int argc, char **argv) {
     else if(strcmp(argv[1], "-codegen_debug") == 0) {
       // enable codegen comments
       ASSEMBLY_COMMENT_FLAG = 1;
-      if(argc != 4) {
-        fprintf(stderr, "No file output name for option '%s'\n", argv[1]);
-        exit(1);
+      // pass in output file name
+      FILE *f;
+      if(argc == 4) {
+        f = fopen(argv[3], "w");
+        if(!f) {
+          fprintf(stderr, "Can't open output assembly file %s\n", argv[3]);
+        }
+      }
+      else if(argc == 3) {
+        char *fileName = strtok(argv[2], ".");
+        char *outFile;
+        asprintf(&outFile, "%s.s", fileName);
+        f = fopen(outFile, "w");
       }
 
-      FILE *f = fopen(argv[3], "w");
       if(!f) {
         fprintf(stderr, "Can't open output assembly file %s\n", argv[3]);
       }

@@ -166,8 +166,7 @@ void decl_resolve(struct decl *d, symbol_t kind, int *which) {
     d -> num_params = param_list_resolve(d -> type -> params, 1);
     int new_scope = 1;
     stmt_resolve(d -> code, &new_scope);
-    d -> num_locals = new_scope;
-    printf("d -> num_locals = %d\n", new_scope);
+    d -> num_locals = new_scope - 1;
     scope_exit();
   }
   int new_decl = 1;
@@ -302,7 +301,7 @@ void decl_codegen(struct decl *d, FILE *f, symbol_t kind) {
     assembly_comment(f, "\t# save the base pointer\n");
     fprintf(f, "\tPUSHQ %%rbp\n");
     assembly_comment(f, "\t# set new base pointer to rsp\n");
-    fprintf(f, "\t MOVQ %%rsp, %%rbp\n");
+    fprintf(f, "\tMOVQ %%rsp, %%rbp\n");
     stmt_codegen(d -> code, f);
   }
   else if(kind == SYMBOL_GLOBAL) {
