@@ -1,6 +1,7 @@
 a: function integer();
 
 main: function void (d: integer) = {
-  c: integer = d + a();
+  b: integer;
+  c: integer = d + a() + b;
 }
 

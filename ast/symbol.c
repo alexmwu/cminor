@@ -7,6 +7,7 @@ struct symbol *symbol_create(symbol_t kind, struct type *type, struct expr *name
   s -> kind = kind;
   s -> type = type;
   s -> name = name;
+  s -> orig_decl = 0;
   s -> which = 0;
   return s;
 }

@@ -30,8 +30,8 @@ void printGoHelp(char *command) {
 }
 
 int main(int argc, char **argv) {
-#ifdef _linux_
-#elif _APPLE_
+#ifdef __linux__
+#elif __APPLE__
 #else
   fprintf(stderr, "Non-linux or OSX platform. Other platforms (including Windows) are unsupported\n");
 #endif

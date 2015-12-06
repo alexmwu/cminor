@@ -20,6 +20,7 @@ struct symbol {
 	int which;
 	struct type *type;
 	struct expr *name;
+  struct decl *orig_decl;
 };
 
 struct symbol * symbol_create( symbol_t kind, struct type *type, struct expr *name );

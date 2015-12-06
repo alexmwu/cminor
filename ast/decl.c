@@ -1,4 +1,6 @@
 #include "decl.h"
+/*#include "../codegen/register.h"*/
+#include "../codegen/assembly.h"
 #include <stdlib.h>
 
 struct decl *decl_create(struct expr *name, struct type *t, struct expr *v, struct stmt *c, struct decl *next) {
@@ -275,16 +277,42 @@ void decl_codegen(struct decl *d, FILE *f, symbol_t kind) {
     fprintf(stderr, "CODEGEN_ERROR: cminor does not have an array implementation\n");
     exit(1);
   }
+
   // implied global decl or it would have failed in typecheck
   if(d -> type -> kind == TYPE_FUNCTION) {
+#ifdef __linux__
+    fprintf(f, ".globl %s\n", d -> name -> name);
+    fprintf(f, "%s:\n", d -> name -> name);
+#elif __APPLE__
+    fprintf(f, ".globl _%s\n", d -> name -> name);
+    fprintf(f, "_%s:\n", d -> name -> name);
+#else
+    fprintf(f, ".globl %s\n", d -> name -> name);
+    fprintf(f, "%s:\n", d -> name -> name);
+#endif
+    // preamble of function (setting up stack)
+    assembly_comment(f, "\t### function preamble");
+    assembly_comment(f, "\t# save the base pointer\n");
+    fprintf(f, "\tPUSHQ %%rbp\n");
+    assembly_comment(f, "\t# set new base pointer to rsp\n");
+    fprintf(f, "\t MOVQ %%rsp, %%rbp\n");
     stmt_codegen(d -> code, f);
   }
   else if(kind == SYMBOL_GLOBAL) {
+#ifdef __linux__
+    fprintf(f, ".globl %s\n", d -> name -> name);
+    fprintf(f, "%s:\n", d -> name -> name);
+#elif __APPLE__
+    fprintf(f, ".globl _%s\n", d -> name -> name);
+    fprintf(f, "_%s:\n", d -> name -> name);
+#else
+    fprintf(f, ".globl %s\n", d -> name -> name);
+    fprintf(f, "%s:\n", d -> name -> name);
+#endif
     expr_codegen(d -> value, f);
   }
   // else it is another declaration of type local
   else {
-
   }
   decl_codegen(d -> next, f, kind);
 }
