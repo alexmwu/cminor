@@ -146,6 +146,10 @@ int main(int argc, char **argv) {
         char *outFile;
         asprintf(&outFile, "%s.s", fileName);
         f = fopen(outFile, "w");
+        if(!f) {
+          fprintf(stderr, "Can't open output assembly file %s\n", outFile);
+          exit(1);
+        }
         free(outFile);
       }
 
@@ -179,6 +183,7 @@ int main(int argc, char **argv) {
         f = fopen(argv[3], "w");
         if(!f) {
           fprintf(stderr, "Can't open output assembly file %s\n", argv[3]);
+          exit(1);
         }
       }
       // use existing file as base
@@ -186,12 +191,12 @@ int main(int argc, char **argv) {
         char *fileName = strtok(argv[2], ".");
         char *outFile;
         asprintf(&outFile, "%s.s", fileName);
-        free(outFile);
         f = fopen(outFile, "w");
-      }
-
-      if(!f) {
-        fprintf(stderr, "Can't open output assembly file %s\n", argv[3]);
+        if(!f) {
+          fprintf(stderr, "Can't open output assembly file %s\n", outFile);
+          exit(1);
+        }
+        free(outFile);
       }
 
       if(yyparse()) {

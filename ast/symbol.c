@@ -59,6 +59,13 @@ void symbol_print(struct symbol *s) {
 }
 
 char *symbol_code(struct symbol *s) {
-
+  switch(s -> kind) {
+    case SYMBOL_LOCAL:
+      break;
+    case SYMBOL_PARAM:
+      break;
+    case SYMBOL_GLOBAL:
+      break;
+  }
 }
 
