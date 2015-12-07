@@ -74,8 +74,8 @@ void assembly_arg_stack_alloc(FILE *f, int num_args) {
     fprintf(f, "Called assembly_arg_stack_alloc with negative (%d) number of arguments\n", num_args);
     exit(1);
   }
-  else if(num_args > NUM_ARG_REGISTERS) {
-    fprintf(f, "CODEGEN_ERROR: cminor does not support functions with more than %d registers\n", NUM_ARG_REGISTERS);
+  else if(num_args > REGISTERS_NUM_ARG) {
+    fprintf(f, "CODEGEN_ERROR: cminor does not support functions with more than %d registers\n", REGISTERS_NUM_ARG);
     exit(1);
   }
   int i;

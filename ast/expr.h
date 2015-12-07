@@ -55,6 +55,8 @@ struct expr {
 	struct symbol *symbol;
 	int literal_value;
 	const char * string_literal;
+  // global string number (for codegen)
+  int str_num;
   char char_literal;
 
   // register holding the expr value

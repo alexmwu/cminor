@@ -8,7 +8,7 @@ const char *register_name(int r) {
 
 int register_alloc() {
   int i;
-  for(i = 0; i < NUM_REGISTERS; i++) {
+  for(i = 0; i < REGISTERS_NUM; i++) {
     if(register_is_free[i]) {
       register_is_free[i] = 0;
       return i;

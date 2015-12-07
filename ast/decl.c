@@ -331,11 +331,36 @@ void decl_codegen(struct decl *d, FILE *f, symbol_t kind) {
 #endif
     fprintf(f, ".text\n");
     if(d -> value) {
+      if(d -> value -> kind == EXPR_STRLIT) {
+        fprintf(f, ".data\n");
+        d -> value -> str_num = expr_num_str++;
+        fprintf(f, "STR%d:\n", d -> value -> str_num);
+        char *val = assembly_string_out((char *) d -> value -> string_literal);
+        fprintf(f, "\t.string \"%s\"\n", val);
+        free(val);
+        fprintf(f, ".text\n");
+      }
+      // otherwise print .globl
+      else {
+        // should have already been typechecked
 #ifdef __linux__
-      fprintf(f, ".globl ");
+        fprintf(f, ".globl %s:", d -> name -> name);
 #elif __APPLE__
-      fprintf(f, ".globl");
+        fprintf(f, ".globl _%s:", d -> name -> name);
 #endif
+        if(d -> value -> kind == EXPR_TRUE) {
+          fprintf(f, "\t.quad 1");
+        }
+        else if(d -> value -> kind == EXPR_FALSE) {
+          fprintf(f, "\t.quad 0");
+        }
+        else if(d -> value -> kind == EXPR_INTLIT) {
+          fprintf(f, "\t.quad %d", d -> value -> literal_value);
+        }
+        else if(d -> value -> kind == EXPR_CHARLIT) {
+          fprintf(f, "\t.quad %d", d -> value -> char_literal);
+        }
+      }
     }
     expr_codegen(d -> value, f);
   }

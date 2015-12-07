@@ -1,14 +1,14 @@
 #ifndef REGISTER_H
 #define REGISTER_H
 
-#define NUM_REGISTERS 7
+#define REGISTERS_NUM 7
 
-static const char *register_name_string[NUM_REGISTERS] = {"%rbx", "%r10", "%r11", "%r12", "%r13", "%r14", "%r15"};
-static int register_is_free[NUM_REGISTERS] = {1, 1, 1, 1, 1, 1, 1};
+static const char *register_name_string[REGISTERS_NUM] = {"%rbx", "%r10", "%r11", "%r12", "%r13", "%r14", "%r15"};
+static int register_is_free[REGISTERS_NUM] = {1, 1, 1, 1, 1, 1, 1};
 
-#define NUM_ARG_REGISTERS
+#define REGISTERS_NUM_ARG 6
 
-static const char *register_arg_names[NUM_ARG_REGISTERS] = {"%rdi", "%rsi", "%rdx", "%rcx", "%r8", "%r9"};
+static const char *register_arg_names[REGISTERS_NUM_ARG] = {"%rdi", "%rsi", "%rdx", "%rcx", "%r8", "%r9"};
 
 const char *register_name(int r);
 // mark register as in use
