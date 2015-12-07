@@ -314,9 +314,11 @@ void decl_codegen(struct decl *d, FILE *f, symbol_t kind) {
     fprintf(f, "\tPUSHQ %%r13\n");
     fprintf(f, "\tPUSHQ %%r14\n");
     fprintf(f, "\tPUSHQ %%r15\n");
+    assembly_comment(f, "\n\t### function body\n\n");
     stmt_codegen(d -> code, f);
   }
   else if(kind == SYMBOL_GLOBAL) {
+    fprintf(f, ".data\n");
 #ifdef __linux__
     fprintf(f, ".globl %s\n", d -> name -> name);
     fprintf(f, "%s:\n", d -> name -> name);
@@ -327,6 +329,14 @@ void decl_codegen(struct decl *d, FILE *f, symbol_t kind) {
     fprintf(f, ".globl %s\n", d -> name -> name);
     fprintf(f, "%s:\n", d -> name -> name);
 #endif
+    fprintf(f, ".text\n");
+    if(d -> value) {
+#ifdef __linux__
+      fprintf(f, ".globl ");
+#elif __APPLE__
+      fprintf(f, ".globl");
+#endif
+    }
     expr_codegen(d -> value, f);
   }
   // else it is another declaration of type local

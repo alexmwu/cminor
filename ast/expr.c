@@ -1255,17 +1255,20 @@ void expr_codegen(struct expr *e, FILE *f) {
     case EXPR_STRLIT:
       e -> reg = register_alloc();
       fprintf(f, ".data\n");
-      fprintf(f, "STR%d:\n", expr_num_str++);
+      fprintf(f, "STR%d:\n", expr_num_str);
       val = assembly_string_out((char *) e -> string_literal);
       fprintf(f, "\t.string \"%s\"\n", val);
       asprintf(&val, "%c", e -> char_literal);
+      // put the string in reg
       expr_assembly_lit_comment(f, val);
       free(val);
-      fprintf(f, "\tMOVQ $%d, %s\n", e -> char_literal, register_name(e -> reg));
+      fprintf(f, "\tLEA STR%d, %s", expr_num_str++, register_name(e -> reg));
       break;
     case EXPR_IDENT:
       e -> reg = register_alloc();
-      fprintf(f, "\tMOVQ %s, %s\n", symbol_code(e -> symbol), register_name(e -> reg));
+      val = symbol_code(e -> symbol);
+      fprintf(f, "\tMOVQ %s, %s\n", val, register_name(e -> reg));
+      free(val);
       break;
   }
 }

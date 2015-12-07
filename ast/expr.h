@@ -61,6 +61,7 @@ struct expr {
   int reg;
 };
 
+// number of strings declared
 int expr_num_str;
 
 struct expr * expr_create( expr_t kind, struct expr *left, struct expr *right, struct expr *next );

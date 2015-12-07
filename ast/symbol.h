@@ -3,6 +3,7 @@
 #define SYMBOL_H
 
 #include "type.h"
+#include "decl.h"
 
 typedef enum {
 	SYMBOL_LOCAL,
@@ -29,4 +30,8 @@ void symbol_free(struct symbol *s);
 const char *symbol_kind_string(symbol_t k);
 void symbol_print(struct symbol *s);
 
+// must free returned string
+char *symbol_code(struct symbol *s);
+
 #endif
+
