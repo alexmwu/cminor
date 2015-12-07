@@ -13,8 +13,8 @@ extern struct decl *programRoot;
 // temporary help printout
 void printHelp() {
   printf("The CMinor Compiler\n\n");
-  printf("usage: cminor [--help|<command>] [filename]\n\n");
-  printf("*Filenames are optional; the default is stdin\n");
+  printf("usage: cminor [--help|<command>] [input file] [output file]\n\n");
+  printf("*Filenames are optional; the default is stdin\n\tOutput files are only used by codegen (and lower) commands\n");
   printf("*All lower commands make use of steps in previous commands (e.g., -parse uses -scan code)\n");
   printf("These are optional commands for the CMinor compiler:\n");
   printf("\t-scan\t\tRun an optional file through CMinor scanner\n");
@@ -22,7 +22,7 @@ void printHelp() {
   printf("\t-resolve\tRun a file through CMinor resolver and see if there are name resolution errors\n");
   printf("\t-typecheck\tRun a file through CMinor typechecker and see if there are type errors\n");
   printf("\t-codegen\tRun a file through CMinor code generator and produce x86_64 assembly code\n");
-  printf("\t-codegen_debug\tRun a file through CMinor code generator and produce x86_64 assembly code with comments\n");
+  printf("\t-codegen-debug\tRun a file through CMinor code generator and produce x86_64 assembly code with comments\n");
   /*printf("\t-compile\tRun a file through CMinor code generator followed by gcc and produce machine code (requires gcc)\n");*/
 }
 
@@ -174,7 +174,7 @@ int main(int argc, char **argv) {
       decl_free(programRoot);
       fclose(f);
     }
-    else if(strcmp(argv[1], "-codegen_debug") == 0) {
+    else if(strcmp(argv[1], "-codegen-debug") == 0) {
       // enable codegen comments
       ASSEMBLY_COMMENT_FLAG = 1;
       // pass in output file name
