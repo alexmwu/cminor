@@ -1231,26 +1231,26 @@ void expr_codegen(struct expr *e, FILE *f) {
     case EXPR_TRUE:
       e -> reg = register_alloc();
       expr_assembly_lit_comment(f, "false");
-      fprintf(f, "MOVQ $1, %s\n", register_name(e -> reg));
+      fprintf(f, "\tMOVQ $1, %s\n", register_name(e -> reg));
       break;
     case EXPR_FALSE:
       e -> reg = register_alloc();
       expr_assembly_lit_comment(f, "false");
-      fprintf(f, "MOVQ $0, %s\n", register_name(e -> reg));
+      fprintf(f, "\tMOVQ $0, %s\n", register_name(e -> reg));
       break;
     case EXPR_INTLIT:
       e -> reg = register_alloc();
       asprintf(&val, "%d", e -> literal_value);
       expr_assembly_lit_comment(f, val);
       free(val);
-      fprintf(f, "MOVQ $%d, %s\n", e -> literal_value, register_name(e -> reg));
+      fprintf(f, "\tMOVQ $%d, %s\n", e -> literal_value, register_name(e -> reg));
       break;
     case EXPR_CHARLIT:
       e -> reg = register_alloc();
       asprintf(&val, "%c", e -> char_literal);
       expr_assembly_lit_comment(f, val);
       free(val);
-      fprintf(f, "MOVQ $%d, %s\n", e -> char_literal, register_name(e -> reg));
+      fprintf(f, "\tMOVQ $%d, %s\n", e -> char_literal, register_name(e -> reg));
       break;
     case EXPR_STRLIT:
       e -> reg = register_alloc();
@@ -1261,11 +1261,11 @@ void expr_codegen(struct expr *e, FILE *f) {
       asprintf(&val, "%c", e -> char_literal);
       expr_assembly_lit_comment(f, val);
       free(val);
-      fprintf(f, "MOVQ $%d, %s\n", e -> char_literal, register_name(e -> reg));
+      fprintf(f, "\tMOVQ $%d, %s\n", e -> char_literal, register_name(e -> reg));
       break;
     case EXPR_IDENT:
       e -> reg = register_alloc();
-      fprintf(f, "MOVQ %s, %s\n", symbol_code(e -> symbol), register_name(e -> reg));
+      fprintf(f, "\tMOVQ %s, %s\n", symbol_code(e -> symbol), register_name(e -> reg));
       break;
   }
 }
