@@ -58,3 +58,7 @@ void symbol_print(struct symbol *s) {
   }
 }
 
+char *symbol_code(struct symbol *s) {
+
+}
+

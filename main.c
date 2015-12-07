@@ -17,12 +17,13 @@ void printHelp() {
   printf("*Filenames are optional; the default is stdin\n");
   printf("*All lower commands make use of steps in previous commands (e.g., -parse uses -scan code)\n");
   printf("These are optional commands for the CMinor compiler:\n");
-  printf("\t-scan\tRun an optional file through CMinor scanner\n");
-  printf("\t-parse\tRun an optional file through CMinor parser\n");
+  printf("\t-scan\t\tRun an optional file through CMinor scanner\n");
+  printf("\t-parse\t\tRun an optional file through CMinor parser\n");
   printf("\t-resolve\tRun a file through CMinor resolver and see if there are name resolution errors\n");
   printf("\t-typecheck\tRun a file through CMinor typechecker and see if there are type errors\n");
   printf("\t-codegen\tRun a file through CMinor code generator and produce x86_64 assembly code\n");
-  printf("\t-compile\tRun a file through CMinor code generator followed by gcc and produce machine code (requires gcc)\n");
+  printf("\t-codegen_debug\tRun a file through CMinor code generator and produce x86_64 assembly code with comments\n");
+  /*printf("\t-compile\tRun a file through CMinor code generator followed by gcc and produce machine code (requires gcc)\n");*/
 }
 
 void printGoHelp(char *command) {
@@ -139,11 +140,13 @@ int main(int argc, char **argv) {
           fprintf(stderr, "Can't open output assembly file %s\n", argv[3]);
         }
       }
+      // use existing file as base
       else if(argc == 3) {
         char *fileName = strtok(argv[2], ".");
         char *outFile;
         asprintf(&outFile, "%s.s", fileName);
         f = fopen(outFile, "w");
+        free(outFile);
       }
 
       if(yyparse()) {
@@ -178,10 +181,12 @@ int main(int argc, char **argv) {
           fprintf(stderr, "Can't open output assembly file %s\n", argv[3]);
         }
       }
+      // use existing file as base
       else if(argc == 3) {
         char *fileName = strtok(argv[2], ".");
         char *outFile;
         asprintf(&outFile, "%s.s", fileName);
+        free(outFile);
         f = fopen(outFile, "w");
       }
 
@@ -212,36 +217,6 @@ int main(int argc, char **argv) {
     }
     // TODO: call system gcc to compile generated code into machine code
     else if(strcmp(argv[1], "-compile") == 0) {
-      if(argc != 4) {
-        fprintf(stderr, "No file output name for option '%s'\n", argv[1]);
-        exit(1);
-      }
-
-      FILE *f = fopen(argv[3], "w");
-      if(!f) {
-        fprintf(stderr, "Can't open output assembly file %s\n", argv[3]);
-      }
-
-      if(yyparse()) {
-        exit(1);
-      }
-      scope_enter();
-      int new_decl = 0;
-      decl_resolve(programRoot, SYMBOL_GLOBAL, &new_decl);
-      scope_exit();
-      if(resolve_error_count) {
-        decl_free(programRoot);
-        printf("Resolve error count: %d\n", resolve_error_count);
-        exit(1);
-      }
-      decl_typecheck(programRoot);
-      if(type_error_count) {
-        printf("Type error count: %d\n", type_error_count);
-        exit(1);
-      }
-      assembly_codegen(programRoot, f);
-      decl_free(programRoot);
-      fclose(f);
     }
     else {
       printGoHelp(argv[1]);
@@ -253,3 +228,4 @@ int main(int argc, char **argv) {
   fclose(yyin);
   return 0;
 }
+

@@ -1067,13 +1067,19 @@ struct type *expr_typecheck(struct expr *e) {
   }
 }
 
-void expr_assembly_comment(FILE *f, struct expr *e, const char *op) {
+void expr_assembly_op_comment(FILE *f, struct expr *e, const char *op) {
   if(ASSEMBLY_COMMENT_FLAG) {
-    fprintf(f, "\t\n#  ");
+    fprintf(f, "\t\n# ");
     expr_fprint(f, e -> left);
     fprintf(f, " %s ", op);
     expr_fprint(f, e -> right);
     fprintf(f, "\n");
+  }
+}
+
+void expr_assembly_lit_comment(FILE *f, char *assign_val) {
+  if(ASSEMBLY_COMMENT_FLAG) {
+    fprintf(f, "\t\n# Move %s into register\n", assign_val);
   }
 }
 
@@ -1093,7 +1099,7 @@ void expr_add_codegen(struct expr *e, FILE *f, int which) {
   expr_codegen(e -> left, f);
   expr_codegen(e -> right, f);
 
-  expr_assembly_comment(f, e, op);
+  expr_assembly_op_comment(f, e, op);
   fprintf(f, "\t%s %s, %s\n", op, register_name(e -> left -> reg), register_name(e -> right -> reg));
   e -> reg = e -> right -> reg;
   register_free(e -> left -> reg);
@@ -1116,7 +1122,7 @@ void expr_div_codegen(struct expr *e, FILE *f, int which) {
   }
   expr_codegen(e -> left, f);
   expr_codegen(e -> right, f);
-  expr_assembly_comment(f, e, op);
+  expr_assembly_op_comment(f, e, op);
 
   // the below moves value of rdx into another register
   // (this is because rdx is overwritten by the IDIV instr)
@@ -1149,7 +1155,7 @@ void expr_post_increment(struct expr *e, FILE *f, int which) {
   // has already been done typechecked but still call it to see
   // if any errors occur
   expr_codegen(e -> right, f);
-  expr_assembly_comment(f, e, op);
+  expr_assembly_op_comment(f, e, op);
   fprintf(f, "\tMOVQ %s, %%rax\n", register_name(e -> left -> reg));
   fprintf(f, "\t%s %%rax\n", op);
   fprintf(f, "\tMOVQ %%rax, %s\n", register_name(e -> left -> reg));
@@ -1160,6 +1166,7 @@ void expr_post_increment(struct expr *e, FILE *f, int which) {
 
 void expr_codegen(struct expr *e, FILE *f) {
   if(!e) return;
+  char *val;
   switch(e -> kind) {
     case EXPR_PLUS:
       expr_add_codegen(e, f, 0);
@@ -1170,7 +1177,7 @@ void expr_codegen(struct expr *e, FILE *f) {
     case EXPR_MUL:
       expr_codegen(e -> left, f);
       expr_codegen(e -> right, f);
-      expr_assembly_comment(f, e, "multiply");
+      expr_assembly_op_comment(f, e, "multiply");
       fprintf(f, "\tMOVQ %s, %%rax\n", register_name(e -> left -> reg));
       fprintf(f, "\tIMULQ %s\n", register_name(e -> right -> reg));
       fprintf(f, "\tMOVQ %%rax, %s\n", register_name(e -> right -> reg));
@@ -1222,16 +1229,43 @@ void expr_codegen(struct expr *e, FILE *f) {
     case EXPR_FUNC:
       break;
     case EXPR_TRUE:
+      e -> reg = register_alloc();
+      expr_assembly_lit_comment(f, "false");
+      fprintf(f, "MOVQ $1, %s\n", register_name(e -> reg));
       break;
     case EXPR_FALSE:
+      e -> reg = register_alloc();
+      expr_assembly_lit_comment(f, "false");
+      fprintf(f, "MOVQ $0, %s\n", register_name(e -> reg));
       break;
     case EXPR_INTLIT:
+      e -> reg = register_alloc();
+      asprintf(&val, "%d", e -> literal_value);
+      expr_assembly_lit_comment(f, val);
+      free(val);
+      fprintf(f, "MOVQ $%d, %s\n", e -> literal_value, register_name(e -> reg));
       break;
     case EXPR_CHARLIT:
+      e -> reg = register_alloc();
+      asprintf(&val, "%c", e -> char_literal);
+      expr_assembly_lit_comment(f, val);
+      free(val);
+      fprintf(f, "MOVQ $%d, %s\n", e -> char_literal, register_name(e -> reg));
       break;
     case EXPR_STRLIT:
+      e -> reg = register_alloc();
+      fprintf(f, ".data\n");
+      fprintf(f, "STR%d:\n", expr_num_str++);
+      val = assembly_string_out((char *) e -> string_literal);
+      fprintf(f, "\t.string \"%s\"\n", val);
+      asprintf(&val, "%c", e -> char_literal);
+      expr_assembly_lit_comment(f, val);
+      free(val);
+      fprintf(f, "MOVQ $%d, %s\n", e -> char_literal, register_name(e -> reg));
       break;
     case EXPR_IDENT:
+      e -> reg = register_alloc();
+      fprintf(f, "MOVQ %s, %s\n", symbol_code(e -> symbol), register_name(e -> reg));
       break;
   }
 }

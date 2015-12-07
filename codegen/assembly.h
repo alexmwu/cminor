@@ -11,5 +11,9 @@ void assembly_comment(FILE *f, const char *s);
 // this prints out boilerplate
 void assembly_codegen(struct decl *d, FILE *f);
 
+// convert null terminator and byte based
+// string representation into a string literal in asm
+char *assembly_string_out(char *s);
+
 #endif
 
