@@ -1069,7 +1069,7 @@ struct type *expr_typecheck(struct expr *e) {
 
 void expr_assembly_op_comment(FILE *f, struct expr *e, const char *op) {
   if(ASSEMBLY_COMMENT_FLAG) {
-    fprintf(f, "\t\n# ");
+    fprintf(f, "\n\t# ");
     expr_fprint(f, e -> left);
     fprintf(f, " %s ", op);
     expr_fprint(f, e -> right);
@@ -1079,7 +1079,7 @@ void expr_assembly_op_comment(FILE *f, struct expr *e, const char *op) {
 
 void expr_assembly_lit_comment(FILE *f, char *assign_val) {
   if(ASSEMBLY_COMMENT_FLAG) {
-    fprintf(f, "\t\n# Move %s into register\n", assign_val);
+    fprintf(f, "\n\t# Move %s into register\n", assign_val);
   }
 }
 

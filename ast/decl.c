@@ -302,6 +302,18 @@ void decl_codegen(struct decl *d, FILE *f, symbol_t kind) {
     fprintf(f, "\tPUSHQ %%rbp\n");
     assembly_comment(f, "\t# set new base pointer to rsp\n");
     fprintf(f, "\tMOVQ %%rsp, %%rbp\n");
+    assembly_arg_stack_alloc(f, d -> num_params);
+    if(ASSEMBLY_COMMENT_FLAG) {
+      fprintf(f, "\n\t # allocate %d local variables\n", d -> num_locals);
+    }
+    // allocate a byte per local (8)
+    fprintf(f, "\tSUBQ $%d, %%rsp\n", d -> num_locals * 8);
+    assembly_comment(f, "\n\t# save callee-saved registers\n");
+    fprintf(f, "\tPUSHQ %%rbx\n");
+    fprintf(f, "\tPUSHQ %%r12\n");
+    fprintf(f, "\tPUSHQ %%r13\n");
+    fprintf(f, "\tPUSHQ %%r14\n");
+    fprintf(f, "\tPUSHQ %%r15\n");
     stmt_codegen(d -> code, f);
   }
   else if(kind == SYMBOL_GLOBAL) {

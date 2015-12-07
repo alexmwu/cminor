@@ -1,4 +1,5 @@
 #include "assembly.h"
+#include "register.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -66,5 +67,23 @@ char *assembly_string_out(char *s) {
     retStr = newStr;
   }
   return retStr;
+}
+
+void assembly_arg_stack_alloc(FILE *f, int num_args) {
+  if(num_args < 0) {
+    fprintf(f, "Called assembly_arg_stack_alloc with negative (%d) number of arguments\n", num_args);
+    exit(1);
+  }
+  else if(num_args > NUM_ARG_REGISTERS) {
+    fprintf(f, "CODEGEN_ERROR: cminor does not support functions with more than %d registers\n", NUM_ARG_REGISTERS);
+    exit(1);
+  }
+  int i;
+  for(i = 0; i < num_args; i++) {
+    if(ASSEMBLY_COMMENT_FLAG) {
+      fprintf(f, "\t# save arg %d on the stack\n", i + 1);
+    }
+    fprintf(f, "\tPUSHQ %s\n", register_arg_names[i]);
+  }
 }
 

@@ -15,5 +15,8 @@ void assembly_codegen(struct decl *d, FILE *f);
 // string representation into a string literal in asm
 char *assembly_string_out(char *s);
 
+// pass in the number of declared params
+void assembly_arg_stack_alloc(FILE *f, int num_args);
+
 #endif
 
