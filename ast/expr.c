@@ -1133,7 +1133,7 @@ void expr_div_codegen(struct expr *e, FILE *f, int which) {
 }
 
 // postincrement and postdecrement
-void expr_post_increment(struct expr *e, FILE *f, int which) {
+void expr_post_codegen(struct expr *e, FILE *f, int which) {
   const char *op;
   if(which == 0) {
     op = "INCQ";
@@ -1156,6 +1156,27 @@ void expr_post_increment(struct expr *e, FILE *f, int which) {
   e -> reg = e -> left -> reg;
   // will cause errors with reg_name[0]
   /*register_free(e -> right -> reg);*/
+}
+
+// places func result in e -> reg, pass in func name
+void expr_func_codegen(struct expr *e, const char *name, FILE *f) {
+  assembly_comment(f, "\t# save caller-saved registers\n");
+  fprintf(f, "\tPUSHQ %%r10\n");
+  fprintf(f, "\tPUSHQ %%r11\n");
+  assembly_comment(f, "\t# call actual function\n");
+#ifdef __linux__
+  fprintf(f, "\tCALL %s\n", name);
+#elif __APPLE__
+  fprintf(f, "\tCALL _%s\n", name);
+#else
+  fprintf(f, "\tCALL %s\n", name);
+#endif
+  assembly_comment(f, "\t# unsave caller-saved registers\n");
+  fprintf(f, "\tPOPQ %%r11\n");
+  fprintf(f, "\tPOPQ %%r10\n");
+  e -> reg = register_alloc();
+  assembly_comment(f, "\t# save function return value\n");
+  fprintf(f, "\tMOVQ %%rax, %s\n", register_name(e -> reg));
 }
 
 void expr_codegen(struct expr *e, FILE *f) {
@@ -1185,13 +1206,28 @@ void expr_codegen(struct expr *e, FILE *f) {
       expr_div_codegen(e, f, 1);
       break;
     case EXPR_PLUSPLUS:
-      expr_post_increment(e, f, 0);
+      expr_post_codegen(e, f, 0);
       break;
     case EXPR_MINMIN:
-      expr_post_increment(e, f, 1);
+      expr_post_codegen(e, f, 1);
       break;
-    case EXPR_EXP:
+    case EXPR_EXP: {
+      expr_codegen(e -> left, f);
+      expr_codegen(e -> right, f);
+      int count = 0;
+      // put arg 0 (left) of expr in arg reg 0
+      if(ASSEMBLY_COMMENT_FLAG) {
+        fprintf(f, "\t# move arg %d (in %s) into %s", count, register_name(e -> left -> reg), register_arg_names[count]);
+      }
+      fprintf(f, "MOVQ %s, %s\n", register_name(e -> left -> reg), register_arg_names[count++]);
+      // put arg 1 (right) of expr in arg reg 1
+      if(ASSEMBLY_COMMENT_FLAG) {
+        fprintf(f, "\t# move arg %d (in %s) into %s", count, register_name(e -> right -> reg), register_arg_names[count]);
+      }
+      fprintf(f, "MOVQ %s, %s\n", register_name(e -> right -> reg), register_arg_names[count++]);
+      expr_func_codegen(e, "integer_power", f);
       break;
+                   }
     case EXPR_LT:
       break;
     case EXPR_LE:
@@ -1299,23 +1335,7 @@ void expr_codegen(struct expr *e, FILE *f) {
       break;
     case EXPR_FUNC:
       assembly_mov_arg_registers(f, e -> right);
-      assembly_comment(f, "\t# save caller-saved registers\n");
-      fprintf(f, "\tPUSHQ %%r10\n");
-      fprintf(f, "\tPUSHQ %%r11\n");
-      assembly_comment(f, "\t# call actual function\n");
-#ifdef __linux__
-      fprintf(f, "\tCALL %s\n", e -> left -> name);
-#elif __APPLE__
-      fprintf(f, "\tCALL _%s\n", e -> left -> name);
-#else
-      fprintf(f, "\tCALL %s\n", e -> left -> name);
-#endif
-      assembly_comment(f, "\t# unsave caller-saved registers\n");
-      fprintf(f, "\tPOPQ %%r11\n");
-      fprintf(f, "\tPOPQ %%r10\n");
-      e -> reg = register_alloc();
-      assembly_comment(f, "\t# save function return value\n");
-      fprintf(f, "\tMOVQ %%rax, %s\n", register_name(e -> reg));
+      expr_func_codegen(e, e -> left -> name, f);
       break;
     case EXPR_TRUE:
       e -> reg = register_alloc();

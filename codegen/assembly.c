@@ -10,7 +10,10 @@ void assembly_comment(FILE *f, const char *s) {
 }
 
 void assembly_codegen(struct decl *d, FILE *f) {
-#ifdef __APPLE__
+  fprintf(f, ".text\n");
+#ifdef __linux__
+  fprintf(f, "extern integer_power\n");
+#elif __APPLE__
   // minimum supported version
   // of OSX is 10.11
   fprintf(f, ".macosx_version_min 10, 11\n");
@@ -18,8 +21,10 @@ void assembly_codegen(struct decl *d, FILE *f) {
   // (cannot be an odd sum of locals
   // params, and callee saved regs)
   fprintf(f, ".p2align 4\n");
+  fprintf(f, "extern _integer_power\n");
+#else
+  fprintf(f, "extern integer_power\n");
 #endif
-  fprintf(f, ".text\n");
   decl_codegen(d, f, SYMBOL_GLOBAL);
 }
 
