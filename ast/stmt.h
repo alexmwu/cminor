@@ -3,6 +3,7 @@
 #define STMT_H
 
 #include "decl.h"
+
 #include <stdio.h>
 
 typedef enum {

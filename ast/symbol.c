@@ -1,4 +1,5 @@
 #include "symbol.h"
+#include "decl.h"
 #include <stdlib.h>
 #include <stdio.h>
 

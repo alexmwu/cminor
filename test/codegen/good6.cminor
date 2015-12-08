@@ -1,8 +1,8 @@
-func: function integer(a: integer, b: integer) {
+func: function integer(a: integer, b: integer) = {
   return 5 + a * b;
 }
 
-main: function integer() {
+main: function integer() = {
   // should return 23
   return func(4, 2) + 10;
 }

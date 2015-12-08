@@ -1,8 +1,8 @@
-func: function integer() {
+func: function integer() = {
   return 5;
 }
 
-main: function integer() {
+main: function integer() = {
   return func() + 10;
 }
 
