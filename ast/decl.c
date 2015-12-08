@@ -347,6 +347,8 @@ void decl_codegen(struct decl *d, FILE *f, symbol_t kind) {
         fprintf(f, ".globl %s:", d -> name -> name);
 #elif __APPLE__
         fprintf(f, ".globl _%s:", d -> name -> name);
+#else
+        fprintf(f, ".globl %s:", d -> name -> name);
 #endif
         if(d -> value -> kind == EXPR_TRUE) {
           fprintf(f, "\t.quad 1");

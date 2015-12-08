@@ -74,8 +74,8 @@ void assembly_arg_stack_alloc(FILE *f, int num_args) {
     fprintf(f, "Called assembly_arg_stack_alloc with negative (%d) number of arguments\n", num_args);
     exit(1);
   }
-  else if(num_args > REGISTERS_NUM_ARG) {
-    fprintf(f, "CODEGEN_ERROR: cminor does not support functions with more than %d registers\n", REGISTERS_NUM_ARG);
+  else if(num_args > REGISTER_NUM_ARG) {
+    fprintf(f, "CODEGEN_ERROR: cminor does not support functions with more than %d arguments\n", REGISTER_NUM_ARG);
     exit(1);
   }
   int i;
@@ -84,6 +84,18 @@ void assembly_arg_stack_alloc(FILE *f, int num_args) {
       fprintf(f, "\t# save arg %d on the stack\n", i + 1);
     }
     fprintf(f, "\tPUSHQ %s\n", register_arg_names[i]);
+  }
+}
+
+void assembly_mov_arg_registers(FILE *f, struct expr *expr_list) {
+  struct expr *curr_expr = expr_list;
+  int count = 0;
+  while(curr_expr) {
+    if(count > REGISTER_NUM_ARG) {
+      fprintf(f, "CODEGEN_ERROR: cminor does not support functions with more than %d arguments\n", REGISTER_NUM_ARG);
+      exit(1);
+    }
+    count++;
   }
 }
 

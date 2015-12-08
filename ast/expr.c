@@ -1221,14 +1221,39 @@ void expr_codegen(struct expr *e, FILE *f) {
     case EXPR_EQ:
       break;
     case EXPR_ARREQ:
+      fprintf(stderr, "CODEGEN_ERROR: cminor does not have an array implementation\n");
+      exit(1);
       break;
     case EXPR_ARR:
+      fprintf(stderr, "CODEGEN_ERROR: cminor does not have an array implementation\n");
+      exit(1);
       break;
     case EXPR_ARR_INITLIST:
+      fprintf(stderr, "CODEGEN_ERROR: cminor does not have an array implementation\n");
+      exit(1);
       break;
     case EXPR_GROUP:
+      expr_codegen(e -> right, f);
       break;
     case EXPR_FUNC:
+      assembly_mov_arg_registers(f, e -> right);
+      assembly_comment(f, "\t# save caller-saved registers\n");
+      fprintf(f, "\tPUSHQ %%r10\n");
+      fprintf(f, "\tPUSHQ %%r11\n");
+      assembly_comment(f, "\t# call actual function\n");
+#ifdef __linux__
+      fprintf(f, "\tCALL %s\n", e -> left -> name);
+#elif __APPLE__
+      fprintf(f, "\tCALL _%s\n", e -> left -> name);
+#else
+      fprintf(f, "\tCALL %s\n", e -> left -> name);
+#endif
+      assembly_comment(f, "\t# unsave caller-saved registers\n");
+      fprintf(f, "\tPOPQ %%r11\n");
+      fprintf(f, "\tPOPQ %%r10\n");
+      e -> reg = register_alloc();
+      assembly_comment(f, "\t# save function return value\n");
+      fprintf(f, "\tMOVQ %%rax, %s\n", register_name(e -> reg));
       break;
     case EXPR_TRUE:
       e -> reg = register_alloc();
@@ -1277,6 +1302,8 @@ void expr_codegen(struct expr *e, FILE *f) {
       // in an invalid inst error (instead, specify
       // an addr relative to current instr ptr)
       fprintf(f, "\tLEA STR%d(%%rip), %s", e -> str_num, register_name(e -> reg));
+#else
+      fprintf(f, "\tLEA STR%d, %s", e -> str_num, register_name(e -> reg));
 #endif
       break;
     case EXPR_IDENT:
@@ -1295,6 +1322,8 @@ void expr_codegen(struct expr *e, FILE *f) {
         // in an invalid inst error (instead, specify
         // an addr relative to current instr ptr)
         fprintf(f, "\tLEA STR%d(%%rip), %s", str_num, register_name(e -> reg));
+#else
+        fprintf(f, "\tLEA STR%d, %s", str_num, register_name(e -> reg));
 #endif
       }
       else {

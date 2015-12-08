@@ -1,0 +1,8 @@
+func: function integer(a: integer) {
+  return 5 + a;
+}
+
+main: function integer() {
+  return func(4) + 10;
+}
+
