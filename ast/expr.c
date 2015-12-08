@@ -1212,7 +1212,9 @@ void expr_comp_codegen(struct expr *e, FILE *f, int which) {
   expr_codegen(e -> right, f);
   int tr = assembly_jump_label++;
   int done = assembly_jump_label++;
+
   expr_assembly_op_comment(e, f, comp_type);
+
   fprintf(f, "\tCMP %s, %s\n", register_name(e -> left -> reg), register_name(e -> right -> reg));
   // jump to boolean result of true
   fprintf(f, "\t%s L%d\n", op, tr);
@@ -1236,6 +1238,21 @@ void expr_comp_codegen(struct expr *e, FILE *f, int which) {
 void expr_comp_string_codegen(struct expr *e, FILE *f) {
   expr_codegen(e -> left, f);
   expr_codegen(e -> right, f);
+
+  int count = 0;
+  // put arg 0 (left) of expr in arg reg 0
+  if(ASSEMBLY_COMMENT_FLAG) {
+    fprintf(f, "\t# move arg %d (in %s) into %s", count, register_name(e -> left -> reg), register_arg_names[count]);
+  }
+  fprintf(f, "MOVQ %s, %s\n", register_name(e -> left -> reg), register_arg_names[count++]);
+
+  // put arg 1 (right) of expr in arg reg 1
+  if(ASSEMBLY_COMMENT_FLAG) {
+    fprintf(f, "\t# move arg %d (in %s) into %s", count, register_name(e -> right -> reg), register_arg_names[count]);
+  }
+  fprintf(f, "MOVQ %s, %s\n", register_name(e -> right -> reg), register_arg_names[count++]);
+  register_free(e -> left -> reg);
+  register_free(e -> right -> reg);
   expr_func_codegen(e, "strcmp", f);
 }
 
@@ -1274,17 +1291,21 @@ void expr_codegen(struct expr *e, FILE *f) {
     case EXPR_EXP: {
       expr_codegen(e -> left, f);
       expr_codegen(e -> right, f);
+
       int count = 0;
       // put arg 0 (left) of expr in arg reg 0
       if(ASSEMBLY_COMMENT_FLAG) {
         fprintf(f, "\t# move arg %d (in %s) into %s", count, register_name(e -> left -> reg), register_arg_names[count]);
       }
       fprintf(f, "MOVQ %s, %s\n", register_name(e -> left -> reg), register_arg_names[count++]);
+
       // put arg 1 (right) of expr in arg reg 1
       if(ASSEMBLY_COMMENT_FLAG) {
         fprintf(f, "\t# move arg %d (in %s) into %s", count, register_name(e -> right -> reg), register_arg_names[count]);
       }
       fprintf(f, "MOVQ %s, %s\n", register_name(e -> right -> reg), register_arg_names[count++]);
+      register_free(e -> left -> reg);
+      register_free(e -> right -> reg);
       expr_func_codegen(e, "integer_power", f);
       break;
     }
@@ -1304,7 +1325,26 @@ void expr_codegen(struct expr *e, FILE *f) {
       // check that left is str lit or that it
       // is an ident of type str (already typechecked)
       if(e -> left -> kind == EXPR_STRLIT || e -> left -> symbol -> type -> kind == TYPE_STRING) {
+        expr_comp_string_codegen(e, f);
 
+        int tr = assembly_jump_label++;
+        int done = assembly_jump_label++;
+
+        assembly_comment(f, "\t# compare result of strcmp to 0 (-1/1 mean str 1 is lexicographically lt/gt str 2)\n");
+        fprintf(f, "\tCMP $0, %s\n", register_name(e -> reg));
+        // jump to boolean result of true
+        fprintf(f, "\tJE L%d\n", tr);
+
+        // boolean false
+        fprintf(f, "\tMOVQ $0, %s\n", register_name(e -> reg));
+        assembly_comment(f, "\t# jump to done label (don't evaluate set to true)\n");
+        fprintf(f, "\tJMP L%d\n", done);
+
+        assembly_comment(f, "\t# true label\n"); fprintf(f, "L%d:\n", tr);
+        fprintf(f, "\tMOVQ $1, %s\n", register_name(e -> reg));
+
+        assembly_comment(f, "\t# done label\n");
+        fprintf(f, "L%d:\n", done);
       }
       // other equality checks
       else {
