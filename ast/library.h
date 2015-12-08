@@ -12,5 +12,6 @@ void fprint_boolean(FILE *f, int b);
 void fprint_character(FILE *f, char c);
 void fprint_indent(FILE *f, int indent);
 int integer_power(int x, int y);
+int strcmp(const char* s1, const char* s2);
 
 #endif

@@ -1179,6 +1179,66 @@ void expr_func_codegen(struct expr *e, const char *name, FILE *f) {
   fprintf(f, "\tMOVQ %%rax, %s\n", register_name(e -> reg));
 }
 
+void expr_comp_codegen(struct expr *e, FILE *f, int which) {
+  char *comp_type = 0;
+  char *op = 0;
+  switch(which) {
+    case 0:
+      comp_type = "less than";
+      op = "JL";
+      break;
+    case 1:
+      comp_type = "less than or equal";
+      op = "JLE";
+      break;
+    case 2:
+      comp_type = "greater than";
+      op = "JG";
+      break;
+    case 3:
+      comp_type = "greater than or equal";
+      op = "JGE";
+      break;
+    case 4:
+      comp_type = "equal equal";
+      op = "JE";
+      break;
+    case 5:
+      comp_type = "not equal";
+      op = "JNE";
+      break;
+  }
+  expr_codegen(e -> left, f);
+  expr_codegen(e -> right, f);
+  int tr = assembly_jump_label++;
+  int done = assembly_jump_label++;
+  expr_assembly_op_comment(e, f, comp_type);
+  fprintf(f, "\tCMP %s, %s\n", register_name(e -> left -> reg), register_name(e -> right -> reg));
+  // jump to boolean result of true
+  fprintf(f, "\t%s L%d\n", op, tr);
+
+  // boolean false
+  fprintf(f, "\tMOVQ $0, %s\n", register_name(e -> right -> reg));
+  assembly_comment(f, "\t# jump to done label (don't evaluate set to true)\n");
+  fprintf(f, "\tJMP L%d\n", done);
+
+  assembly_comment(f, "\t# true label\n");
+  fprintf(f, "L%d:\n", tr);
+  fprintf(f, "\tMOVQ $1, %s\n", register_name(e -> right -> reg));
+
+  assembly_comment(f, "\t# done label\n");
+  fprintf(f, "L%d:\n", done);
+
+  e -> reg = e -> right -> reg;
+  register_free(e -> left -> reg);
+}
+
+void expr_comp_string_codegen(struct expr *e, FILE *f) {
+  expr_codegen(e -> left, f);
+  expr_codegen(e -> right, f);
+  expr_func_codegen(e, "strcmp", f);
+}
+
 void expr_codegen(struct expr *e, FILE *f) {
   if(!e) return;
   char *val;
@@ -1227,16 +1287,29 @@ void expr_codegen(struct expr *e, FILE *f) {
       fprintf(f, "MOVQ %s, %s\n", register_name(e -> right -> reg), register_arg_names[count++]);
       expr_func_codegen(e, "integer_power", f);
       break;
-                   }
+    }
     case EXPR_LT:
+      expr_comp_codegen(e, f, 0);
       break;
     case EXPR_LE:
+      expr_comp_codegen(e, f, 1);
       break;
     case EXPR_GT:
+      expr_comp_codegen(e, f, 2);
       break;
     case EXPR_GE:
+      expr_comp_codegen(e, f, 3);
       break;
     case EXPR_EQEQ:
+      // check that left is str lit or that it
+      // is an ident of type str (already typechecked)
+      if(e -> left -> kind == EXPR_STRLIT || e -> left -> symbol -> type -> kind == TYPE_STRING) {
+
+      }
+      // other equality checks
+      else {
+        expr_comp_codegen(e, f, 4);
+      }
       break;
     case EXPR_NE:
 
@@ -1245,28 +1318,36 @@ void expr_codegen(struct expr *e, FILE *f) {
       expr_codegen(e -> left, f);
       expr_codegen(e -> right, f);
       expr_assembly_op_comment(e, f, "and");
-      int tr = stmt_jump_label++;
-      int fal = stmt_jump_label++;
-      int done = stmt_jump_label++;
+
+      int tr = assembly_jump_label++;
+      int fal = assembly_jump_label++;
+      int done = assembly_jump_label++;
+
       // implement short circuiting
       assembly_comment(f, "\t# check that left expr is false\n");
       fprintf(f, "\tCMP $0, %s\n", register_name(e -> left -> reg));
       // jump to boolean result of false
       fprintf(f, "\tJE L%d\n", fal);
+
       assembly_comment(f, "\t# check that right expr is false\n");
       fprintf(f, "\tCMP $0, %s\n", register_name(e -> right -> reg));
       // jump to boolean result of true
       fprintf(f, "\tJNE L%d\n", tr);
+
       // boolean false
       assembly_comment(f, "\t# false label\n");
       fprintf(f, "L%d:\n", fal);
       fprintf(f, "\tMOVQ $0, %s\n", register_name(e -> right -> reg));
       assembly_comment(f, "\t# jump to done label (don't evaluate set to true)\n");
       fprintf(f, "\tJMP L%d\n", done);
+
       assembly_comment(f, "\t# true label\n");
       fprintf(f, "L%d:\n", tr);
       fprintf(f, "\tMOVQ $1, %s\n", register_name(e -> right -> reg));
+
+      assembly_comment(f, "\t# done label\n");
       fprintf(f, "L%d:\n", done);
+
       e -> reg = e -> right -> reg;
       register_free(e -> left -> reg);
       break;
@@ -1275,28 +1356,36 @@ void expr_codegen(struct expr *e, FILE *f) {
       expr_codegen(e -> left, f);
       expr_codegen(e -> right, f);
       expr_assembly_op_comment(e, f, "or");
-      int tr = stmt_jump_label++;
-      int fal = stmt_jump_label++;
-      int done = stmt_jump_label++;
+
+      int tr = assembly_jump_label++;
+      int fal = assembly_jump_label++;
+      int done = assembly_jump_label++;
+
       // implement short circuiting
       assembly_comment(f, "\t# check that left expr is true\n");
       fprintf(f, "\tCMP $1, %s\n", register_name(e -> left -> reg));
       // jump to boolean result of true
       fprintf(f, "\tJE L%d\n", tr);
+
       assembly_comment(f, "\t# check that right expr is true\n");
       fprintf(f, "\tCMP $1, %s\n", register_name(e -> right -> reg));
       // jump to boolean result of false
       fprintf(f, "\tJNE L%d\n", fal);
+
       // boolean false
       assembly_comment(f, "\t# true label\n");
       fprintf(f, "L%d:\n", tr);
       fprintf(f, "\tMOVQ $1, %s\n", register_name(e -> right -> reg));
       assembly_comment(f, "\t# jump to done label (don't evaluate set to false)\n");
       fprintf(f, "\tJMP L%d\n", done);
+
       assembly_comment(f, "\t# false label\n");
       fprintf(f, "L%d:\n", fal);
       fprintf(f, "\tMOVQ $1, %s\n", register_name(e -> right -> reg));
+
+      assembly_comment(f, "\t# done label\n");
       fprintf(f, "L%d:\n", done);
+
       e -> reg = e -> right -> reg;
       register_free(e -> left -> reg);
       break;
@@ -1306,6 +1395,7 @@ void expr_codegen(struct expr *e, FILE *f) {
       fprintf(f, "\tSUBQ $1, %s\n", register_name(e -> right -> reg));
       fprintf(f, "\tSBB %s, %s\n", register_name(e -> right -> reg), register_name(e -> right -> reg));
       fprintf(f, "\tAND $1, %s\n", register_name(e -> right -> reg));
+      e -> reg = e -> right -> reg;
       break;
     case EXPR_EQ:
       if(e -> left -> symbol -> type -> kind == TYPE_ARRAY_DECL || e -> left -> symbol -> type -> kind == TYPE_ARRAY) {

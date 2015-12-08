@@ -5,6 +5,10 @@
 #include <stdio.h>
 
 int ASSEMBLY_COMMENT_FLAG;
+
+// label to jump to
+int assembly_jump_label;
+
 void assembly_comment(FILE *f, const char *s);
 
 // entry point for codegen

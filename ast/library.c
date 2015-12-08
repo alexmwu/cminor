@@ -1,3 +1,18 @@
+/* Copyright (C) 1991, 1996, 1997, 2003 Free Software Foundation, Inc.
+   This file is part of the GNU C Library.
+   The GNU C Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
+   The GNU C Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+   You should have received a copy of the GNU Lesser General Public
+   License along with the GNU C Library; if not, write to the Free
+   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+   02111-1307 USA.  */
+
 /*
 This is the standard library of functions for cminor, implemented in C.
 The print statement in C-minor expects there to exist a function
@@ -85,5 +100,13 @@ int integer_power( int x, int y )
 		y = y -1;
 	}
 	return result;
+}
+
+/*implementation found here: http://stackoverflow.com/questions/20004458/optimized-strcmp-implementation*/
+int strcmp(const char* s1, const char* s2)
+{
+    while(*s1 && (*s1==*s2))
+        s1++,s2++;
+    return *(const unsigned char*)s1-*(const unsigned char*)s2;
 }
 

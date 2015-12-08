@@ -13,6 +13,7 @@ void assembly_codegen(struct decl *d, FILE *f) {
   fprintf(f, ".text\n");
 #ifdef __linux__
   fprintf(f, "extern integer_power\n");
+  fprintf(f, "extern strcmp\n");
 #elif __APPLE__
   // minimum supported version
   // of OSX is 10.11
@@ -22,8 +23,10 @@ void assembly_codegen(struct decl *d, FILE *f) {
   // params, and callee saved regs)
   fprintf(f, ".p2align 4\n");
   fprintf(f, "extern _integer_power\n");
+  fprintf(f, "extern _strcmp\n");
 #else
   fprintf(f, "extern integer_power\n");
+  fprintf(f, "extern strcmp\n");
 #endif
   decl_codegen(d, f, SYMBOL_GLOBAL);
 }
