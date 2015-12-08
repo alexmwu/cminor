@@ -12,9 +12,15 @@ done
 
 for genfile in good*.s
 do
-  if ! gcc $genfile
+  filename="${filename%.*}"
+  if ! gcc $genfile -o "$filename.out"
   then
     echo "$testfile failure (COMPILING/LINKING)"
   fi
+done
+
+for outfile in good*.out
+do
+  eval $filename
 done
 

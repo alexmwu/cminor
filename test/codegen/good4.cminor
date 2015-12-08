@@ -1,5 +1,5 @@
 func: function integer() = {
-  return 5;
+  return 5^2;
 }
 
 main: function integer() = {
