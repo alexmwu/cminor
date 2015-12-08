@@ -139,8 +139,8 @@ void decl_resolve(struct decl *d, symbol_t kind, int *which) {
   }
   else {
     struct symbol *sym = symbol_create(kind, d -> type, d -> name);
+    sym -> orig_decl = d;
     if(d -> type -> kind == TYPE_FUNCTION) {
-      sym -> orig_decl = d;
       struct symbol *curr;
       // 2 represents that a function has
       // been defined and declared

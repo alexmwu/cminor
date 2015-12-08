@@ -63,10 +63,10 @@ char *symbol_code(struct symbol *s) {
   char *retStr;
   switch(s -> kind) {
     case SYMBOL_LOCAL:
-      asprintf(&retStr, "-%d(%%rbp)", ((s -> orig_decl -> num_params) + s -> which) * 8);
+      asprintf(&retStr, "-%d(%%rbp)", ((s -> orig_decl -> num_params) + 5) * 8);
       break;
     case SYMBOL_PARAM:
-      asprintf(&retStr, "-%d(%%rbp)", (s -> which) * 8);
+      asprintf(&retStr, "-%d(%%rbp)", (7) * 8);
       break;
     case SYMBOL_GLOBAL:
       asprintf(&retStr, "%s", s -> name -> name);
