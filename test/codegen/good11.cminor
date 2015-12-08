@@ -1,0 +1,8 @@
+main: function integer() = {
+  int i;
+  for(i = 0; i<20; i++) {
+    print "i: ", i;
+  }
+  return 0;
+}
+

@@ -1069,7 +1069,7 @@ struct type *expr_typecheck(struct expr *e) {
   }
 }
 
-void expr_assembly_op_comment(FILE *f, struct expr *e, const char *op) {
+void expr_assembly_op_comment(struct expr *e, FILE *f, const char *op) {
   if(ASSEMBLY_COMMENT_FLAG) {
     fprintf(f, "\n\t# ");
     expr_fprint(f, e -> left);
@@ -1101,7 +1101,7 @@ void expr_add_codegen(struct expr *e, FILE *f, int which) {
   expr_codegen(e -> left, f);
   expr_codegen(e -> right, f);
 
-  expr_assembly_op_comment(f, e, op);
+  expr_assembly_op_comment(e, f, op);
   fprintf(f, "\t%s %s, %s\n", op, register_name(e -> left -> reg), register_name(e -> right -> reg));
   e -> reg = e -> right -> reg;
   register_free(e -> left -> reg);
@@ -1124,7 +1124,7 @@ void expr_div_codegen(struct expr *e, FILE *f, int which) {
   }
   expr_codegen(e -> left, f);
   expr_codegen(e -> right, f);
-  expr_assembly_op_comment(f, e, op);
+  expr_assembly_op_comment(e, f, op);
 
   // the below moves value of rdx into another register
   // (this is because rdx is overwritten by the IDIV instr)
@@ -1157,7 +1157,7 @@ void expr_post_increment(struct expr *e, FILE *f, int which) {
   // has already been done typechecked but still call it to see
   // if any errors occur
   expr_codegen(e -> right, f);
-  expr_assembly_op_comment(f, e, op);
+  expr_assembly_op_comment(e, f, op);
   fprintf(f, "\tMOVQ %s, %%rax\n", register_name(e -> left -> reg));
   fprintf(f, "\t%s %%rax\n", op);
   fprintf(f, "\tMOVQ %%rax, %s\n", register_name(e -> left -> reg));
@@ -1179,7 +1179,7 @@ void expr_codegen(struct expr *e, FILE *f) {
     case EXPR_MUL:
       expr_codegen(e -> left, f);
       expr_codegen(e -> right, f);
-      expr_assembly_op_comment(f, e, "multiply");
+      expr_assembly_op_comment(e, f, "multiply");
       fprintf(f, "\tMOVQ %s, %%rax\n", register_name(e -> left -> reg));
       fprintf(f, "\tIMULQ %s\n", register_name(e -> right -> reg));
       fprintf(f, "\tMOVQ %%rax, %s\n", register_name(e -> right -> reg));
@@ -1219,6 +1219,12 @@ void expr_codegen(struct expr *e, FILE *f) {
     case EXPR_NOT:
       break;
     case EXPR_EQ:
+      if(e -> left -> symbol -> type -> kind == TYPE_ARRAY_DECL || e -> left -> symbol -> type -> kind == TYPE_ARRAY) {
+        fprintf(stderr, "CODEGEN_ERROR: cminor does not have an array implementation\n");
+        exit(1);
+      }
+      expr_codegen(e -> right, f);
+      fprintf(f, "MOV %s, %s", register_name(e -> right -> reg), symbol_code(e -> left -> symbol));
       break;
     case EXPR_ARREQ:
       fprintf(stderr, "CODEGEN_ERROR: cminor does not have an array implementation\n");

@@ -1,0 +1,14 @@
+main: function integer() = {
+  int i;
+  for(i = 0; i<100; i++) {
+    if(i%3 == 0) {
+      print "fizz";
+    }
+    if(i%5 == 0) {
+      print "buzz";
+    }
+    print "\n";
+  }
+  return 0;
+}
+

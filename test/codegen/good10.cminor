@@ -1,0 +1,4 @@
+main: function integer() = {
+  print "hi", 'c', 5, true;
+  return 0;
+}

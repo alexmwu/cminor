@@ -177,7 +177,7 @@ void decl_typecheck(struct decl *d) {
   if(!d) return;
 
   // need to place this first
-  if(d -> type -> kind == TYPE_ARRAY_DECL) {
+  if(d -> type -> kind == TYPE_ARRAY_DECL || d -> type -> kind == TYPE_ARRAY) {
     if(d -> value && d -> value -> kind != EXPR_ARR_INITLIST) {
       fprintf(stderr, "Bad initialization: array declaration expression for (");
       expr_print(d -> name);
@@ -297,7 +297,7 @@ void decl_codegen(struct decl *d, FILE *f, symbol_t kind) {
     fprintf(f, "%s:\n", d -> name -> name);
 #endif
     // preamble of function (setting up stack)
-    assembly_comment(f, "\t### function preamble");
+    assembly_comment(f, "\t### function preamble\n");
     assembly_comment(f, "\t# save the base pointer\n");
     fprintf(f, "\tPUSHQ %%rbp\n");
     assembly_comment(f, "\t# set new base pointer to rsp\n");

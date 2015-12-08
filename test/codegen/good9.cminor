@@ -1,0 +1,14 @@
+func: function integer() {
+  return 5;
+}
+
+main: function integer() {
+
+  if(func() < 6) {
+    return 100;
+  }
+  else {
+    return 200;
+  }
+}
+

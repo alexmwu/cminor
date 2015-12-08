@@ -1,0 +1,10 @@
+func: function integer(x: integer) {
+  a: integer = 6;
+  return 5 + a * x;
+}
+
+main: function integer() {
+  // should return 39
+  return func(4) + 10;
+}
+
