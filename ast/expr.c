@@ -1248,9 +1248,9 @@ void expr_comp_string_codegen(struct expr *e, FILE *f) {
 
   // put arg 1 (right) of expr in arg reg 1
   if(ASSEMBLY_COMMENT_FLAG) {
-    fprintf(f, "\t# move arg %d (in %s) into %s", count, register_name(e -> right -> reg), register_arg_names[count]);
+    fprintf(f, "\t# move arg %d (in %s) into %s\n", count, register_name(e -> right -> reg), register_arg_names[count]);
   }
-  fprintf(f, "MOVQ %s, %s\n", register_name(e -> right -> reg), register_arg_names[count++]);
+  fprintf(f, "\tMOVQ %s, %s\n", register_name(e -> right -> reg), register_arg_names[count++]);
   register_free(e -> left -> reg);
   register_free(e -> right -> reg);
   expr_func_codegen(e, "strcmp", f);
@@ -1301,9 +1301,9 @@ void expr_codegen(struct expr *e, FILE *f) {
 
       // put arg 1 (right) of expr in arg reg 1
       if(ASSEMBLY_COMMENT_FLAG) {
-        fprintf(f, "\t# move arg %d (in %s) into %s", count, register_name(e -> right -> reg), register_arg_names[count]);
+        fprintf(f, "\t# move arg %d (in %s) into %s\n", count, register_name(e -> right -> reg), register_arg_names[count]);
       }
-      fprintf(f, "MOVQ %s, %s\n", register_name(e -> right -> reg), register_arg_names[count++]);
+      fprintf(f, "\tMOVQ %s, %s\n", register_name(e -> right -> reg), register_arg_names[count++]);
       register_free(e -> left -> reg);
       register_free(e -> right -> reg);
       expr_func_codegen(e, "integer_power", f);
