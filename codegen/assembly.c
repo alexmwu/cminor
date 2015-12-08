@@ -105,9 +105,9 @@ void assembly_mov_arg_registers(FILE *f, struct expr *expr_list) {
     }
     expr_codegen(curr_expr, f);
     if(ASSEMBLY_COMMENT_FLAG) {
-      fprintf(f, "\t# move arg %d (in %s) into %s", count, register_name(curr_expr -> reg), register_arg_names[count]);
+      fprintf(f, "\t# move arg %d (in %s) into %s\n", count, register_name(curr_expr -> reg), register_arg_names[count]);
     }
-    fprintf(f, "MOVQ %s, %s\n", register_name(curr_expr -> reg), register_arg_names[count++]);
+    fprintf(f, "\tMOVQ %s, %s\n", register_name(curr_expr -> reg), register_arg_names[count++]);
     register_free(curr_expr -> reg);
     curr_expr = curr_expr -> next;
   }
