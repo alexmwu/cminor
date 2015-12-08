@@ -1,0 +1,17 @@
+// Test case 18
+// Multiple function prototypes should still only generate one piece of code
+
+a: function integer ();
+a: function integer ();
+a: function integer ();
+a: function integer ();
+a: function integer ();
+
+main: function integer () = {
+  print "0 = ", a(), "\n";
+  return 0;
+}
+
+a: function integer () = {
+  return 0;
+}

@@ -1,0 +1,34 @@
+// Test case 7
+// Arithmetic operators on global variables
+
+a1: integer = 15;
+a2: integer = 7;
+
+main: function integer () = {
+
+  print "15 = ", a1, '\n';
+  print "7 = ", a2, '\n';
+
+  print "22 = ", a1 + a2, '\n';
+  print "22 = ", a2 + a1, '\n';
+  print "8 = ", a1 - a2, '\n';
+  print "-8 = ", a2 - a1, '\n';
+  print "105 = ", a1 * a2, '\n';
+  print "105 = ", a2 * a1, '\n';
+  print "2 = ", a1 / a2, '\n';
+  print "0 = ", a2 / a1, '\n';
+  print "1 = ", a1 % a2, '\n';
+  print "7 = ", a2 % a1, '\n';
+
+  print "-22 = ", -a1 + -a2, '\n';
+
+  print "15 = ", a1++, '\n';
+  print "16 = ", a1, '\n';
+  print "7 = ", a2++, '\n';
+  print "8 = ", a2, '\n';
+  print "8 = ", a1 = a2, '\n';
+  print "8 = ", a1, '\n';
+  print "8 = ", a2, '\n';
+
+  return 0;
+}

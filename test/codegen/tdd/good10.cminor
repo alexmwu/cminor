@@ -1,0 +1,18 @@
+// Test case 10
+// Basic if statement
+
+main: function integer () = {
+  if (true) {
+    print "true branch correctly taken", '\n';
+  } else {
+    print "INCORRECT: else branch taken", '\n';
+  }
+
+  if (false) {
+    print "INCORRECT: true branch taken", '\n';
+  } else {
+    print "else branch correctly taken", '\n';
+  }
+
+  return 0;
+}

@@ -1,0 +1,80 @@
+// Test case 8
+// Logical operators on local variables
+
+main: function integer () = {
+  a1: integer = 15;
+  a2: integer = 7;
+  a3: integer = 7;
+  b1: boolean = true;
+  b2: boolean = false;
+  b3: boolean = false;
+  c1: char = 'c';
+  c2: char = 'd';
+  c3: char = 'd';
+  s1: string = "abcde";
+  s2: string = "abcd";
+  s3: string = "abcd";
+
+  print "true = ", a2 < a1, '\n';
+  print "true = ", a3 <= a1, '\n';
+  print "true = ", a1 > a2, '\n';
+  print "true = ", a1 >= a3, '\n';
+  print "true = ", a2 == a3, '\n';
+  print "true = ", a2 == 7, '\n';
+  print "true = ", a1 != a2, '\n';
+  print "true = ", a1 != 7, '\n';
+
+  print "false = ", a1 < a2, '\n';
+  print "false = ", a1 <= a3, '\n';
+  print "false = ", a2 > a1, '\n';
+  print "false = ", a3 >= a1, '\n';
+  print "false = ", a1 == a2, '\n';
+  print "false = ", a1 == 7, '\n';
+  print "false = ", a2 != a3, '\n';
+  print "false = ", a2 != 7, '\n';
+
+  print "true = ", c1 == 'c', '\n';
+  print "true = ", c2 == c3, '\n';
+  print "true = ", c1 != 'd', '\n';
+  print "true = ", c1 != c2, '\n';
+
+  print "true = ", s1 == "abcde", '\n';
+  print "true = ", s2 == s3, '\n';
+  print "true = ", s1 != "abcd", '\n';
+  print "true = ", s1 != s2, '\n';
+
+  print "true = ", b1 == true, '\n';
+  print "true = ", b2 == b3, '\n';
+  print "true = ", b1 != false, '\n';
+  print "true = ", b1 != b2, '\n';
+
+  print "false = ", c1 != 'c', '\n';
+  print "false = ", c2 != c3, '\n';
+  print "false = ", c1 == 'd', '\n';
+  print "false = ", c1 == c2, '\n';
+
+  print "false = ", s1 != "abcde", '\n';
+  print "false = ", s2 != s3, '\n';
+  print "false = ", s1 == "abcd", '\n';
+  print "false = ", s1 == s2, '\n';
+
+  print "false = ", b1 != true, '\n';
+  print "false = ", b2 != b3, '\n';
+  print "false = ", b1 == false, '\n';
+  print "false = ", b1 == b2, '\n';
+
+  print "true = ", b1 && b1, '\n';
+  print "false = ", b2 && b1, '\n';
+  print "false = ", b1 && b2, '\n';
+  print "false = ", b2 && b2, '\n';
+
+  print "true = ", b1 || b1, '\n';
+  print "true = ", b2 || b1, '\n';
+  print "true = ", b1 || b2, '\n';
+  print "false = ", b2 || b2, '\n';
+
+  print "false = ", !b1, '\n';
+  print "true = ", !b2, '\n';
+
+  return 0;
+}

@@ -1,0 +1,22 @@
+// Test case 20
+// Recursive function calling
+
+a: function integer (t: integer);
+b: function integer (t: integer);
+
+a: function integer (t: integer) = {
+  print t, '\n';
+  if (t == 0) { return 0; }
+  else return b(t - 1);
+}
+
+b: function integer (s: integer) = {
+  print s, '\n';
+  if (s == 0) { return 0; }
+  else return a(s - 1);
+}
+
+main: function integer () = {
+  a(10);
+  return 0;
+}

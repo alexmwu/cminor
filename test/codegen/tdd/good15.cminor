@@ -1,0 +1,32 @@
+// Test case 15
+// Register allocation in if statement
+
+main: function integer () = {
+
+  // if statement should dealloc register used for expr
+  a: integer = 0;
+  if (true) { a++; }
+  if (true) { a++; }
+  if (true) { a++; }
+  if (true) { a++; }
+  if (true) { a++; }
+  if (true) { a++; }
+  if (true) { a++; }
+  if (true) { a++; }
+  if (true) { a++; }
+  if (true) { a++; }
+  if (true) { a++; }
+  if (true) { a++; }
+  if (true) { a++; }
+  if (true) { a++; }
+  if (true) { a++; }
+  if (true) { a++; }
+  if (true) { a++; }
+  if (true) { a++; }
+  if (true) { a++; }
+  if (true) { a++; }
+  if (a == 20) { print "CORRECT\n"; }
+  else { print "INCORRECT\n"; }
+
+  return 0;
+}

@@ -1,0 +1,17 @@
+// tests short circuiting
+sideEffectTrue: function boolean() = {
+  return true;
+}
+
+sideEffectFalse: function boolean() = {
+  return true;
+}
+
+main: function integer() = {
+  print "false: ", false && sideEffectTrue();
+  print "false: ", false && sideEffectFalse();
+  print "true: ", true || sideEffectTrue();
+  print "true: ", true || sideEffectFalse();
+  return 0;
+}
+

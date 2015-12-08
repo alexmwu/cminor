@@ -1,0 +1,32 @@
+// Test case 16
+// Register allocation in for statement
+
+main: function integer () = {
+
+  // for loop should dealloc register used for all exprs
+  a: integer = 0;
+  for (true; false; true) { a++; }
+  for (true; false; true) { a++; }
+  for (true; false; true) { a++; }
+  for (true; false; true) { a++; }
+  for (true; false; true) { a++; }
+  for (true; false; true) { a++; }
+  for (true; false; true) { a++; }
+  for (true; false; true) { a++; }
+  for (true; false; true) { a++; }
+  for (true; false; true) { a++; }
+  for (true; false; true) { a++; }
+  for (true; false; true) { a++; }
+  for (true; false; true) { a++; }
+  for (true; false; true) { a++; }
+  for (true; false; true) { a++; }
+  for (true; false; true) { a++; }
+  for (true; false; true) { a++; }
+  for (true; false; true) { a++; }
+  for (true; false; true) { a++; }
+  for (true; false; true) { a++; }
+  if (a == 0) { print "CORRECT\n"; }
+  else { print "INCORRECT\n"; }
+
+  return 0;
+}

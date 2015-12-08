@@ -1,0 +1,53 @@
+// Test case 17
+// Register allocation in return statement
+
+a0: function integer () = { return 0; }
+a1: function integer () = { return 0; }
+a2: function integer () = { return 0; }
+a3: function integer () = { return 0; }
+a4: function integer () = { return 0; }
+a5: function integer () = { return 0; }
+a6: function integer () = { return 0; }
+a7: function integer () = { return 0; }
+a8: function integer () = { return 0; }
+a9: function integer () = { return 0; }
+a10: function integer () = { return 0; }
+a11: function integer () = { return 0; }
+a12: function integer () = { return 0; }
+a13: function integer () = { return 0; }
+a14: function integer () = { return 0; }
+a15: function integer () = { return 0; }
+a16: function integer () = { return 0; }
+a17: function integer () = { return 0; }
+a18: function integer () = { return 0; }
+a19: function integer () = { return 0; }
+
+main: function integer () = {
+
+  // for loop should dealloc register used for all exprs
+  a: integer = 0;
+  if (a0() == 0) { a++; }
+  if (a1() == 0) { a++; }
+  if (a2() == 0) { a++; }
+  if (a3() == 0) { a++; }
+  if (a4() == 0) { a++; }
+  if (a5() == 0) { a++; }
+  if (a6() == 0) { a++; }
+  if (a7() == 0) { a++; }
+  if (a8() == 0) { a++; }
+  if (a9() == 0) { a++; }
+  if (a10() == 0) { a++; }
+  if (a11() == 0) { a++; }
+  if (a12() == 0) { a++; }
+  if (a13() == 0) { a++; }
+  if (a14() == 0) { a++; }
+  if (a15() == 0) { a++; }
+  if (a16() == 0) { a++; }
+  if (a17() == 0) { a++; }
+  if (a18() == 0) { a++; }
+  if (a19() == 0) { a++; }
+  if (a == 20) { print "CORRECT\n"; }
+  else { print "INCORRECT\n"; }
+
+  return 0;
+}

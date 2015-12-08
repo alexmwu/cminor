@@ -1,0 +1,14 @@
+// Test case 2
+// Basic arithmetic expressions
+
+main: function integer () = {
+  print "13 = ", 5 + 8, '\n';
+  print "3 = ", 8 - 5, '\n';
+  print "-3 = ", 5 - 8, '\n';
+  print "40 = ", 5 * 8, '\n';
+  print "2 = ", 10 / 5, '\n';
+  print "0 = ", 10 % 5, '\n';
+  print "2 = ", 12 % 5, '\n';
+  print "-1 = ", -1, '\n';
+  print "8 = ", 2 ^ 3, '\n';
+}

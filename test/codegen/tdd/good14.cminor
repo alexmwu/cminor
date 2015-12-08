@@ -1,0 +1,11 @@
+// Test case 14
+// Simple function with parameters
+
+a: function integer (param: integer) = {
+  return param;
+}
+
+main: function integer () = {
+  print "10 = ", a(10), '\n';
+  return 0;
+}

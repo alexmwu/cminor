@@ -1,0 +1,11 @@
+// Test case 13
+// Simple function declaration
+
+a: function integer () = {
+  return 5;
+}
+
+main: function integer () = {
+  print "5 = ", a(), '\n';
+  return 0;
+}

@@ -1,0 +1,6 @@
+// Test case 1
+// Basic return statement
+
+main: function integer () = {
+  return 5;
+}

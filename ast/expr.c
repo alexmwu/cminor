@@ -562,14 +562,6 @@ struct type *expr_arith_typecheck(struct expr *e, int which) {
     expr_typecheck_err_print(stderr, e);
     type_error_count++;
   }
-  // replace expr with function call to integer_power in library.c
-  if(e -> kind == EXPR_EXP) {
-    struct expr *new = malloc(sizeof *new);
-    // create the arg list for integer_power
-    /*e -> left -> next = e -> right;*/
-    expr_create(EXPR_FUNC, expr_create_name("integer_power"), e -> left, 0);
-    // TODO: replace EXPR_EXP with call to integer_power
-  }
   type_delete(left);
   type_delete(right);
   return type_create(TYPE_INTEGER, 0, 0, 0);
@@ -1211,12 +1203,73 @@ void expr_codegen(struct expr *e, FILE *f) {
     case EXPR_EQEQ:
       break;
     case EXPR_NE:
+
       break;
-    case EXPR_AND:
+    case EXPR_AND: {
+      expr_codegen(e -> left, f);
+      expr_codegen(e -> right, f);
+      expr_assembly_op_comment(e, f, "and");
+      int tr = stmt_jump_label++;
+      int fal = stmt_jump_label++;
+      int done = stmt_jump_label++;
+      // implement short circuiting
+      assembly_comment(f, "\t# check that left expr is false\n");
+      fprintf(f, "\tCMP $0, %s\n", register_name(e -> left -> reg));
+      // jump to boolean result of false
+      fprintf(f, "\tJE L%d\n", fal);
+      assembly_comment(f, "\t# check that right expr is false\n");
+      fprintf(f, "\tCMP $0, %s\n", register_name(e -> right -> reg));
+      // jump to boolean result of true
+      fprintf(f, "\tJNE L%d\n", tr);
+      // boolean false
+      assembly_comment(f, "\t# false label\n");
+      fprintf(f, "L%d:\n", fal);
+      fprintf(f, "\tMOVQ $0, %s\n", register_name(e -> right -> reg));
+      assembly_comment(f, "\t# jump to done label (don't evaluate set to true)\n");
+      fprintf(f, "\tJMP L%d\n", done);
+      assembly_comment(f, "\t# true label\n");
+      fprintf(f, "L%d:\n", tr);
+      fprintf(f, "\tMOVQ $1, %s\n", register_name(e -> right -> reg));
+      fprintf(f, "L%d:\n", done);
+      e -> reg = e -> right -> reg;
+      register_free(e -> left -> reg);
       break;
+    }
     case EXPR_OR:
+      expr_codegen(e -> left, f);
+      expr_codegen(e -> right, f);
+      expr_assembly_op_comment(e, f, "or");
+      int tr = stmt_jump_label++;
+      int fal = stmt_jump_label++;
+      int done = stmt_jump_label++;
+      // implement short circuiting
+      assembly_comment(f, "\t# check that left expr is true\n");
+      fprintf(f, "\tCMP $1, %s\n", register_name(e -> left -> reg));
+      // jump to boolean result of true
+      fprintf(f, "\tJE L%d\n", tr);
+      assembly_comment(f, "\t# check that right expr is true\n");
+      fprintf(f, "\tCMP $1, %s\n", register_name(e -> right -> reg));
+      // jump to boolean result of false
+      fprintf(f, "\tJNE L%d\n", fal);
+      // boolean false
+      assembly_comment(f, "\t# true label\n");
+      fprintf(f, "L%d:\n", tr);
+      fprintf(f, "\tMOVQ $1, %s\n", register_name(e -> right -> reg));
+      assembly_comment(f, "\t# jump to done label (don't evaluate set to false)\n");
+      fprintf(f, "\tJMP L%d\n", done);
+      assembly_comment(f, "\t# false label\n");
+      fprintf(f, "L%d:\n", fal);
+      fprintf(f, "\tMOVQ $1, %s\n", register_name(e -> right -> reg));
+      fprintf(f, "L%d:\n", done);
+      e -> reg = e -> right -> reg;
+      register_free(e -> left -> reg);
       break;
     case EXPR_NOT:
+      expr_codegen(e -> right, f);
+      expr_assembly_op_comment(e, f, "not");
+      fprintf(f, "\tSUBQ $1, %s\n", register_name(e -> right -> reg));
+      fprintf(f, "\tSBB %s, %s\n", register_name(e -> right -> reg), register_name(e -> right -> reg));
+      fprintf(f, "\tAND $1, %s\n", register_name(e -> right -> reg));
       break;
     case EXPR_EQ:
       if(e -> left -> symbol -> type -> kind == TYPE_ARRAY_DECL || e -> left -> symbol -> type -> kind == TYPE_ARRAY) {
@@ -1224,7 +1277,9 @@ void expr_codegen(struct expr *e, FILE *f) {
         exit(1);
       }
       expr_codegen(e -> right, f);
-      fprintf(f, "MOV %s, %s", register_name(e -> right -> reg), symbol_code(e -> left -> symbol));
+      expr_assembly_op_comment(e, f, "assign");
+      fprintf(f, "\tMOV %s, %s", register_name(e -> right -> reg), symbol_code(e -> left -> symbol));
+      e -> reg = e -> right -> reg;
       break;
     case EXPR_ARREQ:
       fprintf(stderr, "CODEGEN_ERROR: cminor does not have an array implementation\n");
@@ -1240,6 +1295,7 @@ void expr_codegen(struct expr *e, FILE *f) {
       break;
     case EXPR_GROUP:
       expr_codegen(e -> right, f);
+      e -> reg = e -> right -> reg;
       break;
     case EXPR_FUNC:
       assembly_mov_arg_registers(f, e -> right);

@@ -1,0 +1,47 @@
+// Test case 3
+// Basic boolean expressions
+
+main: function integer () = {
+  print "true = ", 1 < 2, '\n';
+  print "true = ", 1 <= 2, '\n';
+  print "true = ", 2 > 1, '\n';
+  print "true = ", 2 >= 1, '\n';
+  print "true = ", 1 == 1, '\n';
+  print "true = ", 1 != 2, '\n';
+
+  print "false = ", 2 < 1, '\n';
+  print "false = ", 2 <= 1, '\n';
+  print "false = ", 1 > 2, '\n';
+  print "false = ", 1 >= 2, '\n';
+  print "false = ", 1 == 2, '\n';
+  print "false = ", 1 != 1, '\n';
+
+  print "true = ", 'a' == 'a', '\n';
+  print "true = ", "abcd" == "abcd", '\n';
+  print "true = ", true == true, '\n';
+  print "true = ", 'a' != 'b', '\n';
+  print "true = ", "abcd" != "abcde", '\n';
+  print "true = ", true != false, '\n';
+
+  print "false = ", 'a' != 'a', '\n';
+  print "false = ", "abcd" != "abcd", '\n';
+  print "false = ", true != true, '\n';
+  print "false = ", 'a' == 'b', '\n';
+  print "false = ", "abcd" == "abcde", '\n';
+  print "false = ", true == false, '\n';
+
+  print "true = ", true && true, '\n';
+  print "false = ", false && true, '\n';
+  print "false = ", true && false, '\n';
+  print "false = ", false && false, '\n';
+
+  print "true = ", true || true, '\n';
+  print "true = ", false || true, '\n';
+  print "true = ", true || false, '\n';
+  print "false = ", false || false, '\n';
+
+  print "false = ", !true, '\n';
+  print "true = ", !false, '\n';
+
+  return 0;
+}
