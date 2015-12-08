@@ -61,6 +61,9 @@ struct expr {
 
   // register holding the expr value
   int reg;
+  // print type for atomics
+  // 0 for undef; 1 for bool, 2 char, 3 int, 4 str
+  int print_type;
 };
 
 // number of strings declared
@@ -87,6 +90,7 @@ void expr_arr_init_typecheck(struct expr *name, struct expr *e, struct type *t, 
 void expr_typecheck_err_print(FILE *f, struct expr *e);
 struct type *expr_typecheck(struct expr *e);
 
+void expr_func_codegen(struct expr *e, const char *name, FILE *f);
 void expr_codegen(struct expr *e, FILE *f);
 
 #endif

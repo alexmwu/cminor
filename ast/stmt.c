@@ -276,6 +276,7 @@ void stmt_typecheck(struct stmt *s, struct type *ret, int *returned) {
       curr = s -> expr;
       while(curr) {
         expr = expr_typecheck(curr);
+        // pass type through new symbol
         if(!type_is_atomic(expr)) {
           fprintf(stderr, "TYPE_ERROR: cannot print (print ");
           expr_fprint(stderr, s -> expr);
@@ -285,6 +286,40 @@ void stmt_typecheck(struct stmt *s, struct type *ret, int *returned) {
           type_error_count++;
         }
         type_delete(expr);
+        switch(expr -> kind) {
+          case TYPE_BOOLEAN:
+            curr -> print_type = 1;
+            break;
+          case TYPE_CHARACTER:
+            curr -> print_type = 2;
+            break;
+          case TYPE_INTEGER:
+            curr -> print_type = 3;
+            break;
+          case TYPE_STRING:
+            curr -> print_type = 4;
+            break;
+          case TYPE_ARRAY:
+            curr -> print_type = 0;
+            fprintf(stderr, "Bad entry into switch on type_kind in stmt_typecheck (case STMT_PRINT)\n");
+            exit(1);
+            break;
+          case TYPE_ARRAY_DECL:
+            curr -> print_type = 0;
+            fprintf(stderr, "Bad entry into switch on type_kind in stmt_typecheck (case STMT_PRINT)\n");
+            exit(1);
+            break;
+          case TYPE_FUNCTION:
+            curr -> print_type = 0;
+            fprintf(stderr, "Bad entry into switch on type_kind in stmt_typecheck (case STMT_PRINT)\n");
+            exit(1);
+            break;
+          case TYPE_VOID:
+            curr -> print_type = 0;
+            fprintf(stderr, "Bad entry into switch on type_kind in stmt_typecheck (case STMT_PRINT)\n");
+            exit(1);
+            break;
+        }
         curr = curr -> next;
       }
       break;
@@ -320,6 +355,8 @@ void stmt_codegen(struct stmt *s, FILE *f) {
       decl_codegen(s -> decl, f, SYMBOL_LOCAL);
       break;
     case STMT_EXPR:
+      expr_codegen(s -> expr, f);
+      register_free(s -> expr -> reg);
       break;
     case STMT_IF_ELSE:
       break;
@@ -327,8 +364,49 @@ void stmt_codegen(struct stmt *s, FILE *f) {
       break;
     case STMT_WHILE:
       break;
-    case STMT_PRINT:
+    case STMT_PRINT: {
+      struct expr *curr = s -> expr;
+      while(curr) {
+        expr_codegen(curr, f);
+
+        int count = 0;
+
+        if(ASSEMBLY_COMMENT_FLAG) {
+          fprintf(f, "\t# move arg %d (in %s) into %s", count, register_name(curr -> reg), register_arg_names[count]);
+        }
+
+        fprintf(f, "MOVQ %s, %s\n", register_name(curr -> reg), register_arg_names[count++]);
+
+        switch(curr -> print_type) {
+          case 0:
+            fprintf(stderr, "Expr ");
+            expr_fprint(stderr, curr);
+            fprintf(stderr, " has bad print_type (%d)\n", curr -> print_type);
+            exit(1);
+            break;
+          case 1:
+            expr_func_codegen(curr, "print_boolean", f);
+            break;
+          case 2:
+            expr_func_codegen(curr, "print_character", f);
+            break;
+          case 3:
+            expr_func_codegen(curr, "print_integer", f);
+            break;
+          case 4:
+            expr_func_codegen(curr, "print_string", f);
+            break;
+          default:
+            fprintf(stderr, "Expr ");
+            expr_fprint(stderr, curr);
+            fprintf(stderr, " has bad print_type (%d)\n", curr -> print_type);
+            exit(1);
+            break;
+        }
+        curr = curr -> next;
+      }
       break;
+    }
     case STMT_RET:
       expr_codegen(s -> expr, f);
       if(ASSEMBLY_COMMENT_FLAG) {

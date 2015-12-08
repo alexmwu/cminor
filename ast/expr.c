@@ -17,6 +17,7 @@ struct expr *expr_create(expr_t kind, struct expr *left, struct expr *right, str
   // no string number (for codegen)
   e -> str_num = -1;
   e -> symbol = 0;
+  e -> print_type = 0;
   return e;
 }
 
