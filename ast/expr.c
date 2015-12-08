@@ -1541,6 +1541,9 @@ void expr_codegen(struct expr *e, FILE *f) {
       else {
         e -> reg = register_alloc();
         val = symbol_code(e -> symbol);
+        if(ASSEMBLY_COMMENT_FLAG) {
+          fprintf(f, "\t# move %s %d into %s\n", symbol_kind_string(e -> symbol -> kind), e -> symbol -> which, register_name(e -> reg));
+        }
         fprintf(f, "\tMOVQ %s, %s\n", val, register_name(e -> reg));
         free(val);
       }
