@@ -64,7 +64,7 @@ char *assembly_string_out(char *s) {
   }
   char *newStr;
   if(i < newLen - 1) {
-    newStr = malloc(i * sizeof(char));
+    newStr = malloc((i + 1) * sizeof(char));
     strcpy(newStr, retStr);
     free(retStr);
     retStr = newStr;
