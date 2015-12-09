@@ -374,10 +374,10 @@ void stmt_codegen(struct stmt *s, FILE *f) {
         int count = 0;
 
         if(ASSEMBLY_COMMENT_FLAG) {
-          fprintf(f, "\t# move arg %d (in %s) into %s", count, register_name(curr -> reg), register_arg_names[count]);
+          fprintf(f, "\t# move arg %d (in %s) into %s\n", count, register_name(curr -> reg), register_arg_names[count]);
         }
 
-        fprintf(f, "MOVQ %s, %s\n", register_name(curr -> reg), register_arg_names[count++]);
+        fprintf(f, "\tMOVQ %s, %s\n", register_name(curr -> reg), register_arg_names[count++]);
 
         switch(curr -> print_type) {
           case 0:

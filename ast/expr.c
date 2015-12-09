@@ -1072,12 +1072,6 @@ void expr_assembly_op_comment(struct expr *e, FILE *f, const char *op) {
   }
 }
 
-void expr_assembly_lit_comment(FILE *f, char *assign_val) {
-  if(ASSEMBLY_COMMENT_FLAG) {
-    fprintf(f, "\n\t# Move %s into register\n", assign_val);
-  }
-}
-
 // add and subtract
 void expr_add_codegen(struct expr *e, FILE *f, int which) {
   const char *op;
@@ -1245,7 +1239,7 @@ void expr_comp_string_codegen(struct expr *e, FILE *f) {
   if(ASSEMBLY_COMMENT_FLAG) {
     fprintf(f, "\t# move arg %d (in %s) into %s\n", count, register_name(e -> left -> reg), register_arg_names[count]);
   }
-  fprintf(f, "MOVQ %s, %s\n", register_name(e -> left -> reg), register_arg_names[count++]);
+  fprintf(f, "\tMOVQ %s, %s\n", register_name(e -> left -> reg), register_arg_names[count++]);
 
   // put arg 1 (right) of expr in arg reg 1
   if(ASSEMBLY_COMMENT_FLAG) {
@@ -1298,7 +1292,7 @@ void expr_codegen(struct expr *e, FILE *f) {
       if(ASSEMBLY_COMMENT_FLAG) {
         fprintf(f, "\t# move arg %d (in %s) into %s\n", count, register_name(e -> left -> reg), register_arg_names[count]);
       }
-      fprintf(f, "MOVQ %s, %s\n", register_name(e -> left -> reg), register_arg_names[count++]);
+      fprintf(f, "\tMOVQ %s, %s\n", register_name(e -> left -> reg), register_arg_names[count++]);
 
       // put arg 1 (right) of expr in arg reg 1
       if(ASSEMBLY_COMMENT_FLAG) {
@@ -1470,26 +1464,39 @@ void expr_codegen(struct expr *e, FILE *f) {
       break;
     case EXPR_TRUE:
       e -> reg = register_alloc();
-      expr_assembly_lit_comment(f, "false");
+      if(ASSEMBLY_COMMENT_FLAG) {
+        fprintf(f, "\n\t# move true into register\n");
+      }
       fprintf(f, "\tMOVQ $1, %s\n", register_name(e -> reg));
       break;
     case EXPR_FALSE:
       e -> reg = register_alloc();
-      expr_assembly_lit_comment(f, "false");
+      if(ASSEMBLY_COMMENT_FLAG) {
+        fprintf(f, "\n\t# move false into register\n");
+      }
       fprintf(f, "\tMOVQ $0, %s\n", register_name(e -> reg));
       break;
     case EXPR_INTLIT:
       e -> reg = register_alloc();
-      asprintf(&val, "%d", e -> literal_value);
-      expr_assembly_lit_comment(f, val);
-      free(val);
+      if(ASSEMBLY_COMMENT_FLAG) {
+        fprintf(f, "\n\t# move %d into register\n", e -> literal_value);
+      }
       fprintf(f, "\tMOVQ $%d, %s\n", e -> literal_value, register_name(e -> reg));
       break;
     case EXPR_CHARLIT:
       e -> reg = register_alloc();
-      asprintf(&val, "%c", e -> char_literal);
-      expr_assembly_lit_comment(f, val);
-      free(val);
+      // ad hoc fix for \n and \0 printing
+      if(ASSEMBLY_COMMENT_FLAG) {
+        if(e -> char_literal == '\n') {
+          fprintf(f, "\n\t# move '\\n' into register\n");
+        }
+        else if(e -> char_literal == '\0') {
+          fprintf(f, "\n\t# move '\\0' into register\n");
+        }
+        else {
+          fprintf(f, "\n\t# move '%c' into register\n", e -> char_literal);
+        }
+      }
       fprintf(f, "\tMOVQ $%d, %s\n", e -> char_literal, register_name(e -> reg));
       break;
     case EXPR_STRLIT:
