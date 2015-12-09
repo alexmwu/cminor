@@ -363,6 +363,8 @@ void stmt_codegen(struct stmt *s, FILE *f) {
     case STMT_FOR:
       break;
     case STMT_WHILE:
+      fprintf(stderr, "CODEGEN_ERROR: cminor does not support while loops\n");
+      exit(1);
       break;
     case STMT_PRINT: {
       struct expr *curr = s -> expr;

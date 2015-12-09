@@ -262,7 +262,6 @@ void decl_typecheck(struct decl *d) {
     // and it does not return void and it has
     // a declaration (rather than definition)
     if(d -> code && !(*returned) && d -> type -> subtype -> kind != TYPE_VOID) {
-      type_print(d -> type);
       fprintf(stderr, "TYPE_ERROR: no return in a function (");
       expr_fprint(stderr, d -> name);
       fprintf(stderr, ") of return type ");
