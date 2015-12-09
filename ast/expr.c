@@ -1243,7 +1243,7 @@ void expr_comp_string_codegen(struct expr *e, FILE *f) {
   int count = 0;
   // put arg 0 (left) of expr in arg reg 0
   if(ASSEMBLY_COMMENT_FLAG) {
-    fprintf(f, "\t# move arg %d (in %s) into %s", count, register_name(e -> left -> reg), register_arg_names[count]);
+    fprintf(f, "\t# move arg %d (in %s) into %s\n", count, register_name(e -> left -> reg), register_arg_names[count]);
   }
   fprintf(f, "MOVQ %s, %s\n", register_name(e -> left -> reg), register_arg_names[count++]);
 
@@ -1296,7 +1296,7 @@ void expr_codegen(struct expr *e, FILE *f) {
       int count = 0;
       // put arg 0 (left) of expr in arg reg 0
       if(ASSEMBLY_COMMENT_FLAG) {
-        fprintf(f, "\t# move arg %d (in %s) into %s", count, register_name(e -> left -> reg), register_arg_names[count]);
+        fprintf(f, "\t# move arg %d (in %s) into %s\n", count, register_name(e -> left -> reg), register_arg_names[count]);
       }
       fprintf(f, "MOVQ %s, %s\n", register_name(e -> left -> reg), register_arg_names[count++]);
 
