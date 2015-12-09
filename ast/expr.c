@@ -1210,7 +1210,7 @@ void expr_comp_codegen(struct expr *e, FILE *f, int which) {
 
   expr_assembly_op_comment(e, f, comp_type);
 
-  fprintf(f, "\tCMP %s, %s\n", register_name(e -> left -> reg), register_name(e -> right -> reg));
+  fprintf(f, "\tCMP %s, %s\n", register_name(e -> right -> reg), register_name(e -> left -> reg));
   // jump to boolean result of true
   fprintf(f, "\t%s L%d\n", op, tr);
 
