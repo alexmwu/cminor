@@ -348,6 +348,35 @@ void stmt_typecheck(struct stmt *s, struct type *ret, int *returned) {
   stmt_typecheck(s -> next, ret, returned);
 }
 
+void stmt_call_print(struct expr *curr, FILE *f) {
+  switch(curr -> print_type) {
+    case 0:
+      fprintf(stderr, "Expr ");
+      expr_fprint(stderr, curr);
+      fprintf(stderr, " has bad print_type (%d)\n", curr -> print_type);
+      exit(1);
+      break;
+    case 1:
+      expr_func_codegen(curr, "print_boolean", f);
+      break;
+    case 2:
+      expr_func_codegen(curr, "print_character", f);
+      break;
+    case 3:
+      expr_func_codegen(curr, "print_integer", f);
+      break;
+    case 4:
+      expr_func_codegen(curr, "print_string", f);
+      break;
+    default:
+      fprintf(stderr, "Expr ");
+      expr_fprint(stderr, curr);
+      fprintf(stderr, " has bad print_type (%d)\n", curr -> print_type);
+      exit(1);
+      break;
+  }
+}
+
 void stmt_codegen(struct stmt *s, FILE *f) {
   if(!s) return;
   switch(s -> kind) {
@@ -379,32 +408,8 @@ void stmt_codegen(struct stmt *s, FILE *f) {
 
         fprintf(f, "\tMOVQ %s, %s\n", register_name(curr -> reg), register_arg_names[count++]);
 
-        switch(curr -> print_type) {
-          case 0:
-            fprintf(stderr, "Expr ");
-            expr_fprint(stderr, curr);
-            fprintf(stderr, " has bad print_type (%d)\n", curr -> print_type);
-            exit(1);
-            break;
-          case 1:
-            expr_func_codegen(curr, "print_boolean", f);
-            break;
-          case 2:
-            expr_func_codegen(curr, "print_character", f);
-            break;
-          case 3:
-            expr_func_codegen(curr, "print_integer", f);
-            break;
-          case 4:
-            expr_func_codegen(curr, "print_string", f);
-            break;
-          default:
-            fprintf(stderr, "Expr ");
-            expr_fprint(stderr, curr);
-            fprintf(stderr, " has bad print_type (%d)\n", curr -> print_type);
-            exit(1);
-            break;
-        }
+        stmt_call_print(curr, f);
+
         register_free(curr -> reg);
         curr = curr -> next;
       }
