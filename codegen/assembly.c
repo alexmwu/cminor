@@ -34,7 +34,7 @@ char *assembly_string_out(char *s) {
   char *ptr = s;
   // pointer into retStr
   int i = 0;
-  while(ptr) {
+  while(*ptr) {
     if(*ptr == '"') {
       retStr[i++] = '\\';
       retStr[i++] = '"';
