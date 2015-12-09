@@ -1513,6 +1513,7 @@ void expr_codegen(struct expr *e, FILE *f) {
         }
         // global strings
         else {
+          e -> right -> reg = register_alloc();
           expr_load_global_string(e -> right, f);
           e -> reg = e -> right -> reg;
         }
@@ -1612,9 +1613,9 @@ void expr_codegen(struct expr *e, FILE *f) {
     case EXPR_IDENT:
       // make sure that it is not
       if(e -> symbol -> type -> kind == TYPE_STRING) {
+        e -> reg = register_alloc();
         // globals don't use str_num
         if(e -> symbol -> kind != SYMBOL_GLOBAL) {
-          e -> reg = register_alloc();
           int str_num = e -> symbol -> orig_decl -> value -> str_num;
           if(ASSEMBLY_COMMENT_FLAG) {
             // the str_num is stored in the original decl
