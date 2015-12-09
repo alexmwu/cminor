@@ -1319,7 +1319,7 @@ void expr_codegen(struct expr *e, FILE *f) {
     case EXPR_EQEQ:
       // check that left is str lit or that it
       // is an ident of type str (already typechecked)
-      if(e -> left -> kind == EXPR_STRLIT || e -> left -> symbol -> type -> kind == TYPE_STRING) {
+      if(e -> left -> kind == EXPR_STRLIT || (e -> left -> symbol && e -> left -> symbol -> type -> kind == TYPE_STRING)) {
         expr_comp_string_codegen(e, f);
 
         int tr = assembly_jump_label++;
