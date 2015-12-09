@@ -1099,11 +1099,11 @@ void expr_div_codegen(struct expr *e, FILE *f, int which) {
   const char *op, *reg;
   if(which == 0) {
     op = "DIV";
-    reg = "%%rax";
+    reg = "%rax";
   }
   else if(which == 1) {
     op = "MOD";
-    reg = "%%rdx";
+    reg = "%rdx";
   }
   else {
     fprintf(stderr, "Error in calling function expr_div_codegen (must be of expr type DIV or MOD\n");
@@ -1118,7 +1118,7 @@ void expr_div_codegen(struct expr *e, FILE *f, int which) {
   int tmpReg = register_alloc();
   fprintf(f, "\tMOVQ %%rdx, %s\n", register_name(tmpReg));
   fprintf(f, "\tMOVQ %s, %%rax\n", register_name(e -> left -> reg));
-  fprintf(f, "\tCDQO\n");
+  fprintf(f, "\tCQO\n");
   fprintf(f, "\tIDIVQ %s\n", register_name(e -> right -> reg));
   fprintf(f, "\tMOVQ %s, %s\n", reg, register_name(e -> right -> reg));
   fprintf(f, "\tMOVQ %s, %%rdx\n", register_name(tmpReg));
