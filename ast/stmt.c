@@ -285,7 +285,6 @@ void stmt_typecheck(struct stmt *s, struct type *ret, int *returned) {
           fprintf(stderr, ")\n");
           type_error_count++;
         }
-        type_delete(expr);
         switch(expr -> kind) {
           case TYPE_BOOLEAN:
             curr -> print_type = 1;
@@ -320,6 +319,7 @@ void stmt_typecheck(struct stmt *s, struct type *ret, int *returned) {
             exit(1);
             break;
         }
+        type_delete(expr);
         curr = curr -> next;
       }
       break;
