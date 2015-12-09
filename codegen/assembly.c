@@ -54,6 +54,7 @@ char *assembly_string_out(char *s) {
     else {
       retStr[i++] = *ptr;
     }
+    ptr++;
   }
   retStr[i] = '\0';
   // exceed bounds of malloc
