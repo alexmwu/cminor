@@ -1251,6 +1251,25 @@ void expr_comp_string_codegen(struct expr *e, FILE *f) {
   expr_func_codegen(e, "strcmp", f);
 }
 
+void expr_load_global_string(struct expr *e, FILE *f) {
+  char *val = symbol_code(e -> symbol);
+  if(ASSEMBLY_COMMENT_FLAG) {
+    // the str_num is stored in the original decl
+    fprintf(f, "\t# move %s into register\n", val);
+  }
+#ifdef __linux__
+  // put the string in reg
+  fprintf(f, "\tLEA %s, %s\n", val, register_name(e -> reg));
+#elif __APPLE__
+  // on OSX, a load of 64-bit data addr results
+  // in an invalid inst error (instead, specify
+  // an addr relative to current instr ptr)
+  fprintf(f, "\tLEA %s(%%rip), %s\n", val, register_name(e -> reg));
+#else
+  fprintf(f, "\tLEA %s, %s\n", val, register_name(e -> reg));
+#endif
+}
+
 void expr_codegen(struct expr *e, FILE *f) {
   if(!e) return;
   char *val;
@@ -1471,11 +1490,39 @@ void expr_codegen(struct expr *e, FILE *f) {
         fprintf(stderr, "CODEGEN_ERROR: cminor does not have an array implementation\n");
         exit(1);
       }
-      expr_codegen(e -> right, f);
-      expr_assembly_op_comment(e, f, "assign");
-      fprintf(f, "\tMOVQ %s, %s\n", register_name(e -> right -> reg), symbol_code(e -> left -> symbol));
-      register_free(e -> right -> reg);
-      e -> reg = e -> left -> reg;
+      else if(e -> left -> symbol -> type -> kind == TYPE_STRING) {
+        // globals don't use str_num
+        if(e -> left -> symbol -> kind != SYMBOL_GLOBAL) {
+          e -> reg = register_alloc();
+          int str_num = e -> symbol -> orig_decl -> value -> str_num;
+          if(ASSEMBLY_COMMENT_FLAG) {
+            // the str_num is stored in the original decl
+            fprintf(f, "\t# move STR%d into register\n", str_num);
+          }
+#ifdef __linux__
+          // put the string in reg
+          fprintf(f, "\tLEA STR%d, %s\n", str_num, register_name(e -> reg));
+#elif __APPLE__
+          // on OSX, a load of 64-bit data addr results
+          // in an invalid inst error (instead, specify
+          // an addr relative to current instr ptr)
+          fprintf(f, "\tLEA STR%d(%%rip), %s\n", str_num, register_name(e -> reg));
+#else
+          fprintf(f, "\tLEA STR%d, %s\n", str_num, register_name(e -> reg));
+#endif
+        }
+        // global strings
+        else {
+          expr_load_global_string(e, f);
+        }
+      }
+      else {
+        expr_codegen(e -> right, f);
+        expr_assembly_op_comment(e, f, "assign");
+        fprintf(f, "\tMOVQ %s, %s\n", register_name(e -> right -> reg), symbol_code(e -> left -> symbol));
+        register_free(e -> right -> reg);
+        e -> reg = e -> left -> reg;
+      }
       break;
     case EXPR_ARREQ:
       fprintf(stderr, "CODEGEN_ERROR: cminor does not have an array implementation\n");
@@ -1586,22 +1633,7 @@ void expr_codegen(struct expr *e, FILE *f) {
         }
         // global strings
         else {
-          if(ASSEMBLY_COMMENT_FLAG) {
-            // the str_num is stored in the original decl
-            val = symbol_code(e -> symbol);
-            fprintf(f, "\t# move %s into register\n", val);
-          }
-#ifdef __linux__
-          // put the string in reg
-          fprintf(f, "\tLEA %s, %s\n", val, register_name(e -> reg));
-#elif __APPLE__
-          // on OSX, a load of 64-bit data addr results
-          // in an invalid inst error (instead, specify
-          // an addr relative to current instr ptr)
-          fprintf(f, "\tLEA %s(%%rip), %s\n", val, register_name(e -> reg));
-#else
-          fprintf(f, "\tLEA %s, %s\n", val, register_name(e -> reg));
-#endif
+          expr_load_global_string(e, f);
         }
       }
       else {
