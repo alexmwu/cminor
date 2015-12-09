@@ -1543,7 +1543,7 @@ void expr_codegen(struct expr *e, FILE *f) {
       }
 #ifdef __linux__
       // put the string in reg
-      fprintf(f, "\tLEAQ STR%d\n, %s", e -> str_num, register_name(e -> reg));
+      fprintf(f, "\tLEAQ STR%d, %s\n", e -> str_num, register_name(e -> reg));
 #elif __APPLE__
       // on OSX, a load of 64-bit data addr results
       // in an invalid inst error (instead, specify
