@@ -1259,7 +1259,14 @@ void expr_codegen(struct expr *e, FILE *f) {
       expr_add_codegen(e, f, 0);
       break;
     case EXPR_MIN:
-      expr_add_codegen(e, f, 1);
+      // unary minus
+      if(!e -> left) {
+        expr_codegen(e -> right, f);
+        fprintf(f, "\tNEG %s\n", register_name(e -> reg));
+      }
+      else {
+        expr_add_codegen(e, f, 1);
+      }
       break;
     case EXPR_MUL:
       expr_codegen(e -> left, f);

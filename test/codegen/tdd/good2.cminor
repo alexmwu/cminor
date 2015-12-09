@@ -11,4 +11,5 @@ main: function integer () = {
   print "2 = ", 12 % 5, '\n';
   print "-1 = ", -1, '\n';
   print "8 = ", 2 ^ 3, '\n';
+  return 0;
 }
