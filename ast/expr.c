@@ -1252,6 +1252,7 @@ void expr_comp_string_codegen(struct expr *e, FILE *f) {
 }
 
 void expr_load_global_string(struct expr *e, FILE *f) {
+  e -> reg = register_alloc();
   char *val = symbol_code(e -> symbol);
   if(ASSEMBLY_COMMENT_FLAG) {
     // the str_num is stored in the original decl
@@ -1513,7 +1514,6 @@ void expr_codegen(struct expr *e, FILE *f) {
         }
         // global strings
         else {
-          e -> right -> reg = register_alloc();
           expr_load_global_string(e -> right, f);
           e -> reg = e -> right -> reg;
         }
