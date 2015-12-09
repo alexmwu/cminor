@@ -1473,7 +1473,7 @@ void expr_codegen(struct expr *e, FILE *f) {
       }
       expr_codegen(e -> right, f);
       expr_assembly_op_comment(e, f, "assign");
-      fprintf(f, "\tMOV %s, %s", register_name(e -> right -> reg), symbol_code(e -> left -> symbol));
+      fprintf(f, "\tMOVQ %s, %s\n", register_name(e -> right -> reg), symbol_code(e -> left -> symbol));
       register_free(e -> right -> reg);
       e -> reg = e -> left -> reg;
       break;
@@ -1562,6 +1562,7 @@ void expr_codegen(struct expr *e, FILE *f) {
 #endif
       break;
     case EXPR_IDENT:
+      // make sure that it is not
       if(e -> symbol -> kind != SYMBOL_GLOBAL && e -> symbol -> type -> kind == TYPE_STRING) {
         e -> reg = register_alloc();
         int str_num = e -> symbol -> orig_decl -> value -> str_num;

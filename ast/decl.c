@@ -335,8 +335,8 @@ void decl_codegen(struct decl *d, FILE *f, symbol_t kind) {
 #else
     fprintf(f, ".globl %s\n", d -> name -> name);
 #endif
-    /*fprintf(f, ".text\n");*/
     if(d -> value) {
+      fprintf(f, ".data\n");
 #ifdef __linux__
       fprintf(f, "%s:\n", d -> name -> name);
 #elif __APPLE__
@@ -345,7 +345,6 @@ void decl_codegen(struct decl *d, FILE *f, symbol_t kind) {
       fprintf(f, "%s:\n", d -> name -> name);
 #endif
       // should have already been typechecked
-      /*fprintf(f, ".data\n");*/
       if(d -> value -> kind == EXPR_TRUE) {
         fprintf(f, "\t.quad 1\n");
       }
@@ -363,7 +362,7 @@ void decl_codegen(struct decl *d, FILE *f, symbol_t kind) {
         fprintf(f, "\t.string \"%s\"\n", val);
         free(val);
       }
-        /*fprintf(f, ".text\n");*/
+        fprintf(f, ".text\n");
     }
     expr_codegen(d -> value, f);
   }
