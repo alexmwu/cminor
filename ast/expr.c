@@ -1443,7 +1443,7 @@ void expr_codegen(struct expr *e, FILE *f) {
 
       assembly_comment(f, "\t# false label\n");
       fprintf(f, "L%d:\n", fal);
-      fprintf(f, "\tMOVQ $1, %s\n", register_name(e -> right -> reg));
+      fprintf(f, "\tMOVQ $0, %s\n", register_name(e -> right -> reg));
 
       assembly_comment(f, "\t# done label\n");
       fprintf(f, "L%d:\n", done);
