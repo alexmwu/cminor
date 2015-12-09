@@ -1089,9 +1089,9 @@ void expr_add_codegen(struct expr *e, FILE *f, int which) {
   expr_codegen(e -> right, f);
 
   expr_assembly_op_comment(e, f, op);
-  fprintf(f, "\t%s %s, %s\n", op, register_name(e -> left -> reg), register_name(e -> right -> reg));
-  e -> reg = e -> right -> reg;
-  register_free(e -> left -> reg);
+  fprintf(f, "\t%s %s, %s\n", op, register_name(e -> right -> reg), register_name(e -> left -> reg));
+  e -> reg = e -> left -> reg;
+  register_free(e -> right -> reg);
 }
 
 // divide and modulo
