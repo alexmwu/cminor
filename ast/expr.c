@@ -1474,7 +1474,8 @@ void expr_codegen(struct expr *e, FILE *f) {
       expr_codegen(e -> right, f);
       expr_assembly_op_comment(e, f, "assign");
       fprintf(f, "\tMOV %s, %s", register_name(e -> right -> reg), symbol_code(e -> left -> symbol));
-      e -> reg = e -> right -> reg;
+      register_free(e -> right -> reg);
+      e -> reg = e -> left -> reg;
       break;
     case EXPR_ARREQ:
       fprintf(stderr, "CODEGEN_ERROR: cminor does not have an array implementation\n");
@@ -1561,7 +1562,7 @@ void expr_codegen(struct expr *e, FILE *f) {
 #endif
       break;
     case EXPR_IDENT:
-      if(e -> symbol -> type -> kind == TYPE_STRING) {
+      if(e -> symbol -> kind != SYMBOL_GLOBAL && e -> symbol -> type -> kind == TYPE_STRING) {
         e -> reg = register_alloc();
         int str_num = e -> symbol -> orig_decl -> value -> str_num;
         if(ASSEMBLY_COMMENT_FLAG) {

@@ -19,7 +19,7 @@ main: function integer () = {
   print "15 true c abcde\n";
   print "actual:\n";
   print a, ' ', b, ' ', c, ' ', s, '\n';
-
+  a = a_;
   a_ = a;
   b_ = b;
   c_ = c;
