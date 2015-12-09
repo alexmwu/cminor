@@ -4,7 +4,6 @@
 #define REGISTER_NUM 7
 
 static const char *register_name_string[REGISTER_NUM] = {"%rbx", "%r10", "%r11", "%r12", "%r13", "%r14", "%r15"};
-static int register_is_free[REGISTER_NUM] = {1, 1, 1, 1, 1, 1, 1};
 
 #define REGISTER_NUM_ARG 6
 

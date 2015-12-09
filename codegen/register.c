@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+int register_is_free[REGISTER_NUM] = {1, 1, 1, 1, 1, 1, 1};
+
 const char *register_name(int r) {
   return register_name_string[r];
 }
