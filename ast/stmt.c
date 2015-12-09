@@ -358,15 +358,19 @@ void stmt_call_print(struct expr *curr, FILE *f) {
       break;
     case 1:
       expr_func_codegen(curr, "print_boolean", f);
+      register_free(curr -> reg);
       break;
     case 2:
       expr_func_codegen(curr, "print_character", f);
+      register_free(curr -> reg);
       break;
     case 3:
       expr_func_codegen(curr, "print_integer", f);
+      register_free(curr -> reg);
       break;
     case 4:
       expr_func_codegen(curr, "print_string", f);
+      register_free(curr -> reg);
       break;
     default:
       fprintf(stderr, "Expr ");
@@ -408,9 +412,11 @@ void stmt_codegen(struct stmt *s, FILE *f) {
 
         fprintf(f, "\tMOVQ %s, %s\n", register_name(curr -> reg), register_arg_names[count++]);
 
+        register_free(curr -> reg);
+        // calls func_codegen which save ret val in reg
+        // so need to free reg beforehand
         stmt_call_print(curr, f);
 
-        register_free(curr -> reg);
         curr = curr -> next;
       }
       break;
