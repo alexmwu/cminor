@@ -1563,24 +1563,46 @@ void expr_codegen(struct expr *e, FILE *f) {
       break;
     case EXPR_IDENT:
       // make sure that it is not
-      if(e -> symbol -> kind != SYMBOL_GLOBAL && e -> symbol -> type -> kind == TYPE_STRING) {
-        e -> reg = register_alloc();
-        int str_num = e -> symbol -> orig_decl -> value -> str_num;
-        if(ASSEMBLY_COMMENT_FLAG) {
-          // the str_num is stored in the original decl
-          fprintf(f, "\t# move STR%d into register\n", str_num);
-        }
+      if(e -> symbol -> type -> kind == TYPE_STRING) {
+        // globals don't use str_num
+        if(e -> symbol -> kind != SYMBOL_GLOBAL) {
+          e -> reg = register_alloc();
+          int str_num = e -> symbol -> orig_decl -> value -> str_num;
+          if(ASSEMBLY_COMMENT_FLAG) {
+            // the str_num is stored in the original decl
+            fprintf(f, "\t# move STR%d into register\n", str_num);
+          }
 #ifdef __linux__
-        // put the string in reg
-        fprintf(f, "\tLEA STR%d, %s\n", str_num, register_name(e -> reg));
+          // put the string in reg
+          fprintf(f, "\tLEA STR%d, %s\n", str_num, register_name(e -> reg));
 #elif __APPLE__
-        // on OSX, a load of 64-bit data addr results
-        // in an invalid inst error (instead, specify
-        // an addr relative to current instr ptr)
-        fprintf(f, "\tLEA STR%d(%%rip), %s\n", str_num, register_name(e -> reg));
+          // on OSX, a load of 64-bit data addr results
+          // in an invalid inst error (instead, specify
+          // an addr relative to current instr ptr)
+          fprintf(f, "\tLEA STR%d(%%rip), %s\n", str_num, register_name(e -> reg));
 #else
-        fprintf(f, "\tLEA STR%d, %s\n", str_num, register_name(e -> reg));
+          fprintf(f, "\tLEA STR%d, %s\n", str_num, register_name(e -> reg));
 #endif
+        }
+        // global strings
+        else {
+          if(ASSEMBLY_COMMENT_FLAG) {
+            // the str_num is stored in the original decl
+            val = symbol_code(e -> symbol);
+            fprintf(f, "\t# move %s into register\n", val);
+          }
+#ifdef __linux__
+          // put the string in reg
+          fprintf(f, "\tLEA %s, %s\n", val, register_name(e -> reg));
+#elif __APPLE__
+          // on OSX, a load of 64-bit data addr results
+          // in an invalid inst error (instead, specify
+          // an addr relative to current instr ptr)
+          fprintf(f, "\tLEA %s(%%rip), %s\n", val, register_name(e -> reg));
+#else
+          fprintf(f, "\tLEA %s, %s\n", val, register_name(e -> reg));
+#endif
+        }
       }
       else {
         e -> reg = register_alloc();
