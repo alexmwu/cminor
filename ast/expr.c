@@ -1143,7 +1143,7 @@ void expr_post_codegen(struct expr *e, FILE *f, int which) {
   expr_codegen(e -> left, f);
   // has already been done typechecked but still call it to see
   // if any errors occur
-  expr_codegen(e -> right, f);
+  /*expr_codegen(e -> right, f);*/
   expr_assembly_op_comment(e, f, op);
   fprintf(f, "\tMOVQ %s, %%rax\n", register_name(e -> left -> reg));
   fprintf(f, "\t%s %%rax\n", op);
