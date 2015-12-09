@@ -1526,7 +1526,7 @@ void expr_codegen(struct expr *e, FILE *f) {
           fprintf(f, "\t# move STR%d into register\n", str_num);
         }
         // put the string in reg
-        fprintf(f, "\tLEA STR%d, %s\n", str_num, register_name(e -> reg));
+        fprintf(f, "\tMOV STR%d, %s\n", str_num, register_name(e -> reg));
       }
       else {
         e -> reg = register_alloc();
