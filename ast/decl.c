@@ -327,63 +327,57 @@ void decl_codegen(struct decl *d, FILE *f, symbol_t kind) {
     stmt_codegen(d -> code, f);
   }
   else if(kind == SYMBOL_GLOBAL) {
-    fprintf(f, ".data\n");
+    /*fprintf(f, ".data\n");*/
 #ifdef __linux__
     fprintf(f, ".globl %s\n", d -> name -> name);
-    fprintf(f, "%s:\n", d -> name -> name);
 #elif __APPLE__
     fprintf(f, ".globl _%s\n", d -> name -> name);
-    fprintf(f, "_%s:\n", d -> name -> name);
 #else
     fprintf(f, ".globl %s\n", d -> name -> name);
-    fprintf(f, "%s:\n", d -> name -> name);
 #endif
-    fprintf(f, ".text\n");
+    /*fprintf(f, ".text\n");*/
     if(d -> value) {
-      if(d -> value -> kind == EXPR_STRLIT && d -> symbol -> kind != SYMBOL_GLOBAL) {
-        fprintf(f, ".data\n");
-        d -> value -> str_num = expr_num_str++;
-        fprintf(f, "STR%d:\n", d -> value -> str_num);
-        char *val = assembly_string_out((char *) d -> value -> string_literal);
-        fprintf(f, "\t.string \"%s\"\n", val);
-        free(val);
-        fprintf(f, ".text\n");
-      }
-      // otherwise print .globl
-      else {
-        // should have already been typechecked
-        fprintf(f, ".data\n");
 #ifdef __linux__
-        fprintf(f, ".globl %s\n", d -> name -> name);
+      fprintf(f, "%s:\n", d -> name -> name);
 #elif __APPLE__
-        fprintf(f, ".globl _%s\n", d -> name -> name);
+      fprintf(f, "_%s:\n", d -> name -> name);
 #else
-        fprintf(f, ".globl %s\n", d -> name -> name);
+      fprintf(f, "%s:\n", d -> name -> name);
 #endif
-        if(d -> value -> kind == EXPR_TRUE) {
-          fprintf(f, "\t.quad 1\n");
-        }
-        else if(d -> value -> kind == EXPR_FALSE) {
-          fprintf(f, "\t.quad 0\n");
-        }
-        else if(d -> value -> kind == EXPR_INTLIT) {
-          fprintf(f, "\t.quad %d\n", d -> value -> literal_value);
-        }
-        else if(d -> value -> kind == EXPR_CHARLIT) {
-          fprintf(f, "\t.quad %d\n", d -> value -> char_literal);
-        }
-        else if(d -> value -> kind == EXPR_STRLIT) {
+      // should have already been typechecked
+      /*fprintf(f, ".data\n");*/
+      if(d -> value -> kind == EXPR_TRUE) {
+        fprintf(f, "\t.quad 1\n");
+      }
+      else if(d -> value -> kind == EXPR_FALSE) {
+        fprintf(f, "\t.quad 0\n");
+      }
+      else if(d -> value -> kind == EXPR_INTLIT) {
+        fprintf(f, "\t.quad %d\n", d -> value -> literal_value);
+      }
+      else if(d -> value -> kind == EXPR_CHARLIT) {
+        fprintf(f, "\t.quad %d\n", d -> value -> char_literal);
+      }
+      else if(d -> value -> kind == EXPR_STRLIT) {
         char *val = assembly_string_out((char *) d -> value -> string_literal);
         fprintf(f, "\t.string \"%s\"\n", val);
         free(val);
-        }
-        fprintf(f, ".text\n");
       }
+        /*fprintf(f, ".text\n");*/
     }
     expr_codegen(d -> value, f);
   }
   // else it is another declaration of type local
   else {
+    if(d -> value -> kind == EXPR_STRLIT) {
+      fprintf(f, ".data\n");
+      d -> value -> str_num = expr_num_str++;
+      fprintf(f, "STR%d:\n", d -> value -> str_num);
+      char *val = assembly_string_out((char *) d -> value -> string_literal);
+      fprintf(f, "\t.string \"%s\"\n", val);
+      free(val);
+      fprintf(f, ".text\n");
+    }
   }
   decl_codegen(d -> next, f, kind);
 }
