@@ -335,15 +335,15 @@ void decl_codegen(struct decl *d, FILE *f, symbol_t kind) {
 #else
     fprintf(f, ".globl %s\n", d -> name -> name);
 #endif
-    if(d -> value) {
-      fprintf(f, ".data\n");
+    fprintf(f, ".data\n");
 #ifdef __linux__
-      fprintf(f, "%s:\n", d -> name -> name);
+    fprintf(f, "%s:\n", d -> name -> name);
 #elif __APPLE__
-      fprintf(f, "_%s:\n", d -> name -> name);
+    fprintf(f, "_%s:\n", d -> name -> name);
 #else
-      fprintf(f, "%s:\n", d -> name -> name);
+    fprintf(f, "%s:\n", d -> name -> name);
 #endif
+    if(d -> value) {
       // should have already been typechecked
       if(d -> value -> kind == EXPR_TRUE) {
         fprintf(f, "\t.quad 1\n");
@@ -362,9 +362,23 @@ void decl_codegen(struct decl *d, FILE *f, symbol_t kind) {
         fprintf(f, "\t.string \"%s\"\n", val);
         free(val);
       }
-        fprintf(f, ".text\n");
+      /*expr_codegen(d -> value, f);*/
     }
-    expr_codegen(d -> value, f);
+    else {
+      if(d -> type -> kind == TYPE_BOOLEAN) {
+        fprintf(f, "\t.quad 0\n");
+      }
+      else if(d -> type -> kind == TYPE_INTEGER) {
+        fprintf(f, "\t.quad 0\n");
+      }
+      else if(d -> type -> kind == TYPE_CHARACTER) {
+        fprintf(f, "\t.quad ' '\n");
+      }
+      else if(d -> type -> kind == TYPE_STRING) {
+        fprintf(f, "\t.string ""\n");
+      }
+    }
+    fprintf(f, ".text\n");
   }
   // else it is another declaration of type local
   else {
