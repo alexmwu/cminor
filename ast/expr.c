@@ -1502,20 +1502,20 @@ void expr_codegen(struct expr *e, FILE *f) {
           }
 #ifdef __linux__
           // put the string in reg
-          fprintf(f, "\tLEA STR%d, %s\n", str_num, register_name(e -> reg));
+          fprintf(f, "\tLEA STR%d, %s\n", str_num, symbol_code(e -> symbol));
 #elif __APPLE__
           // on OSX, a load of 64-bit data addr results
           // in an invalid inst error (instead, specify
           // an addr relative to current instr ptr)
-          fprintf(f, "\tLEA STR%d(%%rip), %s\n", str_num, register_name(e -> reg));
+          fprintf(f, "\tLEA STR%d(%%rip), %s\n", str_num, symbol_code(e -> symbol));
 #else
-          fprintf(f, "\tLEA STR%d, %s\n", str_num, register_name(e -> reg));
+          fprintf(f, "\tLEA STR%d, %s\n", str_num, symbol_code(e -> symbol));
 #endif
         }
         // global strings
         else {
           expr_load_global_string(e -> right, f);
-          e -> reg = e -> right -> reg;
+          fprintf(f, "\tLEA %s, %s\n", register_name(e -> right -> reg), symbol_code(e -> symbol));
         }
       }
       else {
