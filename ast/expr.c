@@ -1347,7 +1347,34 @@ void expr_codegen(struct expr *e, FILE *f) {
       }
       break;
     case EXPR_NE:
+      // check that left is str lit or that it
+      // is an ident of type str (already typechecked)
+      if(e -> left -> kind == EXPR_STRLIT || (e -> left -> symbol && e -> left -> symbol -> type -> kind == TYPE_STRING)) {
+        expr_comp_string_codegen(e, f);
 
+        int tr = assembly_jump_label++;
+        int done = assembly_jump_label++;
+
+        assembly_comment(f, "\t# compare result of strcmp to 0 (-1/1 mean str 1 is lexicographically lt/gt str 2)\n");
+        fprintf(f, "\tCMP $0, %s\n", register_name(e -> reg));
+        // jump to boolean result of true
+        fprintf(f, "\tJNE L%d\n", tr);
+
+        // boolean false
+        fprintf(f, "\tMOVQ $0, %s\n", register_name(e -> reg));
+        assembly_comment(f, "\t# jump to done label (don't evaluate set to true)\n");
+        fprintf(f, "\tJMP L%d\n", done);
+
+        assembly_comment(f, "\t# true label\n"); fprintf(f, "L%d:\n", tr);
+        fprintf(f, "\tMOVQ $1, %s\n", register_name(e -> reg));
+
+        assembly_comment(f, "\t# done label\n");
+        fprintf(f, "L%d:\n", done);
+      }
+      // other equality checks
+      else {
+        expr_comp_codegen(e, f, 5);
+      }
       break;
     case EXPR_AND: {
       expr_codegen(e -> left, f);
