@@ -1509,14 +1509,14 @@ void expr_codegen(struct expr *e, FILE *f) {
       }
 #ifdef __linux__
       // put the string in reg
-      fprintf(f, "\tLEA STR%d, %s", e -> str_num, register_name(e -> reg));
+      fprintf(f, "\tLEA STR%d\n, %s", e -> str_num, register_name(e -> reg));
 #elif __APPLE__
       // on OSX, a load of 64-bit data addr results
       // in an invalid inst error (instead, specify
       // an addr relative to current instr ptr)
-      fprintf(f, "\tLEA STR%d(%%rip), %s", e -> str_num, register_name(e -> reg));
+      fprintf(f, "\tLEA STR%d(%%rip), %s\n", e -> str_num, register_name(e -> reg));
 #else
-      fprintf(f, "\tLEA STR%d, %s", e -> str_num, register_name(e -> reg));
+      fprintf(f, "\tLEA STR%d, %s\n", e -> str_num, register_name(e -> reg));
 #endif
       break;
     case EXPR_IDENT:
@@ -1529,14 +1529,14 @@ void expr_codegen(struct expr *e, FILE *f) {
         }
 #ifdef __linux__
         // put the string in reg
-        fprintf(f, "\tLEA STR%d, %s", str_num, register_name(e -> reg));
+        fprintf(f, "\tLEA STR%d, %s\n", str_num, register_name(e -> reg));
 #elif __APPLE__
         // on OSX, a load of 64-bit data addr results
         // in an invalid inst error (instead, specify
         // an addr relative to current instr ptr)
-        fprintf(f, "\tLEA STR%d(%%rip), %s", str_num, register_name(e -> reg));
+        fprintf(f, "\tLEA STR%d(%%rip), %s\n", str_num, register_name(e -> reg));
 #else
-        fprintf(f, "\tLEA STR%d, %s", str_num, register_name(e -> reg));
+        fprintf(f, "\tLEA STR%d, %s\n", str_num, register_name(e -> reg));
 #endif
       }
       else {

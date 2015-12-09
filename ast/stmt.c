@@ -405,6 +405,7 @@ void stmt_codegen(struct stmt *s, FILE *f) {
             exit(1);
             break;
         }
+        register_free(curr -> reg);
         curr = curr -> next;
       }
       break;
