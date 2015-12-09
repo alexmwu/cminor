@@ -375,7 +375,7 @@ void decl_codegen(struct decl *d, FILE *f, symbol_t kind) {
         fprintf(f, "\t.quad ' '\n");
       }
       else if(d -> type -> kind == TYPE_STRING) {
-        fprintf(f, "\t.string ""\n");
+        fprintf(f, "\t.string \"\"\n");
       }
     }
     fprintf(f, ".text\n");
