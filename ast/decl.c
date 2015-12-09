@@ -1,5 +1,5 @@
 #include "decl.h"
-/*#include "../codegen/register.h"*/
+#include "../codegen/register.h"
 #include "../codegen/assembly.h"
 #include <stdlib.h>
 
@@ -305,7 +305,18 @@ void decl_codegen(struct decl *d, FILE *f, symbol_t kind) {
       fprintf(f, "\n\t # allocate %d local variables\n", d -> num_locals);
     }
     // allocate a byte per local (8)
+#ifdef __linux__
     fprintf(f, "\tSUBQ $%d, %%rsp\n", d -> num_locals * 8);
+#elif __APPLE__
+    // num params, locals, and callee-saved regs
+    int num_stack_vars = d -> num_params + d -> num_locals + REGISTER_NUM_CALLEE_SAVED;
+    // add an unused local if the num is odd
+    // (keep stack aligned on 16 byte boundary)
+    int num_locals = (num_stack_vars % 2 == 0) ? d -> num_locals : (d -> num_locals + 1);
+    fprintf(f, "\tSUBQ $%d, %%rsp\n", num_locals * 8);
+#else
+    fprintf(f, "\tSUBQ $%d, %%rsp\n", d -> num_locals * 8);
+#endif
     assembly_comment(f, "\n\t# save callee-saved registers\n");
     fprintf(f, "\tPUSHQ %%rbx\n");
     fprintf(f, "\tPUSHQ %%r12\n");
