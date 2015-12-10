@@ -1517,6 +1517,7 @@ void expr_codegen(struct expr *e, FILE *f) {
           fprintf(f, "\tMOVQ %s, %s\n", rval, register_name(e -> reg));
           fprintf(f, "\tMOVQ %s, %s\n", register_name(e -> reg), val);
           free(val);
+          free(rval);
         }
       }
       else {
