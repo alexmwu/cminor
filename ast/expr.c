@@ -1524,8 +1524,8 @@ void expr_codegen(struct expr *e, FILE *f) {
           expr_load_global_string(e -> right, f);
           val = symbol_code(e -> left -> symbol);
           fprintf(f, "\tMOVQ %s, %s\n", register_name(e -> right -> reg), val);
+          free(val);
           e -> reg = e -> right -> reg;
-          register_free(e -> right -> reg);
         }
       }
       else {
