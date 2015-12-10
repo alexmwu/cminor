@@ -1511,11 +1511,15 @@ void expr_codegen(struct expr *e, FILE *f) {
 #else
           fprintf(f, "\tLEAQ STR%d, %s\n", str_num, symbol_code(e -> symbol));
 #endif
+          // return val of assignment is rvalue
+          e -> reg = register_alloc();
+          fprintf(f, "\tMOVQ %s, %s\n", symbol_code(e -> left -> symbol), register_name(e -> reg));
         }
         // global strings
         else {
           expr_load_global_string(e -> right, f);
-          fprintf(f, "\tMOVQ %s, %s\n", register_name(e -> right -> reg), symbol_code(e -> left -> symbol));
+          e -> reg = register_alloc();
+          fprintf(f, "\tMOVQ %s, %s\n", register_name(e -> right -> reg), register_name(e -> reg));
           register_free(e -> right -> reg);
         }
       }
@@ -1523,8 +1527,8 @@ void expr_codegen(struct expr *e, FILE *f) {
         expr_codegen(e -> right, f);
         expr_assembly_op_comment(e, f, "assign");
         fprintf(f, "\tMOVQ %s, %s\n", register_name(e -> right -> reg), symbol_code(e -> left -> symbol));
-        register_free(e -> right -> reg);
-        e -> reg = e -> left -> reg;
+        // return val of assignment is rvalue
+        e -> reg = e -> right -> reg;
       }
       break;
     case EXPR_ARREQ:
