@@ -1610,6 +1610,7 @@ void expr_codegen(struct expr *e, FILE *f) {
       if(ASSEMBLY_COMMENT_FLAG) {
         fprintf(f, "\t# move STR%d into register\n", e -> str_num);
       }
+#ifdef __linux__
       // put the string in reg
       fprintf(f, "\tLEAQ STR%d, %s\n", e -> str_num, register_name(e -> reg));
 #elif __APPLE__
