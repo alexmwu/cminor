@@ -1253,7 +1253,7 @@ void expr_comp_string_codegen(struct expr *e, FILE *f) {
 
 void expr_load_global_string(struct expr *e, FILE *f) {
   e -> reg = register_alloc();
-  char *val = symbol_code(e -> symbol);
+  char *val;
   if(ASSEMBLY_COMMENT_FLAG) {
     // the str_num is stored in the original decl
     fprintf(f, "\t# move %s into register\n", val);
@@ -1500,20 +1500,23 @@ void expr_codegen(struct expr *e, FILE *f) {
             // the str_num is stored in the original decl
             fprintf(f, "\t# move STR%d into register\n", str_num);
           }
+          val = symbol_code(e -> symbol);
+          // return val of assignment is rvalue
 #ifdef __linux__
           // put the string in reg
-          fprintf(f, "\tLEAQ STR%d, %s\n", str_num, symbol_code(e -> symbol));
+          fprintf(f, "\tLEAQ STR%d, %s\n", str_num, val);
+          fprintf(f, "\tMOVQ STR%d, %s\n", str_num, register_name(e -> reg));
 #elif __APPLE__
           // on OSX, a load of 64-bit data addr results
           // in an invalid inst error (instead, specify
           // an addr relative to current instr ptr)
-          fprintf(f, "\tLEAQ STR%d(%%rip), %s\n", str_num, symbol_code(e -> symbol));
+          fprintf(f, "\tLEAQ STR%d(%%rip), %s\n", str_num, val);
+          fprintf(f, "\tMOVQ STR%d(%%rip), %s\n", str_num, register_name(e -> reg));
 #else
-          fprintf(f, "\tLEAQ STR%d, %s\n", str_num, symbol_code(e -> symbol));
+          fprintf(f, "\tLEAQ STR%d, %s\n", str_num, val);
+          fprintf(f, "\tMOVQ STR%d, %s\n", str_num, register_name(e -> reg));
 #endif
-          // return val of assignment is rvalue
-          e -> reg = register_alloc();
-          fprintf(f, "\tMOVQ %s, %s\n", symbol_code(e -> left -> symbol), register_name(e -> reg));
+          free(val);
         }
         // global strings
         else {
@@ -1526,7 +1529,9 @@ void expr_codegen(struct expr *e, FILE *f) {
       else {
         expr_codegen(e -> right, f);
         expr_assembly_op_comment(e, f, "assign");
-        fprintf(f, "\tMOVQ %s, %s\n", register_name(e -> right -> reg), symbol_code(e -> left -> symbol));
+        val = symbol_code(e -> left -> symbol);
+        fprintf(f, "\tMOVQ %s, %s\n", register_name(e -> right -> reg), val);
+        free(val);
         // return val of assignment is rvalue
         e -> reg = e -> right -> reg;
       }
