@@ -1253,22 +1253,23 @@ void expr_comp_string_codegen(struct expr *e, FILE *f) {
 
 void expr_load_global_string(struct expr *e, FILE *f) {
   e -> reg = register_alloc();
-  char *val;
+  char *val = symbol_code(e -> symbol);
   if(ASSEMBLY_COMMENT_FLAG) {
     // the str_num is stored in the original decl
     fprintf(f, "\t# move %s into register\n", val);
   }
 #ifdef __linux__
   // put the string in reg
-  fprintf(f, "\tLEA %s, %s\n", val, register_name(e -> reg));
+  fprintf(f, "\tLEAQ %s, %s\n", val, register_name(e -> reg));
 #elif __APPLE__
   // on OSX, a load of 64-bit data addr results
   // in an invalid inst error (instead, specify
   // an addr relative to current instr ptr)
-  fprintf(f, "\tLEA %s(%%rip), %s\n", val, register_name(e -> reg));
+  fprintf(f, "\tLEAQ %s(%%rip), %s\n", val, register_name(e -> reg));
 #else
-  fprintf(f, "\tLEA %s, %s\n", val, register_name(e -> reg));
+  fprintf(f, "\tLEAQ %s, %s\n", val, register_name(e -> reg));
 #endif
+  free(val);
 }
 
 void expr_codegen(struct expr *e, FILE *f) {
