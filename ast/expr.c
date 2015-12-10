@@ -1502,30 +1502,21 @@ void expr_codegen(struct expr *e, FILE *f) {
             fprintf(f, "\t# move STR%d into register\n", str_num);
           }
           val = symbol_code(e -> symbol);
+          // assigning string uses MOV
           // return val of assignment is rvalue
-#ifdef __linux__
           // put the string in reg
-          fprintf(f, "\tLEAQ STR%d, %s\n", str_num, val);
+          fprintf(f, "\tMOVQ STR%d, %s\n", str_num, val);
           fprintf(f, "\tMOVQ STR%d, %s\n", str_num, register_name(e -> reg));
-#elif __APPLE__
-          // on OSX, a load of 64-bit data addr results
-          // in an invalid inst error (instead, specify
-          // an addr relative to current instr ptr)
-          fprintf(f, "\tLEAQ STR%d(%%rip), %s\n", str_num, val);
-          fprintf(f, "\tMOVQ STR%d(%%rip), %s\n", str_num, register_name(e -> reg));
-#else
-          fprintf(f, "\tLEAQ STR%d, %s\n", str_num, val);
-          fprintf(f, "\tMOVQ STR%d, %s\n", str_num, register_name(e -> reg));
-#endif
           free(val);
         }
         // global strings
         else {
-          expr_load_global_string(e -> right, f);
+          char *rval = symbol_code(e -> right -> symbol);
           val = symbol_code(e -> left -> symbol);
-          fprintf(f, "\tMOVQ %s, %s\n", register_name(e -> right -> reg), val);
+          e -> reg = register_alloc();
+          fprintf(f, "\tMOVQ %s, %s\n", rval, register_name(e -> reg));
+          fprintf(f, "\tMOVQ %s, %s\n", register_name(e -> reg), val);
           free(val);
-          e -> reg = e -> right -> reg;
         }
       }
       else {
