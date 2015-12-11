@@ -395,6 +395,7 @@ void stmt_codegen(struct stmt *s, FILE *f) {
       int done = assembly_jump_label++;
       expr_codegen(s -> expr, f);
       fprintf(f, "\tCMP $0, %s\n", register_name(s -> expr -> reg));
+      register_free(s -> expr -> reg);
       if(s -> else_body) {
         int el = assembly_jump_label++;
         // jump to else
@@ -417,8 +418,29 @@ void stmt_codegen(struct stmt *s, FILE *f) {
       }
       break;
     }
-    case STMT_FOR:
+    case STMT_FOR: {
+      int loop = assembly_jump_label++;
+      int done = assembly_jump_label++;
+      // loop label
+      assembly_comment(f, "\t# loop label\n");
+      fprintf(f, "L%d:\n", loop);
+      expr_codegen(s -> expr, f);
+      // don't need the return value
+      register_free(s -> expr -> reg);
+      fprintf(f, "\tCMP $0, %s\n", register_name(s -> expr -> reg));
+      assembly_comment(f, "\t# jump to done label (break condition)\n");
+      fprintf(f, "\tJE L%d\n", done);
+      stmt_codegen(s -> body, f);
+      expr_codegen(s -> next_expr, f);
+      register_free(s -> next_expr -> reg);
+      assembly_comment(f, "\t# unconditional jump to next loop\n");
+      fprintf(f, "JMP L%d\n", loop);
+      assembly_comment(f, "\t# done label\n");
+      fprintf(f, "L%d:\n", done);
+
+      register_free(s -> expr -> reg);
       break;
+    }
     case STMT_WHILE:
       fprintf(stderr, "CODEGEN_ERROR: cminor does not support while loops\n");
       exit(1);

@@ -384,13 +384,17 @@ void decl_codegen(struct decl *d, FILE *f, symbol_t kind) {
   else {
     if(d -> value) {
       if(d -> value -> kind == EXPR_STRLIT) {
-      fprintf(f, ".data\n");
-      d -> value -> str_num = expr_num_str++;
-      fprintf(f, "STR%d:\n", d -> value -> str_num);
-      char *val = assembly_string_out((char *) d -> value -> string_literal);
-      fprintf(f, "\t.string \"%s\"\n", val);
-      free(val);
-      fprintf(f, ".text\n");
+        fprintf(f, ".data\n");
+        d -> value -> str_num = expr_num_str++;
+        fprintf(f, "STR%d:\n", d -> value -> str_num);
+        char *val = assembly_string_out((char *) d -> value -> string_literal);
+        fprintf(f, "\t.string \"%s\"\n", val);
+        free(val);
+        fprintf(f, ".text\n");
+      }
+      else {
+        expr_codegen(d -> value, f);
+        fprintf(f, "\tMOVQ %s, %s\n", register_name(d -> value -> reg), symbol_code(d -> symbol));
       }
     }
   }
