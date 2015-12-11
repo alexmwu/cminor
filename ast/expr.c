@@ -1500,7 +1500,7 @@ void expr_codegen(struct expr *e, FILE *f) {
 
           if(ASSEMBLY_COMMENT_FLAG) {
             // the str_num is stored in the original decl
-            fprintf(f, "\t# move STR%d into register\n", str_num);
+            fprintf(f, "\t# move STR%d into %s\n", str_num, val);
           }
           assembly_comment(f, "\t# need to allocate extra reg b/c x86_64 doesn't allow mov from label data to mem offset\n");
           val = symbol_code(e -> left -> symbol);
@@ -1617,33 +1617,8 @@ void expr_codegen(struct expr *e, FILE *f) {
       break;
     case EXPR_IDENT:
       // make sure that it is not
-      if(e -> symbol -> type -> kind == TYPE_STRING) {
-        e -> reg = register_alloc();
-        // globals don't use str_num
-        if(e -> symbol -> kind != SYMBOL_GLOBAL) {
-          char *name = symbol_code(e -> symbol);
-          if(ASSEMBLY_COMMENT_FLAG) {
-            // the str_num is stored in the original decl
-            fprintf(f, "\t# move %s into register\n", name);
-          }
-          fprintf(f, "\tMOVQ %s, %s\n", name, register_name(e -> reg));
-          free(name);
-/*#ifdef __linux__*/
-          /*// put the string in reg*/
-          /*fprintf(f, "\tLEAQ STR%d, %s\n", str_num, register_name(e -> reg));*/
-/*#elif __APPLE__*/
-          /*// on OSX, a load of 64-bit data addr results*/
-          /*// in an invalid inst error (instead, specify*/
-          /*// an addr relative to current instr ptr)*/
-          /*fprintf(f, "\tLEAQ STR%d(%%rip), %s\n", str_num, register_name(e -> reg));*/
-/*#else*/
-          /*fprintf(f, "\tLEAQ STR%d, %s\n", str_num, register_name(e -> reg));*/
-/*#endif*/
-        }
-        // global strings
-        else {
-          expr_load_global_string(e, f);
-        }
+      if(e -> symbol -> type -> kind == TYPE_STRING && e -> symbol -> kind != SYMBOL_GLOBAL) {
+        expr_load_global_string(e, f);
       }
       else {
         e -> reg = register_alloc();
