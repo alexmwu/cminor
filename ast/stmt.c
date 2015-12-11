@@ -260,7 +260,7 @@ void stmt_typecheck(struct stmt *s, struct type *ret, int *returned) {
       expr = expr_typecheck(s -> expr);
       // need to check that the middle
       // expression is actually there
-      if(expr -> kind != TYPE_BOOLEAN && !expr) {
+      if(!expr && expr -> kind != TYPE_BOOLEAN) {
         fprintf(stderr, "TYPE_ERROR: cannot use a ");
         type_fprint(stderr, expr);
         fprintf(stderr, " as the middle expression requires a boolean (or an empty expression)\n");
