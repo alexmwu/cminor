@@ -421,6 +421,8 @@ void stmt_codegen(struct stmt *s, FILE *f) {
     case STMT_FOR: {
       int loop = assembly_jump_label++;
       int done = assembly_jump_label++;
+      expr_codegen(s -> init_expr, f);
+      register_free(s -> init_expr -> reg);
       // loop label
       assembly_comment(f, "\t# loop label\n");
       fprintf(f, "L%d:\n", loop);
