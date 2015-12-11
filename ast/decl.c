@@ -382,7 +382,8 @@ void decl_codegen(struct decl *d, FILE *f, symbol_t kind) {
   }
   // else it is another declaration of type local
   else {
-    if(d -> value -> kind == EXPR_STRLIT) {
+    if(d -> value) {
+      if(d -> value -> kind == EXPR_STRLIT) {
       fprintf(f, ".data\n");
       d -> value -> str_num = expr_num_str++;
       fprintf(f, "STR%d:\n", d -> value -> str_num);
@@ -390,6 +391,7 @@ void decl_codegen(struct decl *d, FILE *f, symbol_t kind) {
       fprintf(f, "\t.string \"%s\"\n", val);
       free(val);
       fprintf(f, ".text\n");
+      }
     }
   }
   decl_codegen(d -> next, f, kind);

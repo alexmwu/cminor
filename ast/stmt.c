@@ -391,8 +391,32 @@ void stmt_codegen(struct stmt *s, FILE *f) {
       expr_codegen(s -> expr, f);
       register_free(s -> expr -> reg);
       break;
-    case STMT_IF_ELSE:
+    case STMT_IF_ELSE: {
+      int done = assembly_jump_label++;
+      expr_codegen(s -> expr, f);
+      fprintf(f, "\tCMP $0, %s\n", register_name(s -> expr -> reg));
+      if(s -> else_body) {
+        int el = assembly_jump_label++;
+        // jump to else
+        fprintf(f, "\tJE L%d\n", el);
+        stmt_codegen(s -> body, f);
+        assembly_comment(f, "\t# jump to done label (don't evaluate else label)\n");
+        fprintf(f, "JMP L%d\n", done);
+        assembly_comment(f, "\t# else label\n");
+        fprintf(f, "L%d:\n", el);
+        stmt_codegen(s -> else_body, f);
+        assembly_comment(f, "\t# done label\n");
+        fprintf(f, "L%d:\n", done);
+      }
+      else {
+        // jump to done
+        fprintf(f, "\tJE L%d\n", done);
+        stmt_codegen(s -> body, f);
+        assembly_comment(f, "\t# done label\n");
+        fprintf(f, "L%d:\n", done);
+      }
       break;
+    }
     case STMT_FOR:
       break;
     case STMT_WHILE:
