@@ -266,7 +266,8 @@ void stmt_typecheck(struct stmt *s, struct type *ret, int *returned) {
         fprintf(stderr, " as the middle expression requires a boolean (or an empty expression)\n");
         type_error_count++;
       }
-      expr_typecheck(s -> next_expr);
+      type_delete(expr);
+      type_delete(expr_typecheck(s -> next_expr));
       stmt_typecheck(s -> body, ret, returned);
       type_delete(expr);
       break;
