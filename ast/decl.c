@@ -328,6 +328,23 @@ void decl_codegen(struct decl *d, FILE *f, symbol_t kind) {
       fprintf(f, "\tPUSHQ %%r15\n");
       assembly_comment(f, "\n\t### function body\n\n");
       stmt_codegen(d -> code, f);
+      // create postamble for void functions
+      if(d -> type -> subtype -> kind == TYPE_VOID) {
+        // postamble
+        assembly_comment(f, "\t### function postamble\n");
+        assembly_comment(f, "\t# restore callee-saved registers\n");
+        fprintf(f, "\tPOPQ %%r15\n");
+        fprintf(f, "\tPOPQ %%r14\n");
+        fprintf(f, "\tPOPQ %%r13\n");
+        fprintf(f, "\tPOPQ %%r12\n");
+        fprintf(f, "\tPOPQ %%rbx\n");
+
+        assembly_comment(f, "\t# reset stack to base pointer\n");
+        fprintf(f, "\tMOVQ %%rbp, %%rsp\n");
+        assembly_comment(f, "\t# restore the old base pointer\n");
+        fprintf(f, "\tPOPQ %%rbp\n");
+        fprintf(f, "\tRET\n");
+      }
     }
     // just a declaration
     else {

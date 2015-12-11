@@ -481,8 +481,10 @@ void stmt_codegen(struct stmt *s, FILE *f) {
         expr_fprint(f, s -> expr);
         fprintf(f, ")\n");
       }
-      fprintf(f, "\tMOVQ %s, %%rax\n", register_name(s -> expr -> reg));
-      register_free(s -> expr -> reg);
+      if(s -> expr) {
+        fprintf(f, "\tMOVQ %s, %%rax\n", register_name(s -> expr -> reg));
+        register_free(s -> expr -> reg);
+      }
 
       // postamble
       assembly_comment(f, "\t### function postamble\n");
