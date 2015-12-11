@@ -1498,12 +1498,12 @@ void expr_codegen(struct expr *e, FILE *f) {
           e -> reg = register_alloc();
           int str_num = e -> right -> symbol -> orig_decl -> value -> str_num;
 
-          val = symbol_code(e -> left -> symbol);
           if(ASSEMBLY_COMMENT_FLAG) {
             // the str_num is stored in the original decl
             fprintf(f, "\t# move STR%d into %s\n", str_num, val);
           }
           assembly_comment(f, "\t# need to allocate extra reg b/c x86_64 doesn't allow mov from label data to mem offset\n");
+          val = symbol_code(e -> left -> symbol);
           // assigning string uses MOV
           // put the string in reg
           fprintf(f, "\tLEAQ STR%d, %s\n", str_num, register_name(e -> reg));
@@ -1617,8 +1617,22 @@ void expr_codegen(struct expr *e, FILE *f) {
       break;
     case EXPR_IDENT:
       // make sure that it is not
-      if(e -> symbol -> type -> kind == TYPE_STRING && e -> symbol -> kind != SYMBOL_GLOBAL) {
-        expr_load_global_string(e, f);
+      if(e -> symbol -> type -> kind == TYPE_STRING) {
+        e -> reg = register_alloc();
+        // globals don't use str_num
+        if(e -> symbol -> kind != SYMBOL_GLOBAL) {
+          char *name = symbol_code(e -> symbol);
+          if(ASSEMBLY_COMMENT_FLAG) {
+            // the str_num is stored in the original decl
+            fprintf(f, "\t# move %s into register\n", name);
+          }
+          fprintf(f, "\tMOVQ %s, %s\n", name, register_name(e -> reg));
+          free(name);
+        }
+        // global strings
+        else {
+          expr_load_global_string(e, f);
+        }
       }
       else {
         e -> reg = register_alloc();

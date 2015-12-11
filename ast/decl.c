@@ -394,6 +394,17 @@ void decl_codegen(struct decl *d, FILE *f, symbol_t kind) {
         fprintf(f, "\t.string \"%s\"\n", val);
         free(val);
         fprintf(f, ".text\n");
+
+        val = symbol_code(d -> symbol);
+        fprintf(f, "\t# move STR%d into %s\n", d -> value -> str_num, val);
+        assembly_comment(f, "\t# need to allocate extra reg b/c x86_64 doesn't allow mov from label data to mem offset\n");
+        // assigning string uses MOV
+        // put the string in reg
+        int tmp_reg = register_alloc();
+        fprintf(f, "\tLEAQ STR%d, %s\n", d -> value -> str_num, register_name(tmp_reg));
+        fprintf(f, "\tMOVQ %s, %s\n", register_name(tmp_reg), val);
+        free(val);
+        register_free(tmp_reg);
       }
       else {
         char *name = symbol_code(d -> symbol);
