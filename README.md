@@ -6,6 +6,8 @@ CMinor
 A project to create a compiled (x86\_64) C-like language using the Flex scanner-generator and the Bison parser-generator.
 The spec for the language is located in the `spec` directory. It is subject to change.
 
+See the `tests/codegen/other` directory for examples of generated codes (with binaries compiled on RHEL).
+
 ##Install
 Building this project requires gcc or clang, Flex, Bison, and ld (for linking to compiled C programs).
 
