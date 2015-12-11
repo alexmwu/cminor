@@ -1,154 +1,19 @@
 .text
 .globl gfx_open
-gfx_open:
-	PUSHQ %rbp
-	MOVQ %rsp, %rbp
-	SUBQ $0, %rsp
-	PUSHQ %rbx
-	PUSHQ %r12
-	PUSHQ %r13
-	PUSHQ %r14
-	PUSHQ %r15
 .globl gfx_point
-gfx_point:
-	PUSHQ %rbp
-	MOVQ %rsp, %rbp
-	SUBQ $0, %rsp
-	PUSHQ %rbx
-	PUSHQ %r12
-	PUSHQ %r13
-	PUSHQ %r14
-	PUSHQ %r15
 .globl gfx_line
-gfx_line:
-	PUSHQ %rbp
-	MOVQ %rsp, %rbp
-	SUBQ $0, %rsp
-	PUSHQ %rbx
-	PUSHQ %r12
-	PUSHQ %r13
-	PUSHQ %r14
-	PUSHQ %r15
 .globl gfx_color
-gfx_color:
-	PUSHQ %rbp
-	MOVQ %rsp, %rbp
-	SUBQ $0, %rsp
-	PUSHQ %rbx
-	PUSHQ %r12
-	PUSHQ %r13
-	PUSHQ %r14
-	PUSHQ %r15
 .globl gfx_clear
-gfx_clear:
-	PUSHQ %rbp
-	MOVQ %rsp, %rbp
-	SUBQ $0, %rsp
-	PUSHQ %rbx
-	PUSHQ %r12
-	PUSHQ %r13
-	PUSHQ %r14
-	PUSHQ %r15
 .globl gfx_clear_color
-gfx_clear_color:
-	PUSHQ %rbp
-	MOVQ %rsp, %rbp
-	SUBQ $0, %rsp
-	PUSHQ %rbx
-	PUSHQ %r12
-	PUSHQ %r13
-	PUSHQ %r14
-	PUSHQ %r15
 .globl gfx_wait
-gfx_wait:
-	PUSHQ %rbp
-	MOVQ %rsp, %rbp
-	SUBQ $0, %rsp
-	PUSHQ %rbx
-	PUSHQ %r12
-	PUSHQ %r13
-	PUSHQ %r14
-	PUSHQ %r15
 .globl gfx_xpos
-gfx_xpos:
-	PUSHQ %rbp
-	MOVQ %rsp, %rbp
-	SUBQ $0, %rsp
-	PUSHQ %rbx
-	PUSHQ %r12
-	PUSHQ %r13
-	PUSHQ %r14
-	PUSHQ %r15
 .globl gfx_ypos
-gfx_ypos:
-	PUSHQ %rbp
-	MOVQ %rsp, %rbp
-	SUBQ $0, %rsp
-	PUSHQ %rbx
-	PUSHQ %r12
-	PUSHQ %r13
-	PUSHQ %r14
-	PUSHQ %r15
 .globl gfx_xsize
-gfx_xsize:
-	PUSHQ %rbp
-	MOVQ %rsp, %rbp
-	SUBQ $0, %rsp
-	PUSHQ %rbx
-	PUSHQ %r12
-	PUSHQ %r13
-	PUSHQ %r14
-	PUSHQ %r15
 .globl gfx_ysize
-gfx_ysize:
-	PUSHQ %rbp
-	MOVQ %rsp, %rbp
-	SUBQ $0, %rsp
-	PUSHQ %rbx
-	PUSHQ %r12
-	PUSHQ %r13
-	PUSHQ %r14
-	PUSHQ %r15
 .globl gfx_event_waiting
-gfx_event_waiting:
-	PUSHQ %rbp
-	MOVQ %rsp, %rbp
-	SUBQ $0, %rsp
-	PUSHQ %rbx
-	PUSHQ %r12
-	PUSHQ %r13
-	PUSHQ %r14
-	PUSHQ %r15
 .globl gfx_flush
-gfx_flush:
-	PUSHQ %rbp
-	MOVQ %rsp, %rbp
-	SUBQ $0, %rsp
-	PUSHQ %rbx
-	PUSHQ %r12
-	PUSHQ %r13
-	PUSHQ %r14
-	PUSHQ %r15
 .globl usleep
-usleep:
-	PUSHQ %rbp
-	MOVQ %rsp, %rbp
-	SUBQ $0, %rsp
-	PUSHQ %rbx
-	PUSHQ %r12
-	PUSHQ %r13
-	PUSHQ %r14
-	PUSHQ %r15
 .globl rand
-rand:
-	PUSHQ %rbp
-	MOVQ %rsp, %rbp
-	SUBQ $0, %rsp
-	PUSHQ %rbx
-	PUSHQ %r12
-	PUSHQ %r13
-	PUSHQ %r14
-	PUSHQ %r15
 .globl draw_box
 draw_box:
 	PUSHQ %rbp
