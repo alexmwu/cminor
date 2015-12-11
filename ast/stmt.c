@@ -269,7 +269,6 @@ void stmt_typecheck(struct stmt *s, struct type *ret, int *returned) {
       type_delete(expr);
       type_delete(expr_typecheck(s -> next_expr));
       stmt_typecheck(s -> body, ret, returned);
-      type_delete(expr);
       break;
     case STMT_WHILE:
       break;
