@@ -4,7 +4,7 @@ sideEffectTrue: function boolean() = {
 }
 
 sideEffectFalse: function boolean() = {
-  return true;
+  return false;
 }
 
 main: function integer() = {

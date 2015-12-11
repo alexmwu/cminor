@@ -1,5 +1,5 @@
 main: function integer() = {
-  int i;
+  i: integer;
   for(i = 0; i<100; i++) {
     print i, ": ";
     if(i%3 == 0) {
