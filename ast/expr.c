@@ -1506,7 +1506,7 @@ void expr_codegen(struct expr *e, FILE *f) {
           val = symbol_code(e -> left -> symbol);
           // assigning string uses MOV
           // put the string in reg
-          fprintf(f, "\tMOVQ STR%d, %s\n", str_num, register_name(e -> reg));
+          fprintf(f, "\tLEAQ STR%d, %s\n", str_num, register_name(e -> reg));
           fprintf(f, "\tMOVQ %s, %s\n", register_name(e -> reg), val);
           free(val);
         }
