@@ -1149,7 +1149,6 @@ void expr_post_codegen(struct expr *e, FILE *f, int which) {
   fprintf(f, "\tMOVQ %%rax, %s\n", register_name(e -> reg));
   fprintf(f, "\t%s %%rax\n", op);
   fprintf(f, "\tMOVQ %%rax, %s\n", val);
-  register_free(e -> left -> reg);
   free(val);
 }
 
