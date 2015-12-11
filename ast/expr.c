@@ -1140,20 +1140,17 @@ void expr_post_codegen(struct expr *e, FILE *f, int which) {
     fprintf(stderr, "Error in calling function expr_post_increment (must be of expr type PLUSPLUS or MINMIN\n");
     exit(1);
   }
-  expr_codegen(e -> left, f);
-  // has already been done typechecked but still call it to see
-  // if any errors occur
-  /*expr_codegen(e -> right, f);*/
+  /*expr_codegen(e -> left, f);*/
+  char *val = symbol_code(e -> left -> symbol);
   e -> reg = register_alloc();
   expr_assembly_op_comment(e, f, op);
-  fprintf(f, "\tMOVQ %s, %%rax\n", register_name(e -> left -> reg));
+  fprintf(f, "\tMOVQ %s, %%rax\n", val);
   // put return value (current value) into e -> reg
-  fprintf(f, "\tMOVQ %s, %%rax\n", register_name(e -> reg));
+  fprintf(f, "\tMOVQ %%rax, %s\n", register_name(e -> reg));
   fprintf(f, "\t%s %%rax\n", op);
-  fprintf(f, "\tMOVQ %%rax, %s\n", symbol_code(e -> left -> symbol));
+  fprintf(f, "\tMOVQ %%rax, %s\n", val);
   register_free(e -> left -> reg);
-  // will cause errors with reg_name[0]
-  /*register_free(e -> right -> reg);*/
+  free(val);
 }
 
 // places func result in e -> reg, pass in func name
