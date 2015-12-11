@@ -170,6 +170,7 @@ stmt_list: stmt
 expr: assign_expr
     ;
 
+/*TODO: add support for chained assignment*/
 assign_expr: TIDENT TEQ or_expr
               { $$ = expr_create(EXPR_EQ, expr_create_name($1), $3, 0); }
            | TIDENT arr_index_list TEQ or_expr
