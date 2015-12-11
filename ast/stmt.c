@@ -419,22 +419,29 @@ void stmt_codegen(struct stmt *s, FILE *f) {
       break;
     }
     case STMT_FOR: {
+      // check for nulls since all exprs optional
       int loop = assembly_jump_label++;
       int done = assembly_jump_label++;
-      expr_codegen(s -> init_expr, f);
-      register_free(s -> init_expr -> reg);
+      if(s -> init_expr) {
+        expr_codegen(s -> init_expr, f);
+        register_free(s -> init_expr -> reg);
+      }
       // loop label
       assembly_comment(f, "\t# loop label\n");
       fprintf(f, "L%d:\n", loop);
-      expr_codegen(s -> expr, f);
-      // don't need the return value
-      register_free(s -> expr -> reg);
-      fprintf(f, "\tCMP $0, %s\n", register_name(s -> expr -> reg));
-      assembly_comment(f, "\t# jump to done label (break condition)\n");
-      fprintf(f, "\tJE L%d\n", done);
+      if(s -> expr) {
+        expr_codegen(s -> expr, f);
+        // don't need the return value
+        register_free(s -> expr -> reg);
+        fprintf(f, "\tCMP $0, %s\n", register_name(s -> expr -> reg));
+        assembly_comment(f, "\t# jump to done label (break condition)\n");
+        fprintf(f, "\tJE L%d\n", done);
+      }
       stmt_codegen(s -> body, f);
-      expr_codegen(s -> next_expr, f);
-      register_free(s -> next_expr -> reg);
+      if(s -> next_expr) {
+        expr_codegen(s -> next_expr, f);
+        register_free(s -> next_expr -> reg);
+      }
       assembly_comment(f, "\t# unconditional jump to next loop\n");
       fprintf(f, "JMP L%d\n", loop);
       assembly_comment(f, "\t# done label\n");
