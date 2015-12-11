@@ -464,6 +464,8 @@ void stmt_codegen(struct stmt *s, FILE *f) {
         // calls func_codegen which save ret val in reg
         // so need to free reg beforehand
         stmt_call_print(curr, f);
+        // need to free reg again
+        register_free(curr -> reg);
 
         curr = curr -> next;
       }

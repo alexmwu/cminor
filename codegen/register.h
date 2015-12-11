@@ -18,5 +18,8 @@ int register_alloc();
 // remove register in use
 void register_free(int r);
 
+// returns whether all registers are free
+int register_all_free();
+
 #endif
 

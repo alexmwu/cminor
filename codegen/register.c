@@ -24,3 +24,13 @@ void register_free(int r) {
   register_is_free[r] = 1;
 }
 
+int register_all_free() {
+  int i;
+  for(i = 0; i < REGISTER_NUM; i++) {
+    if(!register_is_free[i]) {
+      return 0;
+    }
+  }
+  return 1;
+}
+

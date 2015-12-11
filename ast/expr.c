@@ -1229,6 +1229,7 @@ void expr_comp_codegen(struct expr *e, FILE *f, int which) {
   register_free(e -> left -> reg);
 }
 
+// calls func_codegen so must free result
 void expr_comp_string_codegen(struct expr *e, FILE *f) {
   expr_codegen(e -> left, f);
   expr_codegen(e -> right, f);
