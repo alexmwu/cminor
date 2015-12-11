@@ -329,19 +329,6 @@ void decl_codegen(struct decl *d, FILE *f, symbol_t kind) {
       assembly_comment(f, "\n\t### function body\n\n");
       stmt_codegen(d -> code, f);
     }
-    // just a declaration
-    else {
-#ifdef __linux__
-      fprintf(f, ".globl %s\n", d -> name -> name);
-      fprintf(f, "%s:\n", d -> name -> name);
-#elif __APPLE__
-      fprintf(f, ".globl _%s\n", d -> name -> name);
-      fprintf(f, "_%s:\n", d -> name -> name);
-#else
-      fprintf(f, ".globl %s\n", d -> name -> name);
-      fprintf(f, "%s:\n", d -> name -> name);
-#endif
-    }
   }
   else if(kind == SYMBOL_GLOBAL) {
     /*fprintf(f, ".data\n");*/
