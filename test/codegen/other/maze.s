@@ -1,34 +1,7 @@
 .text
 .globl rand
-rand:
-	PUSHQ %rbp
-	MOVQ %rsp, %rbp
-	SUBQ $0, %rsp
-	PUSHQ %rbx
-	PUSHQ %r12
-	PUSHQ %r13
-	PUSHQ %r14
-	PUSHQ %r15
 .globl srand
-srand:
-	PUSHQ %rbp
-	MOVQ %rsp, %rbp
-	SUBQ $0, %rsp
-	PUSHQ %rbx
-	PUSHQ %r12
-	PUSHQ %r13
-	PUSHQ %r14
-	PUSHQ %r15
 .globl time
-time:
-	PUSHQ %rbp
-	MOVQ %rsp, %rbp
-	SUBQ $0, %rsp
-	PUSHQ %rbx
-	PUSHQ %r12
-	PUSHQ %r13
-	PUSHQ %r14
-	PUSHQ %r15
 .globl main
 main:
 	PUSHQ %rbp
@@ -39,9 +12,9 @@ main:
 	PUSHQ %r13
 	PUSHQ %r14
 	PUSHQ %r15
-	MOVQ $4, %rbx
+	MOVQ $20, %rbx
 	MOVQ %rbx, -8(%rbp)
-	MOVQ $4, %rbx
+	MOVQ $20, %rbx
 	MOVQ %rbx, -16(%rbp)
 	MOVQ $0, %rbx
 	MOVQ %rbx, %rdi
