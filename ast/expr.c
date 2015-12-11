@@ -1501,7 +1501,7 @@ void expr_codegen(struct expr *e, FILE *f) {
             // the str_num is stored in the original decl
             fprintf(f, "\t# move STR%d into register\n", str_num);
           }
-          val = symbol_code(e -> symbol);
+          val = symbol_code(e -> left -> symbol);
           // assigning string uses MOV
           // return val of assignment is rvalue
           // put the string in reg

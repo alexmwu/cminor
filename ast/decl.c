@@ -11,6 +11,8 @@ struct decl *decl_create(struct expr *name, struct type *t, struct expr *v, stru
   d -> code = c;
   d -> next = next;
   d -> symbol = 0;
+  d -> num_params = 0;
+  d -> num_locals = 0;
   return d;
 }
 
