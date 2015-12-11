@@ -446,8 +446,6 @@ void stmt_codegen(struct stmt *s, FILE *f) {
       fprintf(f, "JMP L%d\n", loop);
       assembly_comment(f, "\t# done label\n");
       fprintf(f, "L%d:\n", done);
-
-      register_free(s -> expr -> reg);
       break;
     }
     case STMT_WHILE:
