@@ -1,5 +1,22 @@
-main: function integer() = {
-  a: integer = 5;
-  return a + 8;
-}
+a1: integer = 2;
+a2: integer = 10;
 
+main: function integer () = {
+  print "2 = ", a1, '\n';
+  print "10 = ", a2, '\n';
+  print "12 = ", a1 + a2, '\n';
+  print "12 = ", a2 + a1, '\n';
+  print "-8 = ", a1 - a2, '\n';
+  print "8 = ", a2 - a1, '\n';
+  print "200 = ", a1 * a2, '\n';
+  print "200 = ", a2 * a1, '\n';
+  print "0 = ", a1 / a2, '\n';
+  print "5 = ", a2 / a1, '\n';
+  print "2 = ", a1 % a2, '\n';
+  print "0 = ", a2 % a1, '\n';
+  print "-12= ", -a1 + -a2, '\n';
+  a1++; a2++;
+  print "3 = ", a1, '\n';
+  print "11 = ", a2++, '\n';
+  return 0;
+}

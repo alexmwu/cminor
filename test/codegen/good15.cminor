@@ -1,0 +1,15 @@
+main: function integer () = {
+  if (true) {
+    print "good\n";
+  } else {
+    print "bad\n";
+  }
+
+  if (false) {
+    print "bad\n";
+  } else {
+    print "good\n";
+  }
+
+  return 0;
+}

@@ -1,0 +1,8 @@
+fun: function integer (i: integer) = {
+  return i + i;
+}
+
+main: function integer () = {
+  print "200 = ", fun(100), '\n';
+  return 0;
+}

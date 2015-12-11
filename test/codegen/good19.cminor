@@ -1,0 +1,16 @@
+b: function integer();
+
+a: function integer (i: integer) = {
+  if(i == 0) return 0;
+  return 1 + b(i - 1);
+}
+
+b: function integer(i: integer) = {
+  if(i == 0) return 0;
+  return 1 + a(i - 1);
+}
+
+main: function integer () = {
+  print "10 = ", a(10), '\n';
+  return 0;
+}
