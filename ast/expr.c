@@ -1504,7 +1504,6 @@ void expr_codegen(struct expr *e, FILE *f) {
           }
           assembly_comment(f, "\t# need to allocate extra reg b/c x86_64 doesn't allow mov from label data to mem offset\n");
           val = symbol_code(e -> left -> symbol);
-          fprintf(f, "\tMOVQ STR%d, %s\n", str_num, val);
           // assigning string uses MOV
           // put the string in reg
           fprintf(f, "\tMOVQ STR%d, %s\n", str_num, register_name(e -> reg));
