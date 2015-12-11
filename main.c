@@ -5,6 +5,7 @@
 #include "parser.tab.h"
 #include "ast/decl.h"
 #include "codegen/assembly.h"
+#include "codegen/register.h"
 
 extern FILE *yyin;
 extern int yyparse();
@@ -106,7 +107,7 @@ int main(int argc, char **argv) {
       scope_exit();
       decl_free(programRoot);
       if(resolve_error_count) {
-        printf("Resolve error count: %d\n", resolve_error_count);
+        fprintf(stderr, "Resolve error count: %d\n", resolve_error_count);
         exit(1);
       }
     }
@@ -121,13 +122,13 @@ int main(int argc, char **argv) {
       scope_exit();
       if(resolve_error_count) {
         decl_free(programRoot);
-        printf("Resolve error count: %d\n", resolve_error_count);
+        fprintf(stderr, "Resolve error count: %d\n", resolve_error_count);
         exit(1);
       }
       decl_typecheck(programRoot);
       decl_free(programRoot);
       if(type_error_count) {
-        printf("Type error count: %d\n", type_error_count);
+        fprintf(stderr, "Type error count: %d\n", type_error_count);
         exit(1);
       }
     }
@@ -162,16 +163,20 @@ int main(int argc, char **argv) {
       scope_exit();
       if(resolve_error_count) {
         decl_free(programRoot);
-        printf("Resolve error count: %d\n", resolve_error_count);
+        fprintf(stderr, "Resolve error count: %d\n", resolve_error_count);
         exit(1);
       }
       decl_typecheck(programRoot);
       if(type_error_count) {
-        printf("Type error count: %d\n", type_error_count);
+        fprintf(stderr, "Type error count: %d\n", type_error_count);
         exit(1);
       }
       assembly_codegen(programRoot, f);
       decl_free(programRoot);
+      if(!register_all_free()) {
+        fprintf(stderr, "Codegen error: not all registers free\n");
+        exit(1);
+      }
       fclose(f);
     }
     else if(strcmp(argv[1], "-codegen-debug") == 0) {
@@ -208,16 +213,20 @@ int main(int argc, char **argv) {
       scope_exit();
       if(resolve_error_count) {
         decl_free(programRoot);
-        printf("Resolve error count: %d\n", resolve_error_count);
+        fprintf(stderr, "Resolve error count: %d\n", resolve_error_count);
         exit(1);
       }
       decl_typecheck(programRoot);
       if(type_error_count) {
-        printf("Type error count: %d\n", type_error_count);
+        fprintf(stderr, "Type error count: %d\n", type_error_count);
         exit(1);
       }
       assembly_codegen(programRoot, f);
       decl_free(programRoot);
+      if(!register_all_free()) {
+        fprintf(stderr, "Codegen error: not all registers free\n");
+        exit(1);
+      }
       fclose(f);
     }
     // TODO: call system gcc to compile generated code into machine code
