@@ -393,8 +393,9 @@ void decl_codegen(struct decl *d, FILE *f, symbol_t kind) {
         fprintf(f, ".text\n");
       }
       else {
+        char *name = symbol_code(d -> symbol);
         expr_codegen(d -> value, f);
-        fprintf(f, "\tMOVQ %s, %s\n", register_name(d -> value -> reg), symbol_code(d -> symbol));
+        fprintf(f, "\tMOVQ %s, %s\n", register_name(d -> value -> reg), name);
       }
     }
   }
