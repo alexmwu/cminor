@@ -286,47 +286,62 @@ void decl_codegen(struct decl *d, FILE *f, symbol_t kind) {
 
   // implied global decl or it would have failed in typecheck
   if(d -> type -> kind == TYPE_FUNCTION) {
+    if(d -> code) {
 #ifdef __linux__
-    fprintf(f, ".globl %s\n", d -> name -> name);
-    fprintf(f, "%s:\n", d -> name -> name);
+      fprintf(f, ".globl %s\n", d -> name -> name);
+      fprintf(f, "%s:\n", d -> name -> name);
 #elif __APPLE__
-    fprintf(f, ".globl _%s\n", d -> name -> name);
-    fprintf(f, "_%s:\n", d -> name -> name);
+      fprintf(f, ".globl _%s\n", d -> name -> name);
+      fprintf(f, "_%s:\n", d -> name -> name);
 #else
-    fprintf(f, ".globl %s\n", d -> name -> name);
-    fprintf(f, "%s:\n", d -> name -> name);
+      fprintf(f, ".globl %s\n", d -> name -> name);
+      fprintf(f, "%s:\n", d -> name -> name);
 #endif
-    // preamble of function (setting up stack)
-    assembly_comment(f, "\t### function preamble\n");
-    assembly_comment(f, "\t# save the base pointer\n");
-    fprintf(f, "\tPUSHQ %%rbp\n");
-    assembly_comment(f, "\t# set new base pointer to rsp\n");
-    fprintf(f, "\tMOVQ %%rsp, %%rbp\n");
-    assembly_arg_stack_alloc(f, d -> num_params);
-    if(ASSEMBLY_COMMENT_FLAG) {
-      fprintf(f, "\n\t # allocate %d local variables\n", d -> num_locals);
+      // preamble of function (setting up stack)
+      assembly_comment(f, "\t### function preamble\n");
+      assembly_comment(f, "\t# save the base pointer\n");
+      fprintf(f, "\tPUSHQ %%rbp\n");
+      assembly_comment(f, "\t# set new base pointer to rsp\n");
+      fprintf(f, "\tMOVQ %%rsp, %%rbp\n");
+      assembly_arg_stack_alloc(f, d -> num_params);
+      if(ASSEMBLY_COMMENT_FLAG) {
+        fprintf(f, "\n\t # allocate %d local variables\n", d -> num_locals);
+      }
+      // allocate a byte per local (8)
+#ifdef __linux__
+      fprintf(f, "\tSUBQ $%d, %%rsp\n", d -> num_locals * 8);
+#elif __APPLE__
+      // num params, locals, and callee-saved regs
+      int num_stack_vars = d -> num_params + d -> num_locals + REGISTER_NUM_CALLEE_SAVED;
+      // add an unused local if the num is odd
+      // (keep stack aligned on 16 byte boundary)
+      int num_locals = (num_stack_vars % 2 == 0) ? d -> num_locals : (d -> num_locals + 1);
+      fprintf(f, "\tSUBQ $%d, %%rsp\n", num_locals * 8);
+#else
+      fprintf(f, "\tSUBQ $%d, %%rsp\n", d -> num_locals * 8);
+#endif
+      assembly_comment(f, "\n\t# save callee-saved registers\n");
+      fprintf(f, "\tPUSHQ %%rbx\n");
+      fprintf(f, "\tPUSHQ %%r12\n");
+      fprintf(f, "\tPUSHQ %%r13\n");
+      fprintf(f, "\tPUSHQ %%r14\n");
+      fprintf(f, "\tPUSHQ %%r15\n");
+      assembly_comment(f, "\n\t### function body\n\n");
+      stmt_codegen(d -> code, f);
     }
-    // allocate a byte per local (8)
+    // just a declaration
+    else {
 #ifdef __linux__
-    fprintf(f, "\tSUBQ $%d, %%rsp\n", d -> num_locals * 8);
+      fprintf(f, ".globl %s\n", d -> name -> name);
+      fprintf(f, "%s:\n", d -> name -> name);
 #elif __APPLE__
-    // num params, locals, and callee-saved regs
-    int num_stack_vars = d -> num_params + d -> num_locals + REGISTER_NUM_CALLEE_SAVED;
-    // add an unused local if the num is odd
-    // (keep stack aligned on 16 byte boundary)
-    int num_locals = (num_stack_vars % 2 == 0) ? d -> num_locals : (d -> num_locals + 1);
-    fprintf(f, "\tSUBQ $%d, %%rsp\n", num_locals * 8);
+      fprintf(f, ".globl _%s\n", d -> name -> name);
+      fprintf(f, "_%s:\n", d -> name -> name);
 #else
-    fprintf(f, "\tSUBQ $%d, %%rsp\n", d -> num_locals * 8);
+      fprintf(f, ".globl %s\n", d -> name -> name);
+      fprintf(f, "%s:\n", d -> name -> name);
 #endif
-    assembly_comment(f, "\n\t# save callee-saved registers\n");
-    fprintf(f, "\tPUSHQ %%rbx\n");
-    fprintf(f, "\tPUSHQ %%r12\n");
-    fprintf(f, "\tPUSHQ %%r13\n");
-    fprintf(f, "\tPUSHQ %%r14\n");
-    fprintf(f, "\tPUSHQ %%r15\n");
-    assembly_comment(f, "\n\t### function body\n\n");
-    stmt_codegen(d -> code, f);
+    }
   }
   else if(kind == SYMBOL_GLOBAL) {
     /*fprintf(f, ".data\n");*/

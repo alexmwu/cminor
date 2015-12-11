@@ -432,8 +432,8 @@ void stmt_codegen(struct stmt *s, FILE *f) {
       if(s -> expr) {
         expr_codegen(s -> expr, f);
         // don't need the return value
-        register_free(s -> expr -> reg);
         fprintf(f, "\tCMP $0, %s\n", register_name(s -> expr -> reg));
+        register_free(s -> expr -> reg);
         assembly_comment(f, "\t# jump to done label (break condition)\n");
         fprintf(f, "\tJE L%d\n", done);
       }
