@@ -1619,9 +1619,9 @@ void expr_codegen(struct expr *e, FILE *f) {
     case EXPR_IDENT:
       // make sure that it is not
       if(e -> symbol -> type -> kind == TYPE_STRING) {
-        e -> reg = register_alloc();
         // globals don't use str_num
         if(e -> symbol -> kind != SYMBOL_GLOBAL) {
+          e -> reg = register_alloc();
           char *name = symbol_code(e -> symbol);
           if(ASSEMBLY_COMMENT_FLAG) {
             // the str_num is stored in the original decl
