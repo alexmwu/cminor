@@ -1283,7 +1283,8 @@ void expr_codegen(struct expr *e, FILE *f) {
       // unary minus
       if(!e -> left) {
         expr_codegen(e -> right, f);
-        fprintf(f, "\tNEG %s\n", register_name(e -> reg));
+        fprintf(f, "\tNEG %s\n", register_name(e -> right -> reg));
+        e -> reg = e -> right -> reg;
       }
       else {
         expr_add_codegen(e, f, 1);
@@ -1498,12 +1499,12 @@ void expr_codegen(struct expr *e, FILE *f) {
           e -> reg = register_alloc();
           int str_num = e -> right -> symbol -> orig_decl -> value -> str_num;
 
+          val = symbol_code(e -> left -> symbol);
           if(ASSEMBLY_COMMENT_FLAG) {
             // the str_num is stored in the original decl
             fprintf(f, "\t# move STR%d into %s\n", str_num, val);
           }
           assembly_comment(f, "\t# need to allocate extra reg b/c x86_64 doesn't allow mov from label data to mem offset\n");
-          val = symbol_code(e -> left -> symbol);
           // assigning string uses MOV
           // put the string in reg
           fprintf(f, "\tLEAQ STR%d, %s\n", str_num, register_name(e -> reg));
